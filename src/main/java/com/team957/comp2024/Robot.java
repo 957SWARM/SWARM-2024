@@ -11,8 +11,13 @@ import monologue.Logged;
 import monologue.Monologue;
 
 public class Robot extends TimedRobot implements Logged {
+    // these need to be constructed so that
+    // monologue can work its reflection magic
+    @SuppressWarnings("unused")
     private final IMU imu = new IMU();
+    @SuppressWarnings("unused")
     private final PDH pdh = new PDH(PDHConstants.STARTING_SWITCHABLE_CHANNEL_STATE);
+    @SuppressWarnings("unused")
     private final PneumaticsHub ph = new PneumaticsHub();
 
     private final DeltaTimeUtil dt = new DeltaTimeUtil();
@@ -27,5 +32,7 @@ public class Robot extends TimedRobot implements Logged {
         CommandScheduler.getInstance().run();
 
         put("loopTimeSeconds", dt.getTimeSecondsSinceLastCall());
+
+        Monologue.update();
     }
 }
