@@ -18,6 +18,8 @@ public class Constants {
 
     public static final class PDHConstants {
         public static final int PDH_CAN_ID = 30;
+
+        public static final boolean STARTING_SWITCHABLE_CHANNEL_STATE = false;
     }
 
     public static final class PneumaticHubConstants {
