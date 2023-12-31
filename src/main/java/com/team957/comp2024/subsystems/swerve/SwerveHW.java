@@ -128,29 +128,15 @@ public class SwerveHW extends Swerve {
         public String[] getDriveFaults() {
             return SparkMaxUtils.getFaultsAsStringArray(drive, false);
         }
+
+        @Override
+        protected void update(double dt) {
+            // TODO Auto-generated method stub
+            throw new UnsupportedOperationException("Unimplemented method 'update'");
+        }
     }
 
-    @Override
-    public ModuleIO getFrontLeft() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getFrontLeft'");
-    }
-
-    @Override
-    public ModuleIO getFrontRight() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getFrontRight'");
-    }
-
-    @Override
-    public ModuleIO getBackRight() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getBackRight'");
-    }
-
-    @Override
-    public ModuleIO getBackLeft() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getBackLeft'");
+    public SwerveHW() {
+        super(null, null, null, null);
     }
 }

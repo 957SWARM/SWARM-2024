@@ -1,5 +1,7 @@
 package com.team957.comp2024;
 
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
 
@@ -9,8 +11,13 @@ public class Constants {
     }
 
     public static final class SwerveConstants {
-        public static final double STEER_MOMENT_KG_M_2 = 0.1; // NEEDS ACTUAL VALUE!
-        public static final double DRIVE_MOMENT_KG_M_2 = 0.1; // NEEDS ACTUAL VALUE!
+        public static final double STEER_PLANT_KS = 1;
+        public static final double STEER_PLANT_KV = 1; // wild guess
+        public static final double STEER_PLANT_KA = 1;
+
+        public static final double DRIVE_PLANT_KS = 1;
+        public static final double DRIVE_PLANT_KV = 1;
+        public static final double DRIVE_PLANT_KA = 1;
 
         public static final double STEER_GEARING = 42.62;
         public static final double DRIVE_GEARING = 4.71;
@@ -19,6 +26,18 @@ public class Constants {
         public static final DCMotor DRIVE_MOTOR = DCMotor.getNEO(1);
 
         public static final double WHEEL_RADIUS_METERS = Units.inchesToMeters(3);
+
+        public static final Translation2d FRONT_LEFT_TRANSLATION = new Translation2d(0.5, 0.5);
+        public static final Translation2d FRONT_RIGHT_TRANSLATION = new Translation2d(0.5, -0.5);
+        public static final Translation2d BACK_RIGHT_TRANSLATION = new Translation2d(-0.5, -0.5);
+        public static final Translation2d BACK_LEFT_TRANSLATION = new Translation2d(-0.5, 0.5);
+
+        public static final SwerveDriveKinematics KINEMATICS =
+                new SwerveDriveKinematics(
+                        FRONT_LEFT_TRANSLATION,
+                        FRONT_RIGHT_TRANSLATION,
+                        BACK_RIGHT_TRANSLATION,
+                        BACK_LEFT_TRANSLATION);
     }
 
     public static final class IMUConstants {

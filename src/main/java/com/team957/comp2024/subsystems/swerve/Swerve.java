@@ -1,9 +1,13 @@
 package com.team957.comp2024.subsystems.swerve;
 
 import com.team957.comp2024.Constants.SwerveConstants;
+import com.team957.comp2024.Robot;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import java.util.function.Supplier;
 import monologue.Logged;
 import monologue.Monologue.LogBoth;
 
@@ -122,17 +126,48 @@ public abstract class Swerve implements Subsystem, Logged {
                     getDriveVelocityMetersPerSecond(),
                     Rotation2d.fromRadians(getSteerPositionRadians()));
         }
+
+        protected abstract void update(double dt);
     }
 
     public static Swerve getSwerve(boolean isReal) {
         return (isReal) ? new SwerveHW() : new SwerveSim();
     }
 
-    public abstract ModuleIO getFrontLeft();
+    public final ModuleIO frontLeft;
+    public final ModuleIO frontRight;
+    public final ModuleIO backRight;
+    public final ModuleIO backLeft;
 
-    public abstract ModuleIO getFrontRight();
+    protected Swerve(
+            ModuleIO frontLeft, ModuleIO frontRight, ModuleIO backRight, ModuleIO backLeft) {
+        this.frontLeft = frontLeft;
+        this.frontRight = frontRight;
+        this.backRight = backRight;
+        this.backLeft = backLeft;
 
-    public abstract ModuleIO getBackRight();
+        register();
+    }
 
-    public abstract ModuleIO getBackLeft();
+    public static record CombinedModuleSetpoints(
+            SwerveModuleState frontLeft,
+            SwerveModuleState frontRight,
+            SwerveModuleState backRight,
+            SwerveModuleState backLeft) {}
+
+    public Command getModuleControllerCommand(Supplier<CombinedModuleSetpoints> setpoints) {
+        return run(() -> {});
+    }
+
+    public Command getChassisRelativeControlCommand(Supplier<ChassisSpeeds> chassisSpeeds) {
+        return getModuleControllerCommand(
+                () -> {
+                    SwerveModuleState[] states =
+                            SwerveConstants.KINEMATICS.toSwerveModuleStates(
+                                    ChassisSpeeds.discretize(
+                                            chassisSpeeds.get(), Robot.kDefaultPeriod));
+
+                    return new CombinedModuleSetpoints(states[0], states[1], states[2], states[3]);
+                });
+    }
 }

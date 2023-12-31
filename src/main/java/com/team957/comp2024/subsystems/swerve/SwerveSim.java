@@ -3,24 +3,24 @@ package com.team957.comp2024.subsystems.swerve;
 import com.team957.comp2024.Constants.SwerveConstants;
 import com.team957.lib.math.UtilityMath;
 import com.team957.lib.util.DeltaTimeUtil;
+import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
-import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 
 public class SwerveSim extends Swerve {
     private static class SimModuleIO extends ModuleIO {
         final DCMotorSim steerSim =
                 new DCMotorSim(
+                        LinearSystemId.createDCMotorSystem(
+                                SwerveConstants.STEER_PLANT_KV, SwerveConstants.STEER_PLANT_KA),
                         SwerveConstants.STEER_MOTOR,
-                        SwerveConstants.STEER_GEARING,
-                        SwerveConstants.STEER_MOMENT_KG_M_2);
+                        SwerveConstants.STEER_GEARING);
 
-        final FlywheelSim driveSim =
-                new FlywheelSim(
+        final DCMotorSim driveSim =
+                new DCMotorSim(
+                        LinearSystemId.createDCMotorSystem(
+                                SwerveConstants.DRIVE_PLANT_KV, SwerveConstants.DRIVE_PLANT_KA),
                         SwerveConstants.DRIVE_MOTOR,
-                        SwerveConstants.DRIVE_GEARING,
-                        SwerveConstants.DRIVE_MOMENT_KG_M_2);
-
-        // dc motor sim supports position, flywheel does not
+                        SwerveConstants.DRIVE_GEARING);
 
         double steerInputVoltage = 0;
         double driveInputVoltage = 0;
@@ -59,7 +59,7 @@ public class SwerveSim extends Swerve {
 
         @Override
         public void setDriveSetpoint(double radPerSecond) {
-            driveSim.setState(radPerSecond);
+            driveSim.setState(driveSim.getAngularPositionRad(), radPerSecond);
             // :( rev
 
             steerOnboardControl = true;
@@ -88,46 +88,26 @@ public class SwerveSim extends Swerve {
             return driveSim.getCurrentDrawAmps();
         }
 
-        private void updateSims(double dt) {
+        @Override
+        protected void update(double dt) {
             steerSim.update(dt);
             driveSim.update(dt);
         }
     }
 
-    private final SimModuleIO frontLeft = new SimModuleIO();
-    private final SimModuleIO frontRight = new SimModuleIO();
-    private final SimModuleIO backRight = new SimModuleIO();
-    private final SimModuleIO backLeft = new SimModuleIO();
-
     private final DeltaTimeUtil dtUtil = new DeltaTimeUtil();
 
-    @Override
-    public ModuleIO getFrontLeft() {
-        return frontLeft;
-    }
-
-    @Override
-    public ModuleIO getFrontRight() {
-        return frontRight;
-    }
-
-    @Override
-    public ModuleIO getBackRight() {
-        return backRight;
-    }
-
-    @Override
-    public ModuleIO getBackLeft() {
-        return backLeft;
+    public SwerveSim() {
+        super(new SimModuleIO(), new SimModuleIO(), new SimModuleIO(), new SimModuleIO());
     }
 
     @Override
     public void periodic() {
         double dt = dtUtil.getTimeSecondsSinceLastCall();
 
-        frontLeft.updateSims(dt);
-        frontRight.updateSims(dt);
-        backRight.updateSims(dt);
-        backLeft.updateSims(dt);
+        frontLeft.update(dt);
+        frontRight.update(dt);
+        backRight.update(dt);
+        backLeft.update(dt);
     }
 }
