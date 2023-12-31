@@ -166,3 +166,5 @@ simgui.json
 .vscode
 
 logs/
+
+*.wpilog

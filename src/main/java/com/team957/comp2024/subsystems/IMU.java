@@ -10,6 +10,7 @@ import edu.wpi.first.units.Units;
 import edu.wpi.first.units.Velocity;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import monologue.Logged;
+import monologue.Monologue.LogBoth;
 
 public class IMU implements Subsystem, Logged {
     private final Pigeon2 pigeon = new Pigeon2(0);
@@ -38,7 +39,7 @@ public class IMU implements Subsystem, Logged {
         this.angleOffset = angleOffset;
     }
 
-    // @LogBoth
+    @LogBoth
     public Rotation2d getAngleOffset() {
         return angleOffset;
     }
@@ -48,12 +49,12 @@ public class IMU implements Subsystem, Logged {
         angleOffset = angleOffset.minus(getCorrectedAngle());
     }
 
-    // @LogBoth
+    @LogBoth
     public Rotation2d getCorrectedAngle() {
         return getRawAngle().plus(angleOffset);
     }
 
-    // @LogBoth
+    @LogBoth
     public Rotation2d getRawAngle() {
         // this is an object allocation, which may need to remove for loop time reasons
         return Rotation2d.fromDegrees(-pigeon.getYaw());
