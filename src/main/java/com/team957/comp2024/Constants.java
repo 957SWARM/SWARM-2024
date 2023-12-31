@@ -1,11 +1,25 @@
 package com.team957.comp2024;
 
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.util.Units;
+
 public class Constants {
     public static final class MiscConstants {
         public static final double saturationVoltage = 12;
     }
 
-    public static final class DriveConstants {}
+    public static final class SwerveConstants {
+        public static final double STEER_MOMENT_KG_M_2 = 0.1; // NEEDS ACTUAL VALUE!
+        public static final double DRIVE_MOMENT_KG_M_2 = 0.1; // NEEDS ACTUAL VALUE!
+
+        public static final double STEER_GEARING = 42.62;
+        public static final double DRIVE_GEARING = 4.71;
+
+        public static final DCMotor STEER_MOTOR = DCMotor.getNeo550(1);
+        public static final DCMotor DRIVE_MOTOR = DCMotor.getNEO(1);
+
+        public static final double WHEEL_RADIUS_METERS = Units.inchesToMeters(3);
+    }
 
     public static final class IMUConstants {
         public static final boolean YAW_AXIS_INVERTED = true;
