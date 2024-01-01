@@ -12,12 +12,12 @@ public class Constants {
 
     public static final class SwerveConstants {
         public static final double STEER_PLANT_KS = 1;
-        public static final double STEER_PLANT_KV = 1; // wild guess
-        public static final double STEER_PLANT_KA = 1;
+        public static final double STEER_PLANT_KV = 0.2; // wild guess
+        public static final double STEER_PLANT_KA = 0.2;
 
         public static final double DRIVE_PLANT_KS = 1;
-        public static final double DRIVE_PLANT_KV = 1;
-        public static final double DRIVE_PLANT_KA = 1;
+        public static final double DRIVE_PLANT_KV = 0.1;
+        public static final double DRIVE_PLANT_KA = 0.1;
 
         public static final double STEER_GEARING = 42.62;
         public static final double DRIVE_GEARING = 4.71;
@@ -26,6 +26,8 @@ public class Constants {
         public static final DCMotor DRIVE_MOTOR = DCMotor.getNEO(1);
 
         public static final double WHEEL_RADIUS_METERS = Units.inchesToMeters(3);
+
+        public static final double MAX_WHEEL_SPEED_METERS_PER_SECOND = 4;
 
         public static final Translation2d FRONT_LEFT_TRANSLATION = new Translation2d(0.5, 0.5);
         public static final Translation2d FRONT_RIGHT_TRANSLATION = new Translation2d(0.5, -0.5);

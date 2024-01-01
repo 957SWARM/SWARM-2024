@@ -79,6 +79,10 @@ public class SwerveHW extends Swerve {
                     "Unimplemented method 'getDriveVelocityMetersPerSecond'");
         }
 
+        public double getDrivePositionRad() {
+            return 0;
+        }
+
         @Override
         public double getDriveCurrentAmps() {
             return drive.getOutputCurrent();

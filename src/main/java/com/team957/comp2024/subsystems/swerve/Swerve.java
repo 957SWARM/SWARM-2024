@@ -4,6 +4,8 @@ import com.team957.comp2024.Constants.SwerveConstants;
 import com.team957.comp2024.Robot;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
@@ -109,11 +111,20 @@ public abstract class Swerve implements Subsystem, Logged {
         @LogBoth
         public abstract double getDriveVelocityRadPerSecond();
 
+        @LogBoth
         public double getDriveVelocityMetersPerSecond() {
             return 2
                     * Math.PI
                     * getDriveVelocityRadPerSecond()
                     * SwerveConstants.WHEEL_RADIUS_METERS;
+        }
+
+        @LogBoth
+        public abstract double getDrivePositionRad();
+
+        @LogBoth
+        public double getDrivePositionMeters() {
+            return 2 * Math.PI * getDrivePositionRad() * SwerveConstants.WHEEL_RADIUS_METERS;
         }
 
         @LogBoth
@@ -125,6 +136,12 @@ public abstract class Swerve implements Subsystem, Logged {
             return new SwerveModuleState(
                     getDriveVelocityMetersPerSecond(),
                     Rotation2d.fromRadians(getSteerPositionRadians()));
+        }
+
+        @LogBoth
+        public SwerveModulePosition getPosition() {
+            return new SwerveModulePosition(
+                    getDrivePositionMeters(), new Rotation2d(getSteerPositionRadians()));
         }
 
         protected abstract void update(double dt);
@@ -149,6 +166,21 @@ public abstract class Swerve implements Subsystem, Logged {
         register();
     }
 
+    public SwerveModuleState[] getStates() {
+        return new SwerveModuleState[] {
+            frontLeft.getState(), frontRight.getState(), backRight.getState(), backLeft.getState()
+        };
+    }
+
+    public SwerveModulePosition[] getPositions() {
+        return new SwerveModulePosition[] {
+            frontLeft.getPosition(),
+            frontRight.getPosition(),
+            backRight.getPosition(),
+            backLeft.getPosition()
+        };
+    }
+
     public static record CombinedModuleSetpoints(
             SwerveModuleState frontLeft,
             SwerveModuleState frontRight,
@@ -156,7 +188,22 @@ public abstract class Swerve implements Subsystem, Logged {
             SwerveModuleState backLeft) {}
 
     public Command getModuleControllerCommand(Supplier<CombinedModuleSetpoints> setpoints) {
-        return run(() -> {});
+        return run(
+                () -> {
+                    CombinedModuleSetpoints setpointz = setpoints.get();
+
+                    frontLeft.setSteerSetpoint(setpointz.frontLeft.angle.getRadians());
+                    frontLeft.setDriveSetpointMPS(setpointz.frontLeft.speedMetersPerSecond);
+
+                    frontRight.setSteerSetpoint(setpointz.frontRight.angle.getRadians());
+                    frontRight.setDriveSetpointMPS(setpointz.frontRight.speedMetersPerSecond);
+
+                    backRight.setSteerSetpoint(setpointz.backRight.angle.getRadians());
+                    backRight.setDriveSetpointMPS(setpointz.backRight.speedMetersPerSecond);
+
+                    backLeft.setSteerSetpoint(setpointz.backLeft.angle.getRadians());
+                    backLeft.setDriveSetpointMPS(setpointz.backLeft.speedMetersPerSecond);
+                });
     }
 
     public Command getChassisRelativeControlCommand(Supplier<ChassisSpeeds> chassisSpeeds) {
@@ -167,7 +214,27 @@ public abstract class Swerve implements Subsystem, Logged {
                                     ChassisSpeeds.discretize(
                                             chassisSpeeds.get(), Robot.kDefaultPeriod));
 
-                    return new CombinedModuleSetpoints(states[0], states[1], states[2], states[3]);
+                    SwerveDriveKinematics.desaturateWheelSpeeds(
+                            states, SwerveConstants.MAX_WHEEL_SPEED_METERS_PER_SECOND);
+
+                    return new CombinedModuleSetpoints(
+                            SwerveModuleState.optimize(
+                                    states[0], new Rotation2d(frontLeft.getSteerPositionRadians())),
+                            SwerveModuleState.optimize(
+                                    states[1],
+                                    new Rotation2d(frontRight.getSteerPositionRadians())),
+                            SwerveModuleState.optimize(
+                                    states[2], new Rotation2d(backRight.getSteerPositionRadians())),
+                            SwerveModuleState.optimize(
+                                    states[3], new Rotation2d(backLeft.getSteerPositionRadians())));
                 });
+    }
+
+    public Command getFieldRelativeControlCommand(
+            Supplier<ChassisSpeeds> fieldRelativeChassisSpeeds, Supplier<Rotation2d> robotHeading) {
+        return getChassisRelativeControlCommand(
+                () ->
+                        ChassisSpeeds.fromFieldRelativeSpeeds(
+                                fieldRelativeChassisSpeeds.get(), robotHeading.get()));
     }
 }

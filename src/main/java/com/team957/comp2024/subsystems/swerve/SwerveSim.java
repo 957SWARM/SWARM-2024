@@ -83,6 +83,10 @@ public class SwerveSim extends Swerve {
             return driveSim.getAngularVelocityRadPerSec();
         }
 
+        public double getDrivePositionRad() {
+            return driveSim.getAngularPositionRad();
+        }
+
         @Override
         public double getDriveCurrentAmps() {
             return driveSim.getCurrentDrawAmps();
