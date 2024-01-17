@@ -1,5 +1,6 @@
 package com.team957.comp2024;
 
+import com.team957.lib.controllers.feedback.PID.PIDConstants;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -40,6 +41,11 @@ public class Constants {
                         FRONT_RIGHT_TRANSLATION,
                         BACK_RIGHT_TRANSLATION,
                         BACK_LEFT_TRANSLATION);
+    }
+
+    public static final class AutoConstants {
+        public static final PIDConstants LINEAR_PATHFINDING_GAINS = new PIDConstants(5, 0, 0);
+        public static final PIDConstants ROTATIONAL_PATHFINDING_GAINS = new PIDConstants(5, 0, 0);
     }
 
     public static final class IMUConstants {

@@ -1,10 +1,12 @@
 package com.team957.comp2024;
 
 import com.team957.comp2024.Constants.PDHConstants;
+import com.team957.comp2024.commands.ChoreoFollowing;
 import com.team957.comp2024.subsystems.IMU;
 import com.team957.comp2024.subsystems.PDH;
 import com.team957.comp2024.subsystems.PneumaticsHub;
 import com.team957.comp2024.subsystems.swerve.Swerve;
+import com.team957.comp2024.util.SwarmChoreo;
 import com.team957.lib.util.DeltaTimeUtil;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -64,5 +66,14 @@ public class Robot extends TimedRobot implements Logged {
     @Override
     public void teleopInit() {
         teleopDrive.schedule();
+    }
+
+    @Override
+    public void autonomousInit() {
+        ChoreoFollowing.getPathFollowingCommand(
+                        swerve,
+                        SwarmChoreo.getTrajectory("TestPath"),
+                        localization::getPoseEstimate)
+                .schedule();
     }
 }
