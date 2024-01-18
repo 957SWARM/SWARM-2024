@@ -1,7 +1,7 @@
 package com.team957.comp2024.util;
 
+import com.revrobotics.CANSparkBase.FaultID;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMax.FaultID;
 import java.util.ArrayList;
 
 public class SparkMaxUtils {

@@ -5,8 +5,8 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticHub;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import monologue.Annotations.Log;
 import monologue.Logged;
-import monologue.Monologue.LogBoth;
 
 public class PneumaticsHub implements Subsystem, Logged {
     public PneumaticsHub() {
@@ -18,27 +18,27 @@ public class PneumaticsHub implements Subsystem, Logged {
 
     private final PneumaticHub ph = new PneumaticHub(Constants.PneumaticHubConstants.PH_CAN_ID);
 
-    @LogBoth
+    @Log
     public double getCompressorCurrentAmps() {
         return ph.getCompressorCurrent();
     }
 
-    @LogBoth
+    @Log
     public double getAnalogPressurePSI() {
         return ph.getPressure(Constants.PneumaticHubConstants.PRESSURE_SENSOR_ANALOG_CHANNEL);
     }
 
-    @LogBoth
+    @Log
     public double getTotalSolenoidCurrentAmps() {
         return ph.getSolenoidsTotalCurrent();
     }
 
-    @LogBoth
+    @Log
     public boolean getDigitalPressureSwitch() {
         return ph.getPressureSwitch();
     }
 
-    @LogBoth
+    @Log
     public double getInputVoltage() {
         return ph.getInputVoltage();
     }

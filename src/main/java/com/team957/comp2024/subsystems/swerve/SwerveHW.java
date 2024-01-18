@@ -1,9 +1,9 @@
 package com.team957.comp2024.subsystems.swerve;
 
+import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.team957.comp2024.util.SparkMaxUtils;
-import monologue.Monologue.LogBoth;
+import monologue.Annotations.Log;
 
 public class SwerveHW extends Swerve {
 
@@ -68,67 +68,71 @@ public class SwerveHW extends Swerve {
         }
 
         @Override
+        @Log
         public boolean driveIsOnboardClosedLoop() {
             return false;
         }
 
         @Override
+        @Log
         public double getDriveVelocityRadPerSecond() {
             // TODO Auto-generated method stub
             throw new UnsupportedOperationException(
                     "Unimplemented method 'getDriveVelocityMetersPerSecond'");
         }
 
+        @Log
         public double getDrivePositionRad() {
             return 0;
         }
 
         @Override
+        @Log
         public double getDriveCurrentAmps() {
             return drive.getOutputCurrent();
         }
 
-        @LogBoth
+        @Log
         public double getSteerTemperatureC() {
             return steer.getMotorTemperature();
         }
 
-        @LogBoth
+        @Log
         public double getDriveTemperatureC() {
             return drive.getMotorTemperature();
         }
 
-        @LogBoth
+        @Log
         public double getSteerBusVoltage() {
             return steer.getBusVoltage();
         }
 
-        @LogBoth
+        @Log
         public double getDriveBusVoltage() {
             return drive.getBusVoltage();
         }
 
-        @LogBoth
+        @Log
         public double getUnoffsetSteerPositionRadians() {
             return 0;
         }
 
-        @LogBoth
+        @Log
         public String[] getSteerStickyFaults() {
             return SparkMaxUtils.getFaultsAsStringArray(steer, true);
         }
 
-        @LogBoth
+        @Log
         public String[] getSteerFaults() {
             return SparkMaxUtils.getFaultsAsStringArray(steer, false);
         }
 
-        @LogBoth
+        @Log
         public String[] getDriveStickyFaults() {
             return SparkMaxUtils.getFaultsAsStringArray(drive, true);
         }
 
-        @LogBoth
+        @Log
         public String[] getDriveFaults() {
             return SparkMaxUtils.getFaultsAsStringArray(drive, false);
         }

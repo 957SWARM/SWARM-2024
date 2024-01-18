@@ -1,16 +1,12 @@
 package com.team957.comp2024.subsystems;
 
-import com.ctre.phoenix.sensors.Pigeon2;
+import com.ctre.phoenix6.hardware.Pigeon2;
 import com.team957.lib.math.UtilityMath;
 import com.team957.lib.util.DeltaTimeUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.units.Angle;
-import edu.wpi.first.units.Measure;
-import edu.wpi.first.units.Units;
-import edu.wpi.first.units.Velocity;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import monologue.Annotations.Log;
 import monologue.Logged;
-import monologue.Monologue.LogBoth;
 
 public class IMU implements Subsystem, Logged {
     private final Pigeon2 pigeon = new Pigeon2(0);
@@ -39,7 +35,7 @@ public class IMU implements Subsystem, Logged {
         this.angleOffset = angleOffset;
     }
 
-    @LogBoth
+    @Log
     public Rotation2d getAngleOffset() {
         return angleOffset;
     }
@@ -49,20 +45,20 @@ public class IMU implements Subsystem, Logged {
         angleOffset = angleOffset.minus(getCorrectedAngle());
     }
 
-    @LogBoth
+    @Log
     public Rotation2d getCorrectedAngle() {
         return getRawAngle().plus(angleOffset);
     }
 
-    @LogBoth
+    @Log
     public Rotation2d getRawAngle() {
         // this is an object allocation, which may need to remove for loop time reasons
-        return Rotation2d.fromDegrees(-pigeon.getYaw());
+        return Rotation2d.fromDegrees(-pigeon.getAngle());
     }
 
-    // @LogBoth
-    public Measure<Velocity<Angle>> getAngularVelocity() {
-        return Units.RadiansPerSecond.of(yawVelocity);
+    @Log
+    public double getAngularVelocityRadiansperSecond() {
+        return yawVelocity;
     }
 
     @Override

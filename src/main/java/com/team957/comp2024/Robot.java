@@ -49,16 +49,16 @@ public class Robot extends TimedRobot implements Logged {
 
     @Override
     public void robotInit() {
-        Monologue.setupLogging(this, "/robot");
+        Monologue.setupMonologue(this, "Robot", false, false);
     }
 
     @Override
     public void robotPeriodic() {
         CommandScheduler.getInstance().run();
 
-        put("loopTimeSeconds", dt.getTimeSecondsSinceLastCall());
+        log("loopTimeSeconds", dt.getTimeSecondsSinceLastCall());
 
-        Monologue.update();
+        Monologue.updateAll();
 
         localization.update();
     }

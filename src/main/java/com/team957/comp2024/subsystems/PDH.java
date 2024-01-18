@@ -5,8 +5,8 @@ import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import java.util.HashMap;
+import monologue.Annotations.Log;
 import monologue.Logged;
-import monologue.Monologue.LogBoth;
 
 public class PDH implements Subsystem, Logged {
     // only create log identifier strings once
@@ -33,22 +33,22 @@ public class PDH implements Subsystem, Logged {
         return pdh.getCurrent(channel);
     }
 
-    @LogBoth
+    @Log
     public double getTemperatureC() {
         return pdh.getTemperature();
     }
 
-    @LogBoth
+    @Log
     public double getTotalCurrentAmps() {
         return pdh.getTotalCurrent();
     }
 
-    @LogBoth
+    @Log
     public double getTotalEnergyJoules() {
         return pdh.getTotalEnergy();
     }
 
-    @LogBoth
+    @Log
     public double getVoltage() {
         return pdh.getVoltage();
     }
@@ -64,7 +64,7 @@ public class PDH implements Subsystem, Logged {
      *
      * @return The state of the switchable channel, `true` if current can flow.
      */
-    @LogBoth
+    @Log
     public boolean getSwitchableChannelState() {
         return switchableChannelState;
     }
@@ -72,7 +72,7 @@ public class PDH implements Subsystem, Logged {
     @Override
     public void periodic() {
         for (int i = 0; i < pdh.getNumChannels(); i++) {
-            put(channelNumToCurrentLogName.get(i), getCurrentAmps(i));
+            log(channelNumToCurrentLogName.get(i), getCurrentAmps(i));
             // TODO: support for faults once next WPILib released
             // which can get faults by index
         }

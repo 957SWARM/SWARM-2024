@@ -10,8 +10,8 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import java.util.function.Supplier;
+import monologue.Annotations.Log;
 import monologue.Logged;
-import monologue.Monologue.LogBoth;
 
 public abstract class Swerve implements Subsystem, Logged {
     public abstract static class ModuleIO implements Logged {
@@ -48,18 +48,18 @@ public abstract class Swerve implements Subsystem, Logged {
          *
          * @return The set steer voltage.
          */
-        @LogBoth
+        @Log
         public abstract double getSteerControlEffortVolts();
 
-        @LogBoth
+        @Log
         public boolean steerIsOnboardClosedLoop() {
             return steerOnboardControl;
         }
 
-        @LogBoth
+        @Log
         public abstract double getSteerPositionRadians();
 
-        @LogBoth
+        @Log
         public abstract double getSteerCurrentAmps();
 
         /**
@@ -100,18 +100,18 @@ public abstract class Swerve implements Subsystem, Logged {
          *
          * @return The set drive voltage.
          */
-        @LogBoth
+        @Log
         public abstract double getDriveControlEffortVolts();
 
-        @LogBoth
+        @Log
         public boolean driveIsOnboardClosedLoop() {
             return driveOnboardControl;
         }
 
-        @LogBoth
+        @Log
         public abstract double getDriveVelocityRadPerSecond();
 
-        @LogBoth
+        @Log
         public double getDriveVelocityMetersPerSecond() {
             return 2
                     * Math.PI
@@ -119,26 +119,26 @@ public abstract class Swerve implements Subsystem, Logged {
                     * SwerveConstants.WHEEL_RADIUS_METERS;
         }
 
-        @LogBoth
+        @Log
         public abstract double getDrivePositionRad();
 
-        @LogBoth
+        @Log
         public double getDrivePositionMeters() {
             return 2 * Math.PI * getDrivePositionRad() * SwerveConstants.WHEEL_RADIUS_METERS;
         }
 
-        @LogBoth
+        @Log
         public abstract double getDriveCurrentAmps();
 
         // object allocations :(
-        @LogBoth
+        @Log
         public SwerveModuleState getState() {
             return new SwerveModuleState(
                     getDriveVelocityMetersPerSecond(),
                     Rotation2d.fromRadians(getSteerPositionRadians()));
         }
 
-        @LogBoth
+        @Log
         public SwerveModulePosition getPosition() {
             return new SwerveModulePosition(
                     getDrivePositionMeters(), new Rotation2d(getSteerPositionRadians()));

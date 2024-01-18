@@ -1,6 +1,6 @@
 plugins {
 	id "java"
-	id "edu.wpi.first.GradleRIO" version "2024.1.1-beta-3"
+	id "edu.wpi.first.GradleRIO" version "2024.1.1"
 	id 'com.diffplug.spotless' version '6.11.0'
 }
 
@@ -77,8 +77,8 @@ def includeDesktopSupport = true
 // Defining my dependencies. In this case, WPILib (+ friends), and vendor libraries.
 // Also defines JUnit 5.
 dependencies {
-	implementation 'com.github.957SWARM:SwarmLib:1.5.99'
-	implementation 'com.github.shueja:Monologue:v1.0.0-alpha2'
+	implementation 'com.github.957SWARM:SwarmLib:c0a10ff6ad' // jitpack has the wrong version for 1.6.0 for whatever reason, this commit is 1.6.0
+	implementation 'com.github.shueja:Monologue:v1.0.0-beta4'
 
 	implementation wpi.java.deps.wpilib()
 	implementation wpi.java.vendor.java()
