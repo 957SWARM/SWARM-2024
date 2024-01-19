@@ -35,7 +35,7 @@ public class IMU implements Subsystem, Logged {
         this.angleOffset = angleOffset;
     }
 
-    @Log
+    @Log.NT
     public Rotation2d getAngleOffset() {
         return angleOffset;
     }
@@ -45,18 +45,18 @@ public class IMU implements Subsystem, Logged {
         angleOffset = angleOffset.minus(getCorrectedAngle());
     }
 
-    @Log
+    @Log.NT
     public Rotation2d getCorrectedAngle() {
         return getRawAngle().plus(angleOffset);
     }
 
-    @Log
+    @Log.NT
     public Rotation2d getRawAngle() {
         // this is an object allocation, which may need to remove for loop time reasons
         return Rotation2d.fromDegrees(-pigeon.getAngle());
     }
 
-    @Log
+    @Log.NT
     public double getAngularVelocityRadiansperSecond() {
         return yawVelocity;
     }

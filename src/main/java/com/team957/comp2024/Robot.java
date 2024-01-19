@@ -1,5 +1,6 @@
 package com.team957.comp2024;
 
+import com.ctre.phoenix6.SignalLogger;
 import com.team957.comp2024.Constants.PDHConstants;
 import com.team957.comp2024.commands.ChoreoFollowing;
 import com.team957.comp2024.subsystems.IMU;
@@ -15,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import monologue.Logged;
 import monologue.Monologue;
+import org.littletonrobotics.urcl.URCL;
 
 public class Robot extends TimedRobot implements Logged {
     // these need to be constructed so that
@@ -49,6 +51,11 @@ public class Robot extends TimedRobot implements Logged {
 
     @Override
     public void robotInit() {
+        SignalLogger.enableAutoLogging(true);
+        SignalLogger.start();
+
+        if (isReal()) URCL.start(); // segfaults in sim
+
         Monologue.setupMonologue(this, "Robot", false, false);
     }
 

@@ -81,58 +81,56 @@ public class SwerveHW extends Swerve {
                     "Unimplemented method 'getDriveVelocityMetersPerSecond'");
         }
 
-        @Log
         public double getDrivePositionRad() {
             return 0;
         }
 
         @Override
-        @Log
         public double getDriveCurrentAmps() {
             return drive.getOutputCurrent();
         }
 
-        @Log
+        @Log.NT
         public double getSteerTemperatureC() {
             return steer.getMotorTemperature();
         }
 
-        @Log
+        @Log.NT
         public double getDriveTemperatureC() {
             return drive.getMotorTemperature();
         }
 
-        @Log
+        @Log.NT
         public double getSteerBusVoltage() {
             return steer.getBusVoltage();
         }
 
-        @Log
+        @Log.NT
         public double getDriveBusVoltage() {
             return drive.getBusVoltage();
         }
 
-        @Log
+        @Log.NT
         public double getUnoffsetSteerPositionRadians() {
             return 0;
         }
 
-        @Log
+        @Log.NT
         public String[] getSteerStickyFaults() {
             return SparkMaxUtils.getFaultsAsStringArray(steer, true);
         }
 
-        @Log
+        @Log.NT
         public String[] getSteerFaults() {
             return SparkMaxUtils.getFaultsAsStringArray(steer, false);
         }
 
-        @Log
+        @Log.NT
         public String[] getDriveStickyFaults() {
             return SparkMaxUtils.getFaultsAsStringArray(drive, true);
         }
 
-        @Log
+        @Log.NT
         public String[] getDriveFaults() {
             return SparkMaxUtils.getFaultsAsStringArray(drive, false);
         }

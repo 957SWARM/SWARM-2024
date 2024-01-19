@@ -18,27 +18,27 @@ public class PneumaticsHub implements Subsystem, Logged {
 
     private final PneumaticHub ph = new PneumaticHub(Constants.PneumaticHubConstants.PH_CAN_ID);
 
-    @Log
+    @Log.NT
     public double getCompressorCurrentAmps() {
         return ph.getCompressorCurrent();
     }
 
-    @Log
+    @Log.NT
     public double getAnalogPressurePSI() {
         return ph.getPressure(Constants.PneumaticHubConstants.PRESSURE_SENSOR_ANALOG_CHANNEL);
     }
 
-    @Log
+    @Log.NT
     public double getTotalSolenoidCurrentAmps() {
         return ph.getSolenoidsTotalCurrent();
     }
 
-    @Log
+    @Log.NT
     public boolean getDigitalPressureSwitch() {
         return ph.getPressureSwitch();
     }
 
-    @Log
+    @Log.NT
     public double getInputVoltage() {
         return ph.getInputVoltage();
     }

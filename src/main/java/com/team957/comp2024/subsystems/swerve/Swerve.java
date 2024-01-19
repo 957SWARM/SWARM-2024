@@ -48,18 +48,18 @@ public abstract class Swerve implements Subsystem, Logged {
          *
          * @return The set steer voltage.
          */
-        @Log
+        @Log.NT
         public abstract double getSteerControlEffortVolts();
 
-        @Log
+        @Log.NT
         public boolean steerIsOnboardClosedLoop() {
             return steerOnboardControl;
         }
 
-        @Log
+        @Log.NT
         public abstract double getSteerPositionRadians();
 
-        @Log
+        @Log.NT
         public abstract double getSteerCurrentAmps();
 
         /**
@@ -100,18 +100,18 @@ public abstract class Swerve implements Subsystem, Logged {
          *
          * @return The set drive voltage.
          */
-        @Log
+        @Log.NT
         public abstract double getDriveControlEffortVolts();
 
-        @Log
+        @Log.NT
         public boolean driveIsOnboardClosedLoop() {
             return driveOnboardControl;
         }
 
-        @Log
+        @Log.NT
         public abstract double getDriveVelocityRadPerSecond();
 
-        @Log
+        @Log.NT
         public double getDriveVelocityMetersPerSecond() {
             return 2
                     * Math.PI
@@ -119,26 +119,26 @@ public abstract class Swerve implements Subsystem, Logged {
                     * SwerveConstants.WHEEL_RADIUS_METERS;
         }
 
-        @Log
+        @Log.NT
         public abstract double getDrivePositionRad();
 
-        @Log
+        @Log.NT
         public double getDrivePositionMeters() {
             return 2 * Math.PI * getDrivePositionRad() * SwerveConstants.WHEEL_RADIUS_METERS;
         }
 
-        @Log
+        @Log.NT
         public abstract double getDriveCurrentAmps();
 
         // object allocations :(
-        @Log
+        @Log.NT
         public SwerveModuleState getState() {
             return new SwerveModuleState(
                     getDriveVelocityMetersPerSecond(),
                     Rotation2d.fromRadians(getSteerPositionRadians()));
         }
 
-        @Log
+        @Log.NT
         public SwerveModulePosition getPosition() {
             return new SwerveModulePosition(
                     getDrivePositionMeters(), new Rotation2d(getSteerPositionRadians()));

@@ -55,7 +55,7 @@ public class Localization implements Logged {
         }
     }
 
-    @Log
+    @Log.NT
     public Pose2d getPoseEstimate() {
         return odometry.getPoseMeters();
     }

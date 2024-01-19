@@ -33,22 +33,22 @@ public class PDH implements Subsystem, Logged {
         return pdh.getCurrent(channel);
     }
 
-    @Log
+    @Log.NT
     public double getTemperatureC() {
         return pdh.getTemperature();
     }
 
-    @Log
+    @Log.NT
     public double getTotalCurrentAmps() {
         return pdh.getTotalCurrent();
     }
 
-    @Log
+    @Log.NT
     public double getTotalEnergyJoules() {
         return pdh.getTotalEnergy();
     }
 
-    @Log
+    @Log.NT
     public double getVoltage() {
         return pdh.getVoltage();
     }
@@ -64,7 +64,7 @@ public class PDH implements Subsystem, Logged {
      *
      * @return The state of the switchable channel, `true` if current can flow.
      */
-    @Log
+    @Log.NT
     public boolean getSwitchableChannelState() {
         return switchableChannelState;
     }
