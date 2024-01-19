@@ -107,6 +107,8 @@ public class SwerveSim extends Swerve {
 
     @Override
     public void periodic() {
+        super.periodic();
+
         double dt = dtUtil.getTimeSecondsSinceLastCall();
 
         frontLeft.update(dt);

@@ -11,6 +11,7 @@ import com.team957.comp2024.subsystems.swerve.Swerve;
 import com.team957.comp2024.util.SwarmChoreo;
 import com.team957.lib.util.DeltaTimeUtil;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -43,6 +44,8 @@ public class Robot extends TimedRobot implements Logged {
 
     private final XboxController controller = new XboxController(0);
 
+    public static final UI ui = new UI();
+
     private final Command teleopDrive =
             swerve.getFieldRelativeControlCommand(
                     () -> {
@@ -60,7 +63,7 @@ public class Robot extends TimedRobot implements Logged {
 
         if (isReal()) URCL.start(); // segfaults in sim
 
-        Monologue.setupMonologue(this, "Robot", false, false);
+        Monologue.setupMonologue(this, "Robot", false, true);
     }
 
     @Override
@@ -69,6 +72,7 @@ public class Robot extends TimedRobot implements Logged {
 
         log("loopTimeSeconds", dt.getTimeSecondsSinceLastCall());
 
+        Monologue.setFileOnly(DriverStation.isFMSAttached());
         Monologue.updateAll();
 
         localization.update();

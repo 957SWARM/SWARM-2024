@@ -238,4 +238,9 @@ public abstract class Swerve implements Subsystem, Logged {
                         ChassisSpeeds.fromFieldRelativeSpeeds(
                                 fieldRelativeChassisSpeeds.get(), robotHeading.get()));
     }
+
+    @Override
+    public void periodic() {
+        Robot.ui.setSwerveStates(getStates());
+    }
 }
