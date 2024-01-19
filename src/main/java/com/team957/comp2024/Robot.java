@@ -6,7 +6,6 @@ import com.team957.comp2024.Constants.PDHConstants;
 import com.team957.comp2024.commands.ChoreoFollowingFactory;
 import com.team957.comp2024.subsystems.IMU;
 import com.team957.comp2024.subsystems.PDH;
-import com.team957.comp2024.subsystems.PneumaticsHub;
 import com.team957.comp2024.subsystems.swerve.Swerve;
 import com.team957.comp2024.util.SwarmChoreo;
 import com.team957.lib.util.DeltaTimeUtil;
@@ -32,9 +31,6 @@ public class Robot extends TimedRobot implements Logged {
 
     @SuppressWarnings("unused")
     private final PDH pdh = new PDH(PDHConstants.STARTING_SWITCHABLE_CHANNEL_STATE);
-
-    @SuppressWarnings("unused")
-    private final PneumaticsHub ph = new PneumaticsHub();
 
     private final Swerve swerve = Swerve.getSwerve(isReal());
 

@@ -63,12 +63,6 @@ public class Constants {
         public static final boolean STARTING_SWITCHABLE_CHANNEL_STATE = false;
     }
 
-    public static final class PneumaticHubConstants {
-        public static final int PH_CAN_ID = 31;
-
-        public static final int PRESSURE_SENSOR_ANALOG_CHANNEL = 0;
-    }
-
     public static final class AlertConstants {
         public static final double OVERCURRENT_THRESHOLD_AMPS = 120;
     }
