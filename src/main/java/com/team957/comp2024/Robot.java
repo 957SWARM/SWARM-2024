@@ -1,8 +1,9 @@
 package com.team957.comp2024;
 
+import com.choreo.lib.ChoreoTrajectory;
 import com.ctre.phoenix6.SignalLogger;
 import com.team957.comp2024.Constants.PDHConstants;
-import com.team957.comp2024.commands.ChoreoFollowing;
+import com.team957.comp2024.commands.ChoreoFollowingFactory;
 import com.team957.comp2024.subsystems.IMU;
 import com.team957.comp2024.subsystems.PDH;
 import com.team957.comp2024.subsystems.PneumaticsHub;
@@ -36,6 +37,9 @@ public class Robot extends TimedRobot implements Logged {
     private final Localization localization =
             new Localization(
                     swerve::getStates, swerve::getPositions, imu::getCorrectedAngle, !isReal());
+
+    // done this way for monologue's sake
+    private final ChoreoFollowingFactory trajectoryFollowing = new ChoreoFollowingFactory();
 
     private final XboxController controller = new XboxController(0);
 
@@ -77,10 +81,17 @@ public class Robot extends TimedRobot implements Logged {
 
     @Override
     public void autonomousInit() {
-        ChoreoFollowing.getPathFollowingCommand(
-                        swerve,
-                        SwarmChoreo.getTrajectory("TestPath"),
-                        localization::getPoseEstimate)
-                .schedule();
+        ChoreoTrajectory traj = SwarmChoreo.getTrajectory("TestPath");
+
+        if (traj != null) {
+            localization.setPose(traj.getInitialPose());
+
+            trajectoryFollowing
+                    .getPathFollowingCommand(
+                            swerve,
+                            SwarmChoreo.getTrajectory("TestPath"),
+                            localization::getPoseEstimate)
+                    .schedule();
+        }
     }
 }

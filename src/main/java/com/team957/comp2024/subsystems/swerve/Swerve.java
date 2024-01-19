@@ -166,12 +166,14 @@ public abstract class Swerve implements Subsystem, Logged {
         register();
     }
 
+    @Log.NT
     public SwerveModuleState[] getStates() {
         return new SwerveModuleState[] {
             frontLeft.getState(), frontRight.getState(), backRight.getState(), backLeft.getState()
         };
     }
 
+    @Log.NT
     public SwerveModulePosition[] getPositions() {
         return new SwerveModulePosition[] {
             frontLeft.getPosition(),
@@ -181,52 +183,51 @@ public abstract class Swerve implements Subsystem, Logged {
         };
     }
 
-    public static record CombinedModuleSetpoints(
-            SwerveModuleState frontLeft,
-            SwerveModuleState frontRight,
-            SwerveModuleState backRight,
-            SwerveModuleState backLeft) {}
-
-    public Command getModuleControllerCommand(Supplier<CombinedModuleSetpoints> setpoints) {
+    public Command getModuleControllerCommand(Supplier<SwerveModuleState[]> setpoints) {
         return run(
                 () -> {
-                    CombinedModuleSetpoints setpointz = setpoints.get();
+                    SwerveModuleState[] setpointz = setpoints.get();
 
-                    frontLeft.setSteerSetpoint(setpointz.frontLeft.angle.getRadians());
-                    frontLeft.setDriveSetpointMPS(setpointz.frontLeft.speedMetersPerSecond);
+                    this.log("moduleSetpoints", setpointz);
 
-                    frontRight.setSteerSetpoint(setpointz.frontRight.angle.getRadians());
-                    frontRight.setDriveSetpointMPS(setpointz.frontRight.speedMetersPerSecond);
+                    frontLeft.setSteerSetpoint(setpointz[0].angle.getRadians());
+                    frontLeft.setDriveSetpointMPS(setpointz[0].speedMetersPerSecond);
 
-                    backRight.setSteerSetpoint(setpointz.backRight.angle.getRadians());
-                    backRight.setDriveSetpointMPS(setpointz.backRight.speedMetersPerSecond);
+                    frontRight.setSteerSetpoint(setpointz[1].angle.getRadians());
+                    frontRight.setDriveSetpointMPS(setpointz[1].speedMetersPerSecond);
 
-                    backLeft.setSteerSetpoint(setpointz.backLeft.angle.getRadians());
-                    backLeft.setDriveSetpointMPS(setpointz.backLeft.speedMetersPerSecond);
+                    backRight.setSteerSetpoint(setpointz[2].angle.getRadians());
+                    backRight.setDriveSetpointMPS(setpointz[2].speedMetersPerSecond);
+
+                    backLeft.setSteerSetpoint(setpointz[3].angle.getRadians());
+                    backLeft.setDriveSetpointMPS(setpointz[3].speedMetersPerSecond);
                 });
     }
 
     public Command getChassisRelativeControlCommand(Supplier<ChassisSpeeds> chassisSpeeds) {
         return getModuleControllerCommand(
                 () -> {
+                    ChassisSpeeds setpoint = chassisSpeeds.get();
+
+                    this.log("chassisSpeedsSetpoint", setpoint);
+
                     SwerveModuleState[] states =
                             SwerveConstants.KINEMATICS.toSwerveModuleStates(
-                                    ChassisSpeeds.discretize(
-                                            chassisSpeeds.get(), Robot.kDefaultPeriod));
+                                    ChassisSpeeds.discretize(setpoint, Robot.kDefaultPeriod));
 
                     SwerveDriveKinematics.desaturateWheelSpeeds(
                             states, SwerveConstants.MAX_WHEEL_SPEED_METERS_PER_SECOND);
 
-                    return new CombinedModuleSetpoints(
-                            SwerveModuleState.optimize(
-                                    states[0], new Rotation2d(frontLeft.getSteerPositionRadians())),
-                            SwerveModuleState.optimize(
-                                    states[1],
-                                    new Rotation2d(frontRight.getSteerPositionRadians())),
-                            SwerveModuleState.optimize(
-                                    states[2], new Rotation2d(backRight.getSteerPositionRadians())),
-                            SwerveModuleState.optimize(
-                                    states[3], new Rotation2d(backLeft.getSteerPositionRadians())));
+                    return new SwerveModuleState[] {
+                        SwerveModuleState.optimize(
+                                states[0], new Rotation2d(frontLeft.getSteerPositionRadians())),
+                        SwerveModuleState.optimize(
+                                states[1], new Rotation2d(frontRight.getSteerPositionRadians())),
+                        SwerveModuleState.optimize(
+                                states[2], new Rotation2d(backRight.getSteerPositionRadians())),
+                        SwerveModuleState.optimize(
+                                states[3], new Rotation2d(backLeft.getSteerPositionRadians()))
+                    };
                 });
     }
 
