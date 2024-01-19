@@ -1,6 +1,7 @@
 package com.team957.comp2024.subsystems;
 
 import com.team957.comp2024.Constants;
+import com.team957.comp2024.Robot;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj2.command.Subsystem;
@@ -27,6 +28,8 @@ public class PDH implements Subsystem, Logged {
 
         this.switchableChannelState = switchableChannelState;
         setSwitchableChannel(switchableChannelState);
+
+        register();
     }
 
     public double getCurrentAmps(int channel) {
@@ -71,6 +74,8 @@ public class PDH implements Subsystem, Logged {
 
     @Override
     public void periodic() {
+        Robot.ui.setTotalCurrentDraw(getTotalCurrentAmps());
+
         for (int i = 0; i < pdh.getNumChannels(); i++) {
             log(channelNumToCurrentLogName.get(i), getCurrentAmps(i));
             // TODO: support for faults once next WPILib released

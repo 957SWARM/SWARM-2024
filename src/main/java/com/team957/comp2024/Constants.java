@@ -68,4 +68,8 @@ public class Constants {
 
         public static final int PRESSURE_SENSOR_ANALOG_CHANNEL = 0;
     }
+
+    public static final class AlertConstants {
+        public static final double OVERCURRENT_THRESHOLD_AMPS = 120;
+    }
 }

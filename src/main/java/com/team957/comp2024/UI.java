@@ -4,10 +4,13 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import monologue.Annotations.Log;
 import monologue.LogLevel;
 import monologue.Logged;
+import org.littletonrobotics.Alert;
+import org.littletonrobotics.Alert.AlertType;
 
 public class UI implements Logged {
     private SwerveModuleState[] moduleStates =
@@ -62,7 +65,12 @@ public class UI implements Logged {
     @Log.NT(level = LogLevel.OVERRIDE_FILE_ONLY)
     private final Field2d fieldVis = new Field2d();
 
-    public UI() {}
+    private final Alert overcurrentAlert = new Alert("General overcurrent!", AlertType.WARNING);
+
+    public UI() {
+        if (!Robot.isReal()) new Alert("Robot is simulated!", AlertType.INFO).set(true);
+        if (DriverStation.isFMSAttached()) new Alert("FMS connected!", AlertType.INFO).set(true);
+    }
 
     public void setSwerveStates(SwerveModuleState[] states) {
         moduleStates = states;
@@ -77,5 +85,15 @@ public class UI implements Logged {
 
     public void setSetpointPose(Pose2d setpointPose) {
         fieldVis.getObject("setpointPose").setPose(setpointPose);
+    }
+
+    public void setBatteryVoltage(double volts) {
+        log("batteryVoltage", volts);
+    }
+
+    public void setTotalCurrentDraw(double amps) {
+        log("totalCurrent", amps);
+
+        overcurrentAlert.set(amps > Constants.AlertConstants.OVERCURRENT_THRESHOLD_AMPS);
     }
 }

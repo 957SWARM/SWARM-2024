@@ -11,13 +11,18 @@ import com.team957.comp2024.subsystems.swerve.Swerve;
 import com.team957.comp2024.util.SwarmChoreo;
 import com.team957.lib.util.DeltaTimeUtil;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import monologue.Logged;
 import monologue.Monologue;
+import org.littletonrobotics.Alert;
+import org.littletonrobotics.Alert.AlertType;
 import org.littletonrobotics.urcl.URCL;
 
 public class Robot extends TimedRobot implements Logged {
@@ -46,6 +51,8 @@ public class Robot extends TimedRobot implements Logged {
 
     public static final UI ui = new UI();
 
+    private final Alert autoLoadFail = new Alert("Auto path failed to load!", AlertType.ERROR);
+
     private final Command teleopDrive =
             swerve.getFieldRelativeControlCommand(
                     () -> {
@@ -56,14 +63,18 @@ public class Robot extends TimedRobot implements Logged {
                     },
                     localization::getRotationEstimate);
 
+    private Command autoCommand = new InstantCommand();
+
     @Override
     public void robotInit() {
         SignalLogger.enableAutoLogging(true);
         SignalLogger.start();
 
-        if (isReal()) URCL.start(); // segfaults in sim
+        if (isReal()) URCL.start(); // URCL segfaults in sim
 
         Monologue.setupMonologue(this, "Robot", false, true);
+
+        DriverStation.startDataLog(DataLogManager.getLog()); // same log used by monologue
     }
 
     @Override
@@ -81,21 +92,35 @@ public class Robot extends TimedRobot implements Logged {
     @Override
     public void teleopInit() {
         teleopDrive.schedule();
+
+        autoLoadFail.set(false);
+    }
+
+    @Override
+    public void disabledPeriodic() {
+        boolean autoUpdated = true; // todo figure this out
+
+        if (autoUpdated) {
+            ChoreoTrajectory traj = SwarmChoreo.getTrajectory("TestPath");
+
+            if (traj == null) {
+                autoCommand = new InstantCommand();
+
+                autoLoadFail.set(true);
+            } else {
+                autoLoadFail.set(false);
+
+                autoCommand =
+                        Commands.runOnce(() -> localization.setPose(traj.getInitialPose()))
+                                .andThen(
+                                        trajectoryFollowing.getPathFollowingCommand(
+                                                swerve, traj, localization::getPoseEstimate));
+            }
+        }
     }
 
     @Override
     public void autonomousInit() {
-        ChoreoTrajectory traj = SwarmChoreo.getTrajectory("TestPath");
-
-        if (traj != null) {
-            localization.setPose(traj.getInitialPose());
-
-            trajectoryFollowing
-                    .getPathFollowingCommand(
-                            swerve,
-                            SwarmChoreo.getTrajectory("TestPath"),
-                            localization::getPoseEstimate)
-                    .schedule();
-        }
+        autoCommand.schedule();
     }
 }
