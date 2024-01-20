@@ -65,5 +65,9 @@ public class Constants {
 
     public static final class AlertConstants {
         public static final double OVERCURRENT_THRESHOLD_AMPS = 120;
+
+        public static final double HIGH_RESISTANCE_THRESHOLD_OHMS = 20.0 / 1000; // 20 mOhms
+
+        public static final double LOW_VOLTAGE_THRESHOLD = 10.5;
     }
 }

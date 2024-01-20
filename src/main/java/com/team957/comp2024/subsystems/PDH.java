@@ -2,6 +2,7 @@ package com.team957.comp2024.subsystems;
 
 import com.team957.comp2024.Constants;
 import com.team957.comp2024.Robot;
+import edu.wpi.first.hal.PowerDistributionFaults;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj2.command.Subsystem;
@@ -14,6 +15,8 @@ public class PDH implements Subsystem, Logged {
     // since Java string concatenation is absurdly slow and we actually care about loop times
     private final HashMap<Integer, String> channelNumToCurrentLogName = new HashMap<>();
 
+    private final HashMap<Integer, String> channelNumToFaultLogName = new HashMap<>();
+
     private final PowerDistribution pdh =
             new PowerDistribution(Constants.PDHConstants.PDH_CAN_ID, ModuleType.kRev);
 
@@ -24,6 +27,7 @@ public class PDH implements Subsystem, Logged {
             String dirName = "channel" + String.valueOf(i);
 
             channelNumToCurrentLogName.put(i, dirName + "/currentAmps");
+            channelNumToCurrentLogName.put(i, dirName + "/fault");
         }
 
         this.switchableChannelState = switchableChannelState;
@@ -75,11 +79,14 @@ public class PDH implements Subsystem, Logged {
     @Override
     public void periodic() {
         Robot.ui.setTotalCurrentDraw(getTotalCurrentAmps());
+        Robot.ui.setBatteryVoltage(getVoltage());
+
+        PowerDistributionFaults faults = pdh.getFaults();
 
         for (int i = 0; i < pdh.getNumChannels(); i++) {
             log(channelNumToCurrentLogName.get(i), getCurrentAmps(i));
-            // TODO: support for faults once next WPILib released
-            // which can get faults by index
+
+            log(channelNumToFaultLogName.get(i), faults.getBreakerFault(i));
         }
     }
 }
