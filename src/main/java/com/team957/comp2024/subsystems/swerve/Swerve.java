@@ -62,6 +62,11 @@ public abstract class Swerve implements Subsystem, Logged {
         @Log.NT
         public abstract double getSteerCurrentAmps();
 
+        public abstract void setBrakeMode(boolean active);
+
+        @Log.NT
+        public abstract boolean brakeModeIsActive();
+
         /**
          * Sets the setpoint for the onboard controller. If none is present (running in simulation),
          * instantly snaps the drive to its setpoint.

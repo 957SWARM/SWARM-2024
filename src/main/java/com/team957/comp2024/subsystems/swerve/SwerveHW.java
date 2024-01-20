@@ -1,8 +1,17 @@
 package com.team957.comp2024.subsystems.swerve;
 
+import com.revrobotics.AbsoluteEncoder;
+import com.revrobotics.CANSparkBase.ControlType;
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkAbsoluteEncoder.Type;
+import com.revrobotics.SparkPIDController;
+import com.team957.comp2024.Constants;
 import com.team957.comp2024.util.SparkMaxUtils;
+import com.team957.lib.math.UtilityMath;
+import edu.wpi.first.math.util.Units;
 import monologue.Annotations.Log;
 
 public class SwerveHW extends Swerve {
@@ -11,21 +20,72 @@ public class SwerveHW extends Swerve {
         private final CANSparkMax steer;
         private final CANSparkMax drive;
 
-        HWModuleIO(int steerCANID, int driveCANID, double steerOffsetRadians) {
+        private final SparkPIDController steerController;
+        private final SparkPIDController driveController;
+
+        private final AbsoluteEncoder steerEncoder;
+        private final RelativeEncoder driveEncoder;
+
+        private final double steerOffsetRadians;
+        private final boolean invertDrive;
+
+        private boolean brakeModeIsActive = false;
+
+        HWModuleIO(int steerCANID, int driveCANID, double steerOffsetRadians, boolean invertDrive) {
             steer = new CANSparkMax(steerCANID, MotorType.kBrushless);
             drive = new CANSparkMax(driveCANID, MotorType.kBrushless);
+
+            steer.restoreFactoryDefaults();
+            drive.restoreFactoryDefaults();
+
+            steer.setSmartCurrentLimit(
+                    (int) Constants.SwerveConstants.STEER_CURRENT_LIMIT); // WHY IS IT AN INT, REV?
+            drive.setSmartCurrentLimit((int) Constants.SwerveConstants.DRIVE_CURRENT_LIMIT); // WHY
+
+            steerController = steer.getPIDController();
+            driveController = drive.getPIDController();
+
+            steerController.setP(Constants.SwerveConstants.ONBOARD_STEER_CONTROLLER_KP);
+            steerController.setI(Constants.SwerveConstants.ONBOARD_STEER_CONTROLLER_KI);
+            steerController.setD(Constants.SwerveConstants.ONBOARD_STEER_CONTROLLER_KD);
+
+            driveController.setP(Constants.SwerveConstants.ONBOARD_DRIVE_CONTROLLER_KP);
+            driveController.setI(Constants.SwerveConstants.ONBOARD_DRIVE_CONTROLLER_KI);
+            driveController.setD(Constants.SwerveConstants.ONBOARD_DRIVE_CONTROLLER_KD);
+
+            steerEncoder = steer.getAbsoluteEncoder(Type.kDutyCycle);
+            driveEncoder = drive.getEncoder();
+
+            steerController.setFeedbackDevice(steerEncoder);
+
+            // normalizeangleradians gives 0 ~ 2pi, converted to rots that's 0 ~ 1
+            steerController.setPositionPIDWrappingMaxInput(1);
+            steerController.setPositionPIDWrappingMinInput(0);
+            steerController.setPositionPIDWrappingEnabled(true);
+
+            this.steerOffsetRadians = steerOffsetRadians;
+            this.invertDrive = invertDrive;
+
+            setBrakeMode(Constants.SwerveConstants.INITIAL_BRAKE_MODE_ACTIVE);
         }
 
         @Override
         public void setSteerSetpoint(double radians) {
-            // TODO Auto-generated method stub
-            throw new UnsupportedOperationException("Unimplemented method 'setSteerSetpoint'");
+            steerOnboardControl = true;
+
+            steerController.setReference(
+                    Units.radiansToRotations(
+                            UtilityMath.normalizeAngleRadians(radians + steerOffsetRadians)),
+                    ControlType.kPosition);
         }
 
         @Override
         public void setSteerVoltage(double volts) {
-            // TODO Auto-generated method stub
-            throw new UnsupportedOperationException("Unimplemented method 'setSteerVoltage'");
+            steerOnboardControl = false;
+
+            steer.setVoltage(-UtilityMath.clamp(Constants.MiscConstants.saturationVoltage, volts));
+            // I honestly have no idea what this code does but it was in the bunnybots swerve and
+            // that worked fine???
         }
 
         @Override
@@ -35,14 +95,13 @@ public class SwerveHW extends Swerve {
 
         @Override
         public boolean steerIsOnboardClosedLoop() {
-            return false;
+            return steerOnboardControl;
         }
 
         @Override
         public double getSteerPositionRadians() {
-            // TODO Auto-generated method stub
-            throw new UnsupportedOperationException(
-                    "Unimplemented method 'getSteerPositionRadians'");
+            return UtilityMath.normalizeAngleRadians(
+                    getUnoffsetSteerPositionRadians() - steerOffsetRadians);
         }
 
         @Override
@@ -51,15 +110,44 @@ public class SwerveHW extends Swerve {
         }
 
         @Override
+        public void setBrakeMode(boolean active) {
+            drive.setIdleMode(active ? IdleMode.kBrake : IdleMode.kCoast);
+            steer.setIdleMode(active ? IdleMode.kBrake : IdleMode.kCoast);
+
+            brakeModeIsActive = active;
+        }
+
+        @Override
+        public boolean brakeModeIsActive() {
+            return brakeModeIsActive;
+        }
+
+        private double driveWheelRadPerSecondToMotorRPM(double radPerSecond) {
+            return Constants.SwerveConstants.DRIVE_GEARING_HELPER.inputFromOutput(
+                    Units.radiansPerSecondToRotationsPerMinute(radPerSecond)
+                            * (invertDrive ? -1 : 1));
+        }
+
+        private double driveMotorRotationsToWheelRad(double rot) {
+            return Constants.SwerveConstants.DRIVE_GEARING_HELPER.outputFromInput(
+                    Units.rotationsToRadians(rot) * (invertDrive ? -1 : 1));
+        }
+
+        @Override
         public void setDriveSetpoint(double radPerSecond) {
-            // TODO Auto-generated method stub
-            throw new UnsupportedOperationException("Unimplemented method 'setDriveSetpoint'");
+            driveOnboardControl = true;
+
+            driveController.setReference(
+                    driveWheelRadPerSecondToMotorRPM(radPerSecond), ControlType.kVelocity);
         }
 
         @Override
         public void setDriveVoltage(double volts) {
-            // TODO Auto-generated method stub
-            throw new UnsupportedOperationException("Unimplemented method 'setDriveVoltage'");
+            driveOnboardControl = false;
+
+            drive.setVoltage(
+                    UtilityMath.clamp(Constants.MiscConstants.saturationVoltage, volts)
+                            * (invertDrive ? -1 : 1));
         }
 
         @Override
@@ -70,19 +158,18 @@ public class SwerveHW extends Swerve {
         @Override
         @Log
         public boolean driveIsOnboardClosedLoop() {
-            return false;
+            return driveOnboardControl;
         }
 
         @Override
         @Log
         public double getDriveVelocityRadPerSecond() {
-            // TODO Auto-generated method stub
-            throw new UnsupportedOperationException(
-                    "Unimplemented method 'getDriveVelocityMetersPerSecond'");
+            return driveMotorRotationsToWheelRad(
+                    driveEncoder.getVelocity() / 60); // velocity in RPM units
         }
 
         public double getDrivePositionRad() {
-            return 0;
+            return driveMotorRotationsToWheelRad(driveEncoder.getPosition());
         }
 
         @Override
@@ -112,7 +199,7 @@ public class SwerveHW extends Swerve {
 
         @Log.NT
         public double getUnoffsetSteerPositionRadians() {
-            return 0;
+            return steerEncoder.getPosition() * 2 * Math.PI;
         }
 
         @Log.NT
@@ -136,13 +223,30 @@ public class SwerveHW extends Swerve {
         }
 
         @Override
-        protected void update(double dt) {
-            // TODO Auto-generated method stub
-            throw new UnsupportedOperationException("Unimplemented method 'update'");
-        }
+        protected void update(double dt) {}
     }
 
     public SwerveHW() {
-        super(null, null, null, null);
+        super(
+                new HWModuleIO(
+                        Constants.SwerveConstants.FRONT_LEFT_STEER_CANID,
+                        Constants.SwerveConstants.FRONT_LEFT_DRIVE_CANID,
+                        Constants.SwerveConstants.FRONT_LEFT_STEER_OFFSET_RADIANS,
+                        Constants.SwerveConstants.FRONT_LEFT_DRIVE_INVERTED),
+                new HWModuleIO(
+                        Constants.SwerveConstants.FRONT_RIGHT_STEER_CANID,
+                        Constants.SwerveConstants.FRONT_RIGHT_DRIVE_CANID,
+                        Constants.SwerveConstants.FRONT_RIGHT_STEER_OFFSET_RADIANS,
+                        Constants.SwerveConstants.FRONT_RIGHT_DRIVE_INVERTED),
+                new HWModuleIO(
+                        Constants.SwerveConstants.BACK_RIGHT_STEER_CANID,
+                        Constants.SwerveConstants.BACK_RIGHT_DRIVE_CANID,
+                        Constants.SwerveConstants.BACK_RIGHT_STEER_OFFSET_RADIANS,
+                        Constants.SwerveConstants.BACK_RIGHT_DRIVE_INVERTED),
+                new HWModuleIO(
+                        Constants.SwerveConstants.BACK_LEFT_STEER_CANID,
+                        Constants.SwerveConstants.BACK_LEFT_DRIVE_CANID,
+                        Constants.SwerveConstants.BACK_LEFT_STEER_OFFSET_RADIANS,
+                        Constants.SwerveConstants.BACK_LEFT_DRIVE_INVERTED));
     }
 }

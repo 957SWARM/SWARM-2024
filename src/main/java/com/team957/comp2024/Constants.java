@@ -1,6 +1,7 @@
 package com.team957.comp2024;
 
 import com.team957.lib.controllers.feedback.PID.PIDConstants;
+import com.team957.lib.util.GearRatioHelper;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.system.plant.DCMotor;
@@ -12,6 +13,12 @@ public class Constants {
     }
 
     public static final class SwerveConstants {
+        public static final double DRIVE_CURRENT_LIMIT = 60;
+        public static final double STEER_CURRENT_LIMIT = 20;
+
+        public static final boolean INITIAL_BRAKE_MODE_ACTIVE = false;
+        // for the sake of the people positioning the robot!!
+
         public static final double STEER_PLANT_KS = 1;
         public static final double STEER_PLANT_KV = 0.2; // wild guess
         public static final double STEER_PLANT_KA = 0.2;
@@ -23,10 +30,13 @@ public class Constants {
         public static final double STEER_GEARING = 42.62;
         public static final double DRIVE_GEARING = 4.71;
 
+        public static final GearRatioHelper DRIVE_GEARING_HELPER =
+                new GearRatioHelper(1, DRIVE_GEARING);
+
         public static final DCMotor STEER_MOTOR = DCMotor.getNeo550(1);
         public static final DCMotor DRIVE_MOTOR = DCMotor.getNEO(1);
 
-        public static final double WHEEL_RADIUS_METERS = Units.inchesToMeters(3);
+        public static final double WHEEL_RADIUS_METERS = Units.inchesToMeters(1.5);
 
         public static final double MAX_WHEEL_SPEED_METERS_PER_SECOND = 4;
 
@@ -41,6 +51,36 @@ public class Constants {
                         FRONT_RIGHT_TRANSLATION,
                         BACK_RIGHT_TRANSLATION,
                         BACK_LEFT_TRANSLATION);
+
+        public static final double ONBOARD_DRIVE_CONTROLLER_KP = 1;
+        public static final double ONBOARD_DRIVE_CONTROLLER_KI = 0;
+        public static final double ONBOARD_DRIVE_CONTROLLER_KD = 0;
+
+        public static final double ONBOARD_STEER_CONTROLLER_KP = 1;
+        public static final double ONBOARD_STEER_CONTROLLER_KI = 0;
+        public static final double ONBOARD_STEER_CONTROLLER_KD = 0;
+
+        // the offset is the "raw" value reported when the module is at the "zero" position
+
+        public static final int FRONT_LEFT_DRIVE_CANID = 0;
+        public static final int FRONT_LEFT_STEER_CANID = 0;
+        public static final double FRONT_LEFT_STEER_OFFSET_RADIANS = 0;
+        public static final boolean FRONT_LEFT_DRIVE_INVERTED = false;
+
+        public static final int FRONT_RIGHT_DRIVE_CANID = 0;
+        public static final int FRONT_RIGHT_STEER_CANID = 0;
+        public static final double FRONT_RIGHT_STEER_OFFSET_RADIANS = 0;
+        public static final boolean FRONT_RIGHT_DRIVE_INVERTED = false;
+
+        public static final int BACK_LEFT_DRIVE_CANID = 0;
+        public static final int BACK_LEFT_STEER_CANID = 0;
+        public static final double BACK_LEFT_STEER_OFFSET_RADIANS = 0;
+        public static final boolean BACK_LEFT_DRIVE_INVERTED = false;
+
+        public static final int BACK_RIGHT_DRIVE_CANID = 0;
+        public static final int BACK_RIGHT_STEER_CANID = 0;
+        public static final double BACK_RIGHT_STEER_OFFSET_RADIANS = 0;
+        public static final boolean BACK_RIGHT_DRIVE_INVERTED = false;
     }
 
     public static final class AutoConstants {

@@ -58,6 +58,14 @@ public class SwerveSim extends Swerve {
         }
 
         @Override
+        public void setBrakeMode(boolean active) {}
+
+        @Override
+        public boolean brakeModeIsActive() {
+            return false;
+        }
+
+        @Override
         public void setDriveSetpoint(double radPerSecond) {
             driveSim.setState(driveSim.getAngularPositionRad(), radPerSecond);
             // :( rev
