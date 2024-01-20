@@ -88,7 +88,10 @@ public abstract class Swerve implements Subsystem, Logged {
          * @param radians Setpoint for the drive, in meters per second.
          */
         public void setDriveSetpointMPS(double metersPerSecond) {
-            setDriveSetpoint(metersPerSecond / (2 * Math.PI * SwerveConstants.WHEEL_RADIUS_METERS));
+            setDriveSetpoint(
+                    metersPerSecond
+                            / (SwerveConstants.WHEEL_RADIUS_METERS)); // got rid of dividing by 2pi
+            // System.out.println("MPS: " + metersPerSecond);
         }
 
         /**
@@ -120,10 +123,7 @@ public abstract class Swerve implements Subsystem, Logged {
 
         @Log.NT
         public double getDriveVelocityMetersPerSecond() {
-            return 2
-                    * Math.PI
-                    * getDriveVelocityRadPerSecond()
-                    * SwerveConstants.WHEEL_RADIUS_METERS;
+            return getDriveVelocityRadPerSecond() * SwerveConstants.WHEEL_RADIUS_METERS;
         }
 
         @Log.NT
@@ -131,7 +131,7 @@ public abstract class Swerve implements Subsystem, Logged {
 
         @Log.NT
         public double getDrivePositionMeters() {
-            return 2 * Math.PI * getDrivePositionRad() * SwerveConstants.WHEEL_RADIUS_METERS;
+            return getDrivePositionRad() * SwerveConstants.WHEEL_RADIUS_METERS;
         }
 
         @Log.NT

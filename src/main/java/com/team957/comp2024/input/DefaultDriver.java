@@ -23,7 +23,7 @@ public class DefaultDriver implements DriverInput {
 
     @Override
     public double swerveY() {
-        return LIN_MAX_SPEED * -xboxController.getLeftX();
+        return LIN_MAX_SPEED * xboxController.getLeftX();
     }
 
     @Override
@@ -33,6 +33,6 @@ public class DefaultDriver implements DriverInput {
 
     @Override
     public double swerveRot() {
-        return -ROT_MAX_SPEED * xboxController.getRightX();
+        return ROT_MAX_SPEED * xboxController.getRightX();
     }
 }

@@ -38,6 +38,8 @@ public class SwerveHW extends Swerve {
             steer.restoreFactoryDefaults();
             drive.restoreFactoryDefaults();
 
+            // steer.setInverted(true);
+
             steer.setSmartCurrentLimit(
                     (int) Constants.SwerveConstants.STEER_CURRENT_LIMIT); // WHY IS IT AN INT, REV?
             drive.setSmartCurrentLimit((int) Constants.SwerveConstants.DRIVE_CURRENT_LIMIT); // WHY
@@ -54,6 +56,7 @@ public class SwerveHW extends Swerve {
             driveController.setD(Constants.SwerveConstants.ONBOARD_DRIVE_CONTROLLER_KD);
 
             steerEncoder = steer.getAbsoluteEncoder(Type.kDutyCycle);
+            steerEncoder.setInverted(true);
             driveEncoder = drive.getEncoder();
 
             steerController.setFeedbackDevice(steerEncoder);
@@ -75,7 +78,7 @@ public class SwerveHW extends Swerve {
 
             steerController.setReference(
                     Units.radiansToRotations(
-                            UtilityMath.normalizeAngleRadians(radians + steerOffsetRadians)),
+                            UtilityMath.normalizeAngleRadians((radians + steerOffsetRadians))),
                     ControlType.kPosition);
         }
 
