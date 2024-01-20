@@ -4,6 +4,9 @@ import com.choreo.lib.ChoreoTrajectory;
 import com.ctre.phoenix6.SignalLogger;
 import com.team957.comp2024.Constants.PDHConstants;
 import com.team957.comp2024.commands.ChoreoFollowingFactory;
+import com.team957.comp2024.input.DefaultDriver;
+import com.team957.comp2024.input.DriverInput;
+import com.team957.comp2024.input.SimKeyboardDriver;
 import com.team957.comp2024.subsystems.IMU;
 import com.team957.comp2024.subsystems.PDH;
 import com.team957.comp2024.subsystems.swerve.Swerve;
@@ -13,7 +16,6 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -43,19 +45,17 @@ public class Robot extends TimedRobot implements Logged {
     // done this way for monologue's sake
     private final ChoreoFollowingFactory trajectoryFollowing = new ChoreoFollowingFactory();
 
-    private final XboxController controller = new XboxController(0);
-
     public static final UI ui = new UI();
 
     private final Alert autoLoadFail = new Alert("Auto path failed to load!", AlertType.ERROR);
+
+    private DriverInput input;
 
     private final Command teleopDrive =
             swerve.getFieldRelativeControlCommand(
                     () -> {
                         return new ChassisSpeeds(
-                                -5 * controller.getLeftY(),
-                                -5 * controller.getLeftX(),
-                                10 * controller.getLeftTriggerAxis());
+                                input.swerveX(), input.swerveY(), input.swerveRot());
                     },
                     localization::getRotationEstimate);
 
@@ -66,7 +66,14 @@ public class Robot extends TimedRobot implements Logged {
         SignalLogger.enableAutoLogging(true);
         SignalLogger.start();
 
-        if (isReal()) URCL.start(); // URCL segfaults in sim
+        if (isReal()) {
+            URCL.start(); // URCL segfaults in sim
+
+            input = new DefaultDriver();
+            // implement more options later
+        } else {
+            input = new SimKeyboardDriver();
+        }
 
         Monologue.setupMonologue(this, "Robot", false, true);
 

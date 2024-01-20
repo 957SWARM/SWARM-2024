@@ -11,7 +11,7 @@ public class DefaultDriver implements DriverInput {
 
     private final XboxController xboxController;
 
-    public DefaultDriver(int port) {
+    public DefaultDriver() {
 
         xboxController = new XboxController(0);
     }
