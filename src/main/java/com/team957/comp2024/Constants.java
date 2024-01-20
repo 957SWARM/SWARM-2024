@@ -13,19 +13,19 @@ public class Constants {
     }
 
     public static final class SwerveConstants {
-        public static final double DRIVE_CURRENT_LIMIT = 60;
+        public static final double DRIVE_CURRENT_LIMIT = 40;
         public static final double STEER_CURRENT_LIMIT = 20;
 
         public static final boolean INITIAL_BRAKE_MODE_ACTIVE = false;
         // for the sake of the people positioning the robot!!
 
-        public static final double STEER_PLANT_KS = 1;
-        public static final double STEER_PLANT_KV = 0.2; // wild guess
-        public static final double STEER_PLANT_KA = 0.2;
+        public static final double STEER_PLANT_KS = 0;
+        public static final double STEER_PLANT_KV = 0; // wild guess
+        public static final double STEER_PLANT_KA = 0;
 
-        public static final double DRIVE_PLANT_KS = 1;
-        public static final double DRIVE_PLANT_KV = 0.1;
-        public static final double DRIVE_PLANT_KA = 0.1;
+        public static final double DRIVE_PLANT_KS = 0;
+        public static final double DRIVE_PLANT_KV = 0;
+        public static final double DRIVE_PLANT_KA = 0;
 
         public static final double STEER_GEARING = 42.62;
         public static final double DRIVE_GEARING = 4.71;
@@ -40,10 +40,14 @@ public class Constants {
 
         public static final double MAX_WHEEL_SPEED_METERS_PER_SECOND = 4;
 
-        public static final Translation2d FRONT_LEFT_TRANSLATION = new Translation2d(0.5, 0.5);
-        public static final Translation2d FRONT_RIGHT_TRANSLATION = new Translation2d(0.5, -0.5);
-        public static final Translation2d BACK_RIGHT_TRANSLATION = new Translation2d(-0.5, -0.5);
-        public static final Translation2d BACK_LEFT_TRANSLATION = new Translation2d(-0.5, 0.5);
+        public static final Translation2d FRONT_LEFT_TRANSLATION =
+                new Translation2d(0.3112, 0.2604);
+        public static final Translation2d FRONT_RIGHT_TRANSLATION =
+                new Translation2d(0.3112, -0.2604);
+        public static final Translation2d BACK_RIGHT_TRANSLATION =
+                new Translation2d(-0.3112, -0.2604);
+        public static final Translation2d BACK_LEFT_TRANSLATION =
+                new Translation2d(-0.3112, 0.2604);
 
         public static final SwerveDriveKinematics KINEMATICS =
                 new SwerveDriveKinematics(
@@ -52,35 +56,35 @@ public class Constants {
                         BACK_RIGHT_TRANSLATION,
                         BACK_LEFT_TRANSLATION);
 
-        public static final double ONBOARD_DRIVE_CONTROLLER_KP = 1;
+        public static final double ONBOARD_DRIVE_CONTROLLER_KP = 0.0001; // 0.0004
         public static final double ONBOARD_DRIVE_CONTROLLER_KI = 0;
         public static final double ONBOARD_DRIVE_CONTROLLER_KD = 0;
 
-        public static final double ONBOARD_STEER_CONTROLLER_KP = 1;
+        public static final double ONBOARD_STEER_CONTROLLER_KP = 2;
         public static final double ONBOARD_STEER_CONTROLLER_KI = 0;
         public static final double ONBOARD_STEER_CONTROLLER_KD = 0;
 
         // the offset is the "raw" value reported when the module is at the "zero" position
 
-        public static final int FRONT_LEFT_DRIVE_CANID = 0;
-        public static final int FRONT_LEFT_STEER_CANID = 0;
-        public static final double FRONT_LEFT_STEER_OFFSET_RADIANS = 0;
+        public static final int FRONT_LEFT_DRIVE_CANID = 7;
+        public static final int FRONT_LEFT_STEER_CANID = 8;
+        public static final double FRONT_LEFT_STEER_OFFSET_RADIANS = -0.3613 + (Math.PI / 2);
         public static final boolean FRONT_LEFT_DRIVE_INVERTED = false;
 
-        public static final int FRONT_RIGHT_DRIVE_CANID = 0;
-        public static final int FRONT_RIGHT_STEER_CANID = 0;
-        public static final double FRONT_RIGHT_STEER_OFFSET_RADIANS = 0;
-        public static final boolean FRONT_RIGHT_DRIVE_INVERTED = false;
+        public static final int FRONT_RIGHT_DRIVE_CANID = 1;
+        public static final int FRONT_RIGHT_STEER_CANID = 2;
+        public static final double FRONT_RIGHT_STEER_OFFSET_RADIANS = -1.5327;
+        public static final boolean FRONT_RIGHT_DRIVE_INVERTED = true;
 
-        public static final int BACK_LEFT_DRIVE_CANID = 0;
-        public static final int BACK_LEFT_STEER_CANID = 0;
-        public static final double BACK_LEFT_STEER_OFFSET_RADIANS = 0;
+        public static final int BACK_LEFT_DRIVE_CANID = 5;
+        public static final int BACK_LEFT_STEER_CANID = 6;
+        public static final double BACK_LEFT_STEER_OFFSET_RADIANS = -0.0124;
         public static final boolean BACK_LEFT_DRIVE_INVERTED = false;
 
-        public static final int BACK_RIGHT_DRIVE_CANID = 0;
-        public static final int BACK_RIGHT_STEER_CANID = 0;
-        public static final double BACK_RIGHT_STEER_OFFSET_RADIANS = 0;
-        public static final boolean BACK_RIGHT_DRIVE_INVERTED = false;
+        public static final int BACK_RIGHT_DRIVE_CANID = 3;
+        public static final int BACK_RIGHT_STEER_CANID = 4;
+        public static final double BACK_RIGHT_STEER_OFFSET_RADIANS = -5.6515 + (Math.PI / 2);
+        public static final boolean BACK_RIGHT_DRIVE_INVERTED = true;
     }
 
     public static final class AutoConstants {
