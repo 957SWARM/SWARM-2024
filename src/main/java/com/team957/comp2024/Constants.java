@@ -63,6 +63,16 @@ public class Constants {
         public static final boolean STARTING_SWITCHABLE_CHANNEL_STATE = false;
     }
 
+    public static final class IntakePivotConstants {
+        public static final double MIN_ANGLE_RADIANS = Units.degreesToRadians(-10);
+        public static final double MAX_ANGLE_RADIANS = Units.degreesToRadians(135);
+
+        public static final double PLANT_KS = 1;
+        public static final double PLANT_KV = 1;
+        public static final double PLANT_KA = 1;
+        public static final double PLANT_KG = 1;
+    }
+
     public static final class AlertConstants {
         public static final double OVERCURRENT_THRESHOLD_AMPS = 120;
 
