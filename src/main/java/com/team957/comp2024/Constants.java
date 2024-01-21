@@ -56,9 +56,10 @@ public class Constants {
                         BACK_RIGHT_TRANSLATION,
                         BACK_LEFT_TRANSLATION);
 
-        public static final double ONBOARD_DRIVE_CONTROLLER_KP = 0.0001; // 0.0004
+        public static final double ONBOARD_DRIVE_CONTROLLER_KP = 0.00003;
         public static final double ONBOARD_DRIVE_CONTROLLER_KI = 0;
         public static final double ONBOARD_DRIVE_CONTROLLER_KD = 0;
+        public static final double ONBOARD_DRIVE_CONTROLLER_KFF = 0.000125;
 
         public static final double ONBOARD_STEER_CONTROLLER_KP = 2;
         public static final double ONBOARD_STEER_CONTROLLER_KI = 0;

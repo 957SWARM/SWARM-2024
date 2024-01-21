@@ -10,6 +10,7 @@ import com.team957.comp2024.subsystems.IMU;
 import com.team957.comp2024.subsystems.swerve.Swerve;
 import com.team957.comp2024.util.SwarmChoreo;
 import com.team957.lib.util.DeltaTimeUtil;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -46,12 +47,19 @@ public class Robot extends TimedRobot implements Logged {
     private final Alert autoLoadFail = new Alert("Auto path failed to load!", AlertType.ERROR);
 
     private DriverInput input;
+    private SlewRateLimiter x = new SlewRateLimiter(.25);
+    private SlewRateLimiter y = new SlewRateLimiter(.25);
+    private SlewRateLimiter rot = new SlewRateLimiter(.25);
 
+    private double xOutput = 0;
+    private double yOutput = 0;
+    private double rotOutput = 0;
+
+    // input.swerveX(), input.swerveY(), input.swerveRot()
     private final Command teleopDrive =
             swerve.getFieldRelativeControlCommand(
                     () -> {
-                        return new ChassisSpeeds(
-                                input.swerveX(), input.swerveY(), input.swerveRot());
+                        return new ChassisSpeeds(xOutput, yOutput, rotOutput);
                     },
                     localization::getRotationEstimate);
 
@@ -84,6 +92,12 @@ public class Robot extends TimedRobot implements Logged {
 
         Monologue.setFileOnly(DriverStation.isFMSAttached());
         Monologue.updateAll();
+
+        // input values slew-limited before being passed into teleopDrive
+
+        xOutput = input.swerveX();
+        yOutput = input.swerveY();
+        rotOutput = input.swerveRot();
 
         localization.update();
     }

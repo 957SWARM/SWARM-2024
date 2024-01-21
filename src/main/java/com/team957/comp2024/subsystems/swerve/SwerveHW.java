@@ -54,6 +54,7 @@ public class SwerveHW extends Swerve {
             driveController.setP(Constants.SwerveConstants.ONBOARD_DRIVE_CONTROLLER_KP);
             driveController.setI(Constants.SwerveConstants.ONBOARD_DRIVE_CONTROLLER_KI);
             driveController.setD(Constants.SwerveConstants.ONBOARD_DRIVE_CONTROLLER_KD);
+            driveController.setFF(Constants.SwerveConstants.ONBOARD_DRIVE_CONTROLLER_KFF);
 
             steerEncoder = steer.getAbsoluteEncoder(Type.kDutyCycle);
             steerEncoder.setInverted(true);
