@@ -124,4 +124,20 @@ public class Constants {
 
         public static final double LOW_VOLTAGE_THRESHOLD = 10.5;
     }
+
+    public static final class VisionConstants{
+
+        private static final Transform3d LL1_TO_CENTER = new Transform3d(
+            new Translation3d(0, 0, 0),
+            new Rotation3d(0, 0, 0)
+        );
+
+        private static final Transform3d LL2_TO_CENTER = new Transform3d(
+            new Translation3d(0, 0, 0),
+            new Rotation3d(0, 0, 0)
+        );
+
+        
+        
+    }
 }
