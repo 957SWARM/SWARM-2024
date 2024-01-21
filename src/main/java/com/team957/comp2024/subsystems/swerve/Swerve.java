@@ -9,8 +9,12 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.units.Measure;
+import edu.wpi.first.units.Voltage;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import java.util.function.Supplier;
 import monologue.Annotations.Log;
 import monologue.Logged;
@@ -163,12 +167,46 @@ public abstract class Swerve implements Subsystem, Logged {
     public final ModuleIO backRight;
     public final ModuleIO backLeft;
 
+    private final SysIdRoutine steerRoutine;
+
+    private final SysIdRoutine driveRoutine;
+
     protected Swerve(
             ModuleIO frontLeft, ModuleIO frontRight, ModuleIO backRight, ModuleIO backLeft) {
         this.frontLeft = frontLeft;
         this.frontRight = frontRight;
         this.backRight = backRight;
         this.backLeft = backLeft;
+
+        steerRoutine =
+                new SysIdRoutine(
+                        new SysIdRoutine.Config(),
+                        new SysIdRoutine.Mechanism(
+                                (Measure<Voltage> volts) -> {
+                                    double asNumber = volts.magnitude();
+
+                                    frontLeft.setSteerVoltage(asNumber);
+                                    frontRight.setSteerVoltage(asNumber);
+                                    backRight.setSteerVoltage(asNumber);
+                                    backLeft.setSteerVoltage(asNumber);
+                                },
+                                null,
+                                this));
+
+        driveRoutine =
+                new SysIdRoutine(
+                        new SysIdRoutine.Config(),
+                        new SysIdRoutine.Mechanism(
+                                (Measure<Voltage> volts) -> {
+                                    double asNumber = volts.magnitude();
+
+                                    frontLeft.setDriveVoltage(asNumber);
+                                    frontRight.setDriveVoltage(asNumber);
+                                    backRight.setDriveVoltage(asNumber);
+                                    backLeft.setDriveVoltage(asNumber);
+                                },
+                                null,
+                                this));
 
         register();
     }
@@ -244,6 +282,22 @@ public abstract class Swerve implements Subsystem, Logged {
                 () ->
                         ChassisSpeeds.fromFieldRelativeSpeeds(
                                 fieldRelativeChassisSpeeds.get(), robotHeading.get()));
+    }
+
+    public Command getSysIdSteerQuasistatic(boolean forward) {
+        return steerRoutine.quasistatic(forward ? Direction.kForward : Direction.kReverse);
+    }
+
+    public Command getSysIdSteerDynamic(boolean forward) {
+        return steerRoutine.dynamic(forward ? Direction.kForward : Direction.kReverse);
+    }
+
+    public Command getSysIdDriveQuasistatic(boolean forward) {
+        return driveRoutine.quasistatic(forward ? Direction.kForward : Direction.kReverse);
+    }
+
+    public Command getSysIdDriveDynamic(boolean forward) {
+        return driveRoutine.dynamic(forward ? Direction.kForward : Direction.kReverse);
     }
 
     @Override
