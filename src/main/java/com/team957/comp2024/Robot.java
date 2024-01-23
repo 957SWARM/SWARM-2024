@@ -127,6 +127,6 @@ public class Robot extends TimedRobot implements Logged {
 
     @Override
     public void autonomousInit() {
-        Autos.middleTwoPiece(swerve, intakePivot, localization).schedule();
+        Autos.topFivePiece(swerve, intakePivot, localization).schedule();
     }
 }

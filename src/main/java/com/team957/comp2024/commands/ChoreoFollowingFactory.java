@@ -51,14 +51,17 @@ public class ChoreoFollowingFactory implements Logged {
         final PID yController = new PID(AutoConstants.LINEAR_PATHFINDING_GAINS, 0);
         final PID thetaController = new PID(AutoConstants.ROTATIONAL_PATHFINDING_GAINS, 0, true);
 
-        if (resetPoseToInitial) localization.setPose(trajectory.getInitialPose());
-
         ChoreoControlFunction controlFunction =
                 alternateControlFunction(xController, yController, thetaController);
 
         Timer timer = new Timer();
 
-        return Commands.runOnce(timer::restart)
+        return Commands.runOnce(
+                        () -> {
+                            timer.restart();
+                            if (resetPoseToInitial)
+                                localization.setPose(trajectory.getInitialPose());
+                        })
                 // .andThen(Commands.runOnce((this.log("trajectory",trajectory))))
                 // choreotrajectory not supported in monologue :(
                 .andThen(
