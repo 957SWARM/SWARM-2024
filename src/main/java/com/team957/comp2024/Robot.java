@@ -7,6 +7,7 @@ import com.team957.comp2024.input.DefaultDriver;
 import com.team957.comp2024.input.DriverInput;
 import com.team957.comp2024.input.SimKeyboardDriver;
 import com.team957.comp2024.subsystems.IMU;
+import com.team957.comp2024.subsystems.intake.IntakePivot;
 import com.team957.comp2024.subsystems.swerve.Swerve;
 import com.team957.comp2024.util.SwarmChoreo;
 import com.team957.lib.util.DeltaTimeUtil;
@@ -34,6 +35,8 @@ public class Robot extends TimedRobot implements Logged {
 
     private final Swerve swerve = Swerve.getSwerve(isReal());
 
+    private final IntakePivot intakePivot = IntakePivot.getIntakePivot(isReal());
+
     private final DeltaTimeUtil dt = new DeltaTimeUtil();
 
     private final Localization localization =
@@ -54,6 +57,8 @@ public class Robot extends TimedRobot implements Logged {
                                 input.swerveX(), input.swerveY(), input.swerveRot());
                     },
                     localization::getRotationEstimate);
+
+    private final Command teleopIntake = intakePivot.goToSetpoint(() -> 1.0);
 
     private Command autoCommand = new InstantCommand();
 
@@ -91,6 +96,8 @@ public class Robot extends TimedRobot implements Logged {
     @Override
     public void teleopInit() {
         teleopDrive.schedule();
+
+        teleopIntake.schedule();
 
         autoLoadFail.set(false);
     }

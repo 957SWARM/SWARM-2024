@@ -3,7 +3,7 @@ package com.team957.comp2024.commands;
 import com.choreo.lib.ChoreoControlFunction;
 import com.choreo.lib.ChoreoTrajectory;
 import com.team957.comp2024.Constants.AutoConstants;
-import com.team957.comp2024.Robot;
+import com.team957.comp2024.UI;
 import com.team957.comp2024.subsystems.swerve.Swerve;
 import com.team957.comp2024.util.SwarmChoreo;
 import com.team957.lib.controllers.feedback.PID;
@@ -59,7 +59,7 @@ public class ChoreoFollowingFactory implements Logged {
 
                                                     this.log("poseSetpoint", pose);
 
-                                                    Robot.ui.setSetpointPose(pose);
+                                                    UI.instance.setSetpointPose(pose);
                                                 })));
     }
 }

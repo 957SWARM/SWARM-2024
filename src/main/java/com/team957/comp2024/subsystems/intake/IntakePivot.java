@@ -3,6 +3,7 @@ package com.team957.comp2024.subsystems.intake;
 import com.team957.comp2024.Constants;
 import com.team957.comp2024.Constants.IntakePivotConstants;
 import com.team957.comp2024.Robot;
+import com.team957.comp2024.UI;
 import com.team957.lib.math.UtilityMath;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.trajectory.ExponentialProfile;
@@ -35,6 +36,10 @@ public abstract class IntakePivot implements Subsystem, Logged {
                             },
                             null,
                             this));
+
+    public IntakePivot() {
+        register();
+    }
 
     public void setVoltage(double volts) {
         // spotless:off
@@ -73,6 +78,11 @@ public abstract class IntakePivot implements Subsystem, Logged {
     @Log.NT
     public boolean isOnboardClosedLoop() {
         return pivotOnboardClosedLoop;
+    }
+
+    @Override
+    public void periodic() {
+        UI.instance.setIntakeAngle(getPositionRadians());
     }
 
     /**
@@ -124,10 +134,18 @@ public abstract class IntakePivot implements Subsystem, Logged {
 
                     double accel = (profiled.velocity - current.velocity) / Robot.kDefaultPeriod;
 
+                    log("profiled", profiled.position);
+                    log("profiledV", profiled.velocity);
+
                     setSetpoint(profiled.position);
 
                     setFeedforward(
                             feedforward.calculate(profiled.position, profiled.velocity, accel));
                 });
+    }
+
+    public static IntakePivot getIntakePivot(boolean isReal) {
+        if (!isReal) return new IntakePivotSim();
+        else return null; // not implemented
     }
 }

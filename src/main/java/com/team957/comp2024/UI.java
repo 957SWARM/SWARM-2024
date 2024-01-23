@@ -1,12 +1,15 @@
 package com.team957.comp2024;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import monologue.Annotations.IgnoreLogged;
+import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import monologue.Annotations.Log;
 import monologue.LogLevel;
 import monologue.Logged;
@@ -72,6 +75,18 @@ public class UI implements Logged {
     @Log.NT(level = LogLevel.OVERRIDE_FILE_ONLY)
     private final Field2d fieldVis = new Field2d();
 
+    @Log.NT(level = LogLevel.OVERRIDE_FILE_ONLY)
+    private final Mechanism2d intakeVis = new Mechanism2d(2, 2);
+
+    private final MechanismLigament2d intakeVisBody =
+            intakeVis
+                    .getRoot("root", 1, .5)
+                    .append(
+                            new MechanismLigament2d(
+                                    "intake",
+                                    Constants.IntakePivotConstants.PIVOT_TO_TIP_METERS,
+                                    0));
+
     private final Alert overcurrent = new Alert("General overcurrent!", AlertType.WARNING);
 
     private final Alert highResistance =
@@ -117,6 +132,10 @@ public class UI implements Logged {
         overcurrent.set(amps > Constants.AlertConstants.OVERCURRENT_THRESHOLD_AMPS);
 
         logPowerPathResistance();
+    }
+
+    public void setIntakeAngle(double radians) {
+        intakeVisBody.setAngle(Rotation2d.fromRadians(radians));
     }
 
     private void logPowerPathResistance() {
