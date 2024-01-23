@@ -2,7 +2,6 @@ package com.team957.comp2024.subsystems;
 
 import com.team957.comp2024.Constants;
 import com.team957.comp2024.UI;
-
 import edu.wpi.first.hal.PowerDistributionFaults;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
