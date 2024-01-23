@@ -54,7 +54,7 @@ public class Localization implements Logged {
             odometry.update(gyro.get(), modulePositions.get());
         }
 
-        Robot.ui.setPose(getPoseEstimate());
+        UI.instance.setPose(getPoseEstimate());
     }
 
     @Log.NT

@@ -6,6 +6,7 @@ import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import monologue.Annotations.IgnoreLogged;
 import monologue.Annotations.Log;
 import monologue.LogLevel;
 import monologue.Logged;
@@ -20,6 +21,9 @@ public class UI implements Logged {
                 new SwerveModuleState(),
                 new SwerveModuleState()
             };
+
+            @IgnoreLogged
+            public static final UI instance = new UI();
 
     private double rotationDegrees = 0;
 
@@ -75,7 +79,7 @@ public class UI implements Logged {
 
     private final Alert lowVoltage = new Alert("Low battery voltage!", AlertType.WARNING);
 
-    public UI() {
+    private UI() {
         if (!Robot.isReal()) new Alert("Robot is simulated!", AlertType.INFO).set(true);
         if (DriverStation.isFMSAttached()) new Alert("FMS connected!", AlertType.INFO).set(true);
     }

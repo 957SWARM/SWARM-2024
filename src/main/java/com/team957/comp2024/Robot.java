@@ -45,8 +45,6 @@ public class Robot extends TimedRobot implements Logged {
     // done this way for monologue's sake
     private final ChoreoFollowingFactory trajectoryFollowing = new ChoreoFollowingFactory();
 
-    public static final UI ui = new UI();
-
     private final Alert autoLoadFail = new Alert("Auto path failed to load!", AlertType.ERROR);
 
     private DriverInput input;
