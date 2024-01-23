@@ -113,9 +113,15 @@ public class Constants {
         public static final double MAX_ANGLE_RADIANS = Units.degreesToRadians(135);
 
         public static final double PLANT_KS = 1;
-        public static final double PLANT_KV = 1;
-        public static final double PLANT_KA = 1;
-        public static final double PLANT_KG = 1;
+        public static final double PLANT_KV = 0.88;
+        public static final double PLANT_KA = 0.001;
+        public static final double PLANT_KG = 0.22;
+
+        public static final DCMotor DRIVE_MOTOR = DCMotor.getNEO(1);
+
+        public static final GearRatioHelper GEARING_HELPER = new GearRatioHelper(1, 45);
+
+        public static final double PIVOT_TO_TIP_METERS = Units.inchesToMeters(14);
     }
 
     public static final class AlertConstants {
