@@ -121,6 +121,11 @@ public class Constants {
         public static final GearRatioHelper GEARING_HELPER = new GearRatioHelper(1, 45);
 
         public static final double PIVOT_TO_TIP_METERS = Units.inchesToMeters(14);
+
+        public static final double FLOOR_INTAKE_ANGLE_RADIANS = Units.degreesToRadians(-7.5);
+        public static final double STOW_INTAKE_ANGLE_RADIANS = Units.degreesToRadians(100);
+        public static final double HANDOFF_INTAKE_ANGLE_RADIANS = Units.degreesToRadians(132.5);
+        public static final double AMP_INTAKE_ANGLE_RADIANS = Units.degreesToRadians(75);
     }
 
     public static final class AlertConstants {

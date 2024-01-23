@@ -557,15 +557,6 @@
             "velocityX": -0.28706826982679384,
             "velocityY": -0.0015916228881614545,
             "timestamp": 3.19701264516693
-        },
-        {
-            "x": 2.5,
-            "y": 4.4,
-            "heading": 3.14159,
-            "angularVelocity": 0,
-            "velocityX": 0,
-            "velocityY": 0,
-            "timestamp": 3.2503058665620546
         }
     ]
 }

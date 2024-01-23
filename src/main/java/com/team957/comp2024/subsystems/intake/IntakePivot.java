@@ -144,6 +144,22 @@ public abstract class IntakePivot implements Subsystem, Logged {
                 });
     }
 
+    public Command toFloor() {
+        return goToSetpoint(() -> Constants.IntakePivotConstants.FLOOR_INTAKE_ANGLE_RADIANS);
+    }
+
+    public Command toStow() {
+        return goToSetpoint(() -> Constants.IntakePivotConstants.STOW_INTAKE_ANGLE_RADIANS);
+    }
+
+    public Command toHandoff() {
+        return goToSetpoint(() -> Constants.IntakePivotConstants.HANDOFF_INTAKE_ANGLE_RADIANS);
+    }
+
+    public Command toAmp() {
+        return goToSetpoint(() -> Constants.IntakePivotConstants.AMP_INTAKE_ANGLE_RADIANS);
+    }
+
     public static IntakePivot getIntakePivot(boolean isReal) {
         if (!isReal) return new IntakePivotSim();
         else return null; // not implemented
