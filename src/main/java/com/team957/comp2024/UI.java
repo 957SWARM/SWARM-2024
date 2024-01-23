@@ -22,8 +22,7 @@ public class UI implements Logged {
                 new SwerveModuleState()
             };
 
-            @IgnoreLogged
-            public static final UI instance = new UI();
+    @IgnoreLogged public static final UI instance = new UI();
 
     private double rotationDegrees = 0;
 

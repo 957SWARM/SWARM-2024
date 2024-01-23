@@ -20,12 +20,12 @@ public class Constants {
         // for the sake of the people positioning the robot!!
 
         public static final double STEER_PLANT_KS = 0;
-        public static final double STEER_PLANT_KV = 0; // wild guess
-        public static final double STEER_PLANT_KA = 0;
+        public static final double STEER_PLANT_KV = 0.1; // wild guess
+        public static final double STEER_PLANT_KA = 0.1;
 
         public static final double DRIVE_PLANT_KS = 0;
-        public static final double DRIVE_PLANT_KV = 0;
-        public static final double DRIVE_PLANT_KA = 0;
+        public static final double DRIVE_PLANT_KV = 0.1;
+        public static final double DRIVE_PLANT_KA = 0.1;
 
         public static final double STEER_GEARING = 42.62;
         public static final double DRIVE_GEARING = 4.71;
