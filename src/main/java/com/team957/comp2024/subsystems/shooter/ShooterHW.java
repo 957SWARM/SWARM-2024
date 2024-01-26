@@ -5,13 +5,16 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.team957.comp2024.Constants.ShooterConstants;
 
-public class ShooterHW extends Shooter{
+public class ShooterHW extends Shooter {
 
-    private final CANSparkMax leftMotor = new CANSparkMax(ShooterConstants.LEFT_CANID, MotorType.kBrushless);
-    private final CANSparkMax rightMotor = new CANSparkMax(ShooterConstants.RIGHT_CANID, MotorType.kBrushless);
-    private final RelativeEncoder encoder = leftMotor.getEncoder();
+    private final CANSparkMax leftMotor =
+            new CANSparkMax(ShooterConstants.LEFT_CANID, MotorType.kBrushless);
+    private final CANSparkMax rightMotor =
+            new CANSparkMax(ShooterConstants.RIGHT_CANID, MotorType.kBrushless);
+    private final RelativeEncoder leftEncoder = leftMotor.getEncoder();
+    private final RelativeEncoder rightEncoder = rightMotor.getEncoder();
 
-    public ShooterHW(){
+    public ShooterHW() {
         leftMotor.restoreFactoryDefaults();
         rightMotor.restoreFactoryDefaults();
 
@@ -49,6 +52,6 @@ public class ShooterHW extends Shooter{
 
     @Override
     public double getVelocity() {
-       return encoder.getVelocity();
+        return (leftEncoder.getVelocity() + rightEncoder.getVelocity()) / 2.0;
     }
 }

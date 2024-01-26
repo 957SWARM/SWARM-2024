@@ -1,9 +1,8 @@
 package com.team957.comp2024.subsystems.shooter;
 
-import java.util.function.Supplier;
-
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import java.util.function.Supplier;
 import monologue.Annotations.Log;
 import monologue.Logged;
 
@@ -28,26 +27,23 @@ public abstract class Shooter implements Subsystem, Logged {
     @Log.NT
     public abstract double getRightMotorAmps();
 
-
     // returns the current RPM of the shooter
     @Log.NT
     public abstract double getVelocity();
 
-    protected Shooter(){
+    protected Shooter() {
 
         register();
     }
 
     public static Shooter getShooter(boolean isReal) {
-        return (isReal) ? new ShooterHW() : new ShooterHW();
+        return (isReal) ? new ShooterHW() : new ShooterSim();
     }
 
-    public Command defaultShooterControlCommand(Supplier<Double> voltage){
+    public Command defaultShooterControlCommand(Supplier<Double> voltage) {
         return run(
-            () -> {
-                setShooterVoltage(voltage.get());
-            }
-        );
+                () -> {
+                    setShooterVoltage(voltage.get());
+                });
     }
-    
 }

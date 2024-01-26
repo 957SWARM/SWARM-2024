@@ -50,7 +50,6 @@ public class Constants {
         public static final int CURRENT_LIMIT = 30;
         public static final DCMotor SHOOTER_MOTOR = DCMotor.getNEO(1);
         public static final double SHOOTER_REDUCTION = 1;
-
     }
 
     public static final class AutoConstants {
