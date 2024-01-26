@@ -1,5 +1,7 @@
 package com.team957.comp2024;
 
+import org.littletonrobotics.urcl.URCL;
+
 import com.choreo.lib.ChoreoTrajectory;
 import com.ctre.phoenix6.SignalLogger;
 import com.team957.comp2024.Constants.PDHConstants;
@@ -7,9 +9,11 @@ import com.team957.comp2024.commands.ChoreoFollowingFactory;
 import com.team957.comp2024.subsystems.IMU;
 import com.team957.comp2024.subsystems.PDH;
 import com.team957.comp2024.subsystems.PneumaticsHub;
+import com.team957.comp2024.subsystems.shooter.ShooterHW;
 import com.team957.comp2024.subsystems.swerve.Swerve;
 import com.team957.comp2024.util.SwarmChoreo;
 import com.team957.lib.util.DeltaTimeUtil;
+
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
@@ -17,7 +21,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import monologue.Logged;
 import monologue.Monologue;
-import org.littletonrobotics.urcl.URCL;
 
 public class Robot extends TimedRobot implements Logged {
     // these need to be constructed so that

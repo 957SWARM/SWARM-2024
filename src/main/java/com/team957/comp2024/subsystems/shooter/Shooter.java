@@ -1,51 +1,53 @@
 package com.team957.comp2024.subsystems.shooter;
 
-import com.team957.comp2024.subsystems.swerve.Swerve;
-import com.team957.comp2024.subsystems.swerve.SwerveHW;
-import com.team957.comp2024.subsystems.swerve.SwerveSim;
+import java.util.function.Supplier;
 
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import monologue.Annotations.Log;
 import monologue.Logged;
 
 public abstract class Shooter implements Subsystem, Logged {
-    public abstract static class ShooterIO implements Logged {
-        protected ShooterIO() {}
 
-        // sets the applied voltage to both motors
-        public abstract void setMotorVoltage(double voltage);
+    // sets the voltage to the shooter. Motors should follow each other!
+    public abstract void setShooterVoltage(double voltage);
 
-        // returns the current voltage of the motor
-        @Log.NT
-        public abstract double getMotorVoltage();
-
-    }
-    // will set the RPM shooter attempts to reach
-    public abstract void setVelocitySetpoint(double RPM);
-
-    // returns the target RPM of the shooter
+    // returns the current voltage of the left motor
     @Log.NT
-    public abstract double getVelocitySetpoint();
+    public abstract double getLeftMotorVoltage();
+
+    // returns the current voltage of the right motor
+    @Log.NT
+    public abstract double getRightMotorVoltage();
+
+    // returns the current amps of the left motor
+    @Log.NT
+    public abstract double getLeftMotorAmps();
+
+    // returns the current amps of the right motor
+    @Log.NT
+    public abstract double getRightMotorAmps();
+
 
     // returns the current RPM of the shooter
     @Log.NT
-    public abstract double getVelocityCurrent();
+    public abstract double getVelocity();
 
-    // returns the current amps of the motor
-    @Log.NT
-    public abstract double getMotorAmps();
+    protected Shooter(){
 
-
-    protected Shooter(ShooterIO leftMotor, ShooterIO rightMotor){
-
+        register();
     }
 
-    /*
     public static Shooter getShooter(boolean isReal) {
-        if(isReal)
-            return new ShooterHW();
-        else
-            return new ShooterSim();
+        return (isReal) ? new ShooterHW() : new ShooterHW();
     }
-    */
+
+    public Command defaultShooterControlCommand(Supplier<Double> voltage){
+        return run(
+            () -> {
+                setShooterVoltage(voltage.get());
+            }
+        );
+    }
+    
 }

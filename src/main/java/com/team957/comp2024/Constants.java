@@ -43,6 +43,16 @@ public class Constants {
                         BACK_LEFT_TRANSLATION);
     }
 
+    public static final class ShooterConstants {
+        // not set yet as of 1/25/2024
+        public static final int LEFT_CANID = 0;
+        public static final int RIGHT_CANID = 0;
+        public static final int CURRENT_LIMIT = 30;
+        public static final DCMotor SHOOTER_MOTOR = DCMotor.getNEO(1);
+        public static final double SHOOTER_REDUCTION = 1;
+
+    }
+
     public static final class AutoConstants {
         public static final PIDConstants LINEAR_PATHFINDING_GAINS = new PIDConstants(5, 0, 0);
         public static final PIDConstants ROTATIONAL_PATHFINDING_GAINS = new PIDConstants(5, 0, 0);
