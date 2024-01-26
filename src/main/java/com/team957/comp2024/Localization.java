@@ -3,17 +3,18 @@ package com.team957.comp2024;
 import com.team957.comp2024.Constants.SwerveConstants;
 import com.team957.lib.math.filters.IntegratingFilter;
 import com.team957.lib.util.DeltaTimeUtil;
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import java.util.function.Supplier;
 import monologue.Annotations.Log;
 import monologue.Logged;
+import org.photonvision.EstimatedRobotPose;
 
 public class Localization implements Logged {
-    private final SwerveDriveOdometry odometry;
+    private final SwerveDrivePoseEstimator estimator;
 
     private final Supplier<SwerveModuleState[]> moduleStates;
     private final Supplier<SwerveModulePosition[]> modulePositions;
@@ -29,9 +30,12 @@ public class Localization implements Logged {
             Supplier<SwerveModulePosition[]> modulePositions,
             Supplier<Rotation2d> gyro,
             boolean fakeGyro) {
-        odometry =
-                new SwerveDriveOdometry(
-                        SwerveConstants.KINEMATICS, gyro.get(), modulePositions.get());
+        estimator =
+                new SwerveDrivePoseEstimator(
+                        SwerveConstants.KINEMATICS,
+                        gyro.get(),
+                        modulePositions.get(),
+                        new Pose2d());
 
         this.moduleStates = moduleStates;
         this.modulePositions = modulePositions;
@@ -49,9 +53,9 @@ public class Localization implements Logged {
                 dt);
 
         if (fakeGyro) {
-            odometry.update(new Rotation2d(simGyro.getCurrentOutput()), modulePositions.get());
+            estimator.update(new Rotation2d(simGyro.getCurrentOutput()), modulePositions.get());
         } else {
-            odometry.update(gyro.get(), modulePositions.get());
+            estimator.update(gyro.get(), modulePositions.get());
         }
 
         Robot.ui.setPose(getPoseEstimate());
@@ -59,19 +63,24 @@ public class Localization implements Logged {
 
     @Log.NT
     public Pose2d getPoseEstimate() {
-        return odometry.getPoseMeters();
+        return estimator.getEstimatedPosition();
     }
 
     public Rotation2d getRotationEstimate() {
-        return odometry.getPoseMeters().getRotation();
+        return estimator.getEstimatedPosition().getRotation();
     }
 
     public void setPose(Pose2d pose) {
         if (fakeGyro) {
-            odometry.resetPosition(
+            estimator.resetPosition(
                     new Rotation2d(simGyro.getCurrentOutput()), modulePositions.get(), pose);
         } else {
-            odometry.resetPosition(gyro.get(), modulePositions.get(), pose);
+            estimator.resetPosition(gyro.get(), modulePositions.get(), pose);
         }
+    }
+
+    public void addVisionMeasurement(EstimatedRobotPose estimate) {
+        estimator.addVisionMeasurement(
+                estimate.estimatedPose.toPose2d(), estimate.timestampSeconds);
     }
 }

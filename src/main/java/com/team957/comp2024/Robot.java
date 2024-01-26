@@ -2,17 +2,18 @@ package com.team957.comp2024;
 
 import com.choreo.lib.ChoreoTrajectory;
 import com.ctre.phoenix6.SignalLogger;
-import com.team957.comp2024.Constants.SwerveConstants;
+import com.team957.comp2024.Constants.PDHConstants;
 import com.team957.comp2024.commands.ChoreoFollowingFactory;
 import com.team957.comp2024.input.DefaultDriver;
 import com.team957.comp2024.input.DriverInput;
 import com.team957.comp2024.input.SimKeyboardDriver;
 import com.team957.comp2024.subsystems.IMU;
+import com.team957.comp2024.subsystems.PDH;
+import com.team957.comp2024.subsystems.Vision;
 import com.team957.comp2024.subsystems.swerve.Swerve;
 import com.team957.comp2024.util.SwarmChoreo;
 import com.team957.lib.util.DeltaTimeUtil;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -32,18 +33,18 @@ public class Robot extends TimedRobot implements Logged {
     private final IMU imu = new IMU();
 
     @SuppressWarnings("unused")
-    // private final PDH pdh = new
-    // PDH(PDHConstants.STARTING_SWITCHABLE_CHANNEL_STATE);
+    private final PDH pdh = new PDH(PDHConstants.STARTING_SWITCHABLE_CHANNEL_STATE);
 
     private final Swerve swerve = Swerve.getSwerve(isReal());
 
     private final DeltaTimeUtil dt = new DeltaTimeUtil();
 
-    private final Localization localization = new Localization(
-            swerve::getStates, swerve::getPositions, imu::getCorrectedAngle, !isReal());
+    private final Localization localization =
+            new Localization(
+                    swerve::getStates, swerve::getPositions, imu::getCorrectedAngle, !isReal());
 
-    private final ATPoseEstimation poseEstimation = new ATPoseEstimation(
-            SwerveConstants.KINEMATICS, swerve.getPositions(), imu.getCorrectedAngle(), isEnabled());
+    @SuppressWarnings("unused")
+    private final Vision vision = new Vision(localization::addVisionMeasurement);
 
     // done this way for monologue's sake
     private final ChoreoFollowingFactory trajectoryFollowing = new ChoreoFollowingFactory();
@@ -54,12 +55,13 @@ public class Robot extends TimedRobot implements Logged {
 
     private DriverInput input;
 
-    private final Command teleopDrive = swerve.getFieldRelativeControlCommand(
-            () -> {
-                return new ChassisSpeeds(
-                        input.swerveX(), input.swerveY(), input.swerveRot());
-            },
-            localization::getRotationEstimate);
+    private final Command teleopDrive =
+            swerve.getFieldRelativeControlCommand(
+                    () -> {
+                        return new ChassisSpeeds(
+                                input.swerveX(), input.swerveY(), input.swerveRot());
+                    },
+                    localization::getRotationEstimate);
 
     private Command autoCommand = new InstantCommand();
 
@@ -92,7 +94,6 @@ public class Robot extends TimedRobot implements Logged {
         Monologue.updateAll();
 
         localization.update();
-        poseEstimation.update();
     }
 
     @Override
@@ -116,10 +117,11 @@ public class Robot extends TimedRobot implements Logged {
             } else {
                 autoLoadFail.set(false);
 
-                autoCommand = Commands.runOnce(() -> localization.setPose(traj.getInitialPose()))
-                        .andThen(
-                                trajectoryFollowing.getPathFollowingCommand(
-                                        swerve, traj, localization::getPoseEstimate));
+                autoCommand =
+                        Commands.runOnce(() -> localization.setPose(traj.getInitialPose()))
+                                .andThen(
+                                        trajectoryFollowing.getPathFollowingCommand(
+                                                swerve, traj, localization::getPoseEstimate));
             }
         }
     }
