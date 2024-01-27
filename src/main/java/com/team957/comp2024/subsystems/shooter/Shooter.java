@@ -46,4 +46,5 @@ public abstract class Shooter implements Subsystem, Logged {
                     setShooterVoltage(voltage.get());
                 });
     }
+
 }

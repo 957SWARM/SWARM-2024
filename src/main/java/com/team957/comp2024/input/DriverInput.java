@@ -13,4 +13,7 @@ public interface DriverInput {
 
     // in radians/sec
     public double swerveRot();
+
+    // shoot
+    public boolean shoot();
 }
