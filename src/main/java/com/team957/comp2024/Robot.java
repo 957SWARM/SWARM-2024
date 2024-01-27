@@ -1,16 +1,23 @@
 package com.team957.comp2024;
 
+import org.littletonrobotics.Alert;
+import org.littletonrobotics.Alert.AlertType;
+import org.littletonrobotics.urcl.URCL;
+
 import com.choreo.lib.ChoreoTrajectory;
 import com.ctre.phoenix6.SignalLogger;
+import com.team957.comp2024.Constants.ShooterConstants;
 import com.team957.comp2024.commands.ChoreoFollowingFactory;
 import com.team957.comp2024.input.DefaultDriver;
 import com.team957.comp2024.input.DriverInput;
 import com.team957.comp2024.input.SimKeyboardDriver;
 import com.team957.comp2024.subsystems.IMU;
 import com.team957.comp2024.subsystems.intake.IntakePivot;
+import com.team957.comp2024.subsystems.shooter.Shooter;
 import com.team957.comp2024.subsystems.swerve.Swerve;
 import com.team957.comp2024.util.SwarmChoreo;
 import com.team957.lib.util.DeltaTimeUtil;
+
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DataLogManager;
@@ -20,11 +27,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import monologue.Logged;
 import monologue.Monologue;
-import org.littletonrobotics.Alert;
-import org.littletonrobotics.Alert.AlertType;
-import org.littletonrobotics.urcl.URCL;
 
 public class Robot extends TimedRobot implements Logged {
     // these need to be constructed so that
@@ -36,6 +41,8 @@ public class Robot extends TimedRobot implements Logged {
 
     private final Swerve swerve = Swerve.getSwerve(isReal());
 
+    private final Shooter shooter = Shooter.getShooter(isReal());
+
     private final IntakePivot intakePivot = IntakePivot.getIntakePivot(isReal());
 
     private final DeltaTimeUtil dt = new DeltaTimeUtil();
@@ -46,6 +53,8 @@ public class Robot extends TimedRobot implements Logged {
 
     // done this way for monologue's sake
     private final ChoreoFollowingFactory trajectoryFollowing = new ChoreoFollowingFactory();
+
+    private final DriverInput driver = new DefaultDriver();
 
     private final Alert autoLoadFail = new Alert("Auto path failed to load!", AlertType.ERROR);
 
@@ -65,6 +74,12 @@ public class Robot extends TimedRobot implements Logged {
                         return new ChassisSpeeds(xOutput, yOutput, rotOutput);
                     },
                     localization::getRotationEstimate);
+
+    // variables
+    private double shooterVoltage = 0;
+
+    //triggers
+    Trigger shoot;
 
     private final Command teleopIntake = intakePivot.goToSetpoint(() -> 1.0);
 
@@ -87,6 +102,11 @@ public class Robot extends TimedRobot implements Logged {
         Monologue.setupMonologue(this, "Robot", false, true);
 
         DriverStation.startDataLog(DataLogManager.getLog()); // same log used by monologue
+
+        // trigger definitions
+        shoot = new Trigger(() -> driver.shoot())
+            .toggleOnTrue(Commands.runOnce(() -> shooterVoltage = ShooterConstants.DEFAULT_VOLTAGE))
+            .toggleOnFalse(Commands.runOnce(() -> shooterVoltage = ShooterConstants.SHOOTING_VOLTAGE));
     }
 
     @Override
@@ -110,6 +130,7 @@ public class Robot extends TimedRobot implements Logged {
     @Override
     public void teleopInit() {
         teleopDrive.schedule();
+        shooter.defaultShooterControlCommand(() -> shooterVoltage).schedule();
 
         teleopIntake.schedule();
 
