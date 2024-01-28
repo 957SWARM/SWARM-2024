@@ -198,8 +198,7 @@ public class LimelightLib {
         }
     }
 
-    public static class LimelightTarget_Barcode {
-    }
+    public static class LimelightTarget_Barcode {}
 
     public static class LimelightTarget_Classifier {
 
@@ -227,8 +226,7 @@ public class LimelightLib {
         @JsonProperty("typ")
         public double ty_pixels;
 
-        public LimelightTarget_Classifier() {
-        }
+        public LimelightTarget_Classifier() {}
     }
 
     public static class LimelightTarget_Detector {
@@ -257,8 +255,7 @@ public class LimelightLib {
         @JsonProperty("typ")
         public double ty_pixels;
 
-        public LimelightTarget_Detector() {
-        }
+        public LimelightTarget_Detector() {}
     }
 
     public static class Results {
@@ -579,8 +576,7 @@ public class LimelightLib {
     }
 
     /**
-     * Gets the Pose2d for easy use with Odometry vision pose estimator
-     * (addVisionMeasurement)
+     * Gets the Pose2d for easy use with Odometry vision pose estimator (addVisionMeasurement)
      *
      * @param limelightName
      * @return
@@ -592,8 +588,7 @@ public class LimelightLib {
     }
 
     /**
-     * Gets the Pose2d for easy use with Odometry vision pose estimator
-     * (addVisionMeasurement)
+     * Gets the Pose2d for easy use with Odometry vision pose estimator (addVisionMeasurement)
      *
      * @param limelightName
      * @return
@@ -605,8 +600,7 @@ public class LimelightLib {
     }
 
     /**
-     * Gets the Pose2d for easy use with Odometry vision pose estimator
-     * (addVisionMeasurement)
+     * Gets the Pose2d for easy use with Odometry vision pose estimator (addVisionMeasurement)
      *
      * @param limelightName
      * @return
@@ -628,10 +622,7 @@ public class LimelightLib {
         setLimelightNTDouble(limelightName, "pipeline", pipelineIndex);
     }
 
-    /**
-     * The LEDs will be controlled by Limelight pipeline settings, and not by robot
-     * code.
-     */
+    /** The LEDs will be controlled by Limelight pipeline settings, and not by robot code. */
     public static void setLEDMode_PipelineControl(String limelightName) {
         setLimelightNTDouble(limelightName, "ledMode", 0);
     }
@@ -669,8 +660,7 @@ public class LimelightLib {
     }
 
     /**
-     * Sets the crop window. The crop window in the UI must be completely open for
-     * dynamic cropping
+     * Sets the crop window. The crop window in the UI must be completely open for dynamic cropping
      * to work.
      */
     public static void setCropWindow(
@@ -754,8 +744,9 @@ public class LimelightLib {
         long start = System.nanoTime();
         LimelightLib.LimelightResults results = new LimelightLib.LimelightResults();
         if (mapper == null) {
-            mapper = new ObjectMapper()
-                    .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+            mapper =
+                    new ObjectMapper()
+                            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         }
 
         try {

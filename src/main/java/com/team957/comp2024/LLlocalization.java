@@ -29,7 +29,8 @@ public class LLlocalization {
     private final IntegratingFilter simGyro = new IntegratingFilter(0);
     private final DeltaTimeUtil dtUtil = new DeltaTimeUtil();
 
-    private final AprilTagFieldLayout ATLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
+    private final AprilTagFieldLayout ATLayout =
+            AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
 
     private Pose2d visionPose2d = new Pose2d();
 
@@ -48,20 +49,22 @@ public class LLlocalization {
         this.gyro = gyro;
         this.robotReal = robotReal;
 
-        poseEstimator = new SwerveDrivePoseEstimator(
-                kinematics,
-                gyro.get(),
-                modulePositions.get(),
-                new Pose2d(),
-                VisionConstants.STATE_STDS,
-                VisionConstants.VISION_STDS);
+        poseEstimator =
+                new SwerveDrivePoseEstimator(
+                        kinematics,
+                        gyro.get(),
+                        modulePositions.get(),
+                        new Pose2d(),
+                        VisionConstants.STATE_STDS,
+                        VisionConstants.VISION_STDS);
     }
 
     public void update() {
         double dt = dtUtil.getTimeSecondsSinceLastCall();
 
         simGyro.calculate(
-                SwerveConstants.KINEMATICS.toChassisSpeeds(moduleStates.get()).omegaRadiansPerSecond,
+                SwerveConstants.KINEMATICS.toChassisSpeeds(moduleStates.get())
+                        .omegaRadiansPerSecond,
                 dt);
 
         if (robotReal) {
@@ -79,19 +82,22 @@ public class LLlocalization {
 
             double[] botpose = LimelightLib.getBotPose_wpiBlue(limelightName);
 
-            Rotation3d rot3 = new Rotation3d(
-                    Units.degreesToRadians(botpose[3]),
-                    Units.degreesToRadians(botpose[4]),
-                    Units.degreesToRadians(botpose[5]));
+            Rotation3d rot3 =
+                    new Rotation3d(
+                            Units.degreesToRadians(botpose[3]),
+                            Units.degreesToRadians(botpose[4]),
+                            Units.degreesToRadians(botpose[5]));
 
             Pose3d visionPose = new Pose3d(botpose[0], botpose[1], botpose[2], rot3);
 
             if (visionPose != null && LimelightLib.getTV(limelightName)) {
                 if (LimelightLib.getTA(limelightName) > VisionConstants.TARGET_AREA_CUTOFF) {
-                    visionPose2d = new Pose2d(visionPose.getTranslation().toTranslation2d(), gyro.get());
-                    double timeStampSeconds = Timer.getFPGATimestamp()
-                            - (LimelightLib.getLatency_Pipeline(limelightName) / 1000.0)
-                            - (LimelightLib.getLatency_Capture(limelightName) / 1000.0);
+                    visionPose2d =
+                            new Pose2d(visionPose.getTranslation().toTranslation2d(), gyro.get());
+                    double timeStampSeconds =
+                            Timer.getFPGATimestamp()
+                                    - (LimelightLib.getLatency_Pipeline(limelightName) / 1000.0)
+                                    - (LimelightLib.getLatency_Capture(limelightName) / 1000.0);
 
                     System.out.println(visionPose2d.getX() + " || " + visionPose2d.getY());
 
@@ -113,7 +119,8 @@ public class LLlocalization {
         if (robotReal) {
             poseEstimator.resetPosition(gyro.get(), modulePositions.get(), pose);
         } else {
-            poseEstimator.resetPosition(new Rotation2d(simGyro.getCurrentOutput()), modulePositions.get(), pose);
+            poseEstimator.resetPosition(
+                    new Rotation2d(simGyro.getCurrentOutput()), modulePositions.get(), pose);
         }
     }
 }
