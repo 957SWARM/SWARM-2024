@@ -12,7 +12,6 @@ import com.team957.comp2024.subsystems.swerve.Swerve;
 import com.team957.comp2024.util.SwarmChoreo;
 import com.team957.lib.util.DeltaTimeUtil;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -39,11 +38,12 @@ public class Robot extends TimedRobot implements Logged {
 
     private final DeltaTimeUtil dt = new DeltaTimeUtil();
 
-    private final Localization localization = new Localization(
-            swerve::getStates, swerve::getPositions, imu::getCorrectedAngle, !isReal());
-
-    private final ATPoseEstimation poseEstimation = new ATPoseEstimation(
-            SwerveConstants.KINEMATICS, swerve.getPositions(), imu.getCorrectedAngle(), isEnabled());
+    private final LLlocalization poseEstimation = new LLlocalization(
+            SwerveConstants.KINEMATICS,
+            swerve::getStates,
+            swerve::getPositions,
+            imu::getCorrectedAngle,
+            isReal());
 
     // done this way for monologue's sake
     private final ChoreoFollowingFactory trajectoryFollowing = new ChoreoFollowingFactory();
@@ -59,7 +59,7 @@ public class Robot extends TimedRobot implements Logged {
                 return new ChassisSpeeds(
                         input.swerveX(), input.swerveY(), input.swerveRot());
             },
-            localization::getRotationEstimate);
+            poseEstimation::getRotationEstimate);
 
     private Command autoCommand = new InstantCommand();
 
@@ -91,8 +91,9 @@ public class Robot extends TimedRobot implements Logged {
         Monologue.setFileOnly(DriverStation.isFMSAttached());
         Monologue.updateAll();
 
-        localization.update();
         poseEstimation.update();
+
+        ui.setPose(poseEstimation.getPoseEstimate());
     }
 
     @Override
@@ -116,10 +117,10 @@ public class Robot extends TimedRobot implements Logged {
             } else {
                 autoLoadFail.set(false);
 
-                autoCommand = Commands.runOnce(() -> localization.setPose(traj.getInitialPose()))
+                autoCommand = Commands.runOnce(() -> poseEstimation.setPose(traj.getInitialPose()))
                         .andThen(
                                 trajectoryFollowing.getPathFollowingCommand(
-                                        swerve, traj, localization::getPoseEstimate));
+                                        swerve, traj, poseEstimation::getPoseEstimate));
             }
         }
     }
