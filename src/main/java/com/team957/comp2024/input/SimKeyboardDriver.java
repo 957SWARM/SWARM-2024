@@ -27,4 +27,9 @@ public class SimKeyboardDriver implements DriverInput {
     public double swerveRot() {
         return maxRotationalSpeed * controller.getLeftTriggerAxis();
     }
+
+    @Override
+    public boolean shoot() {
+        return false;
+    }
 }
