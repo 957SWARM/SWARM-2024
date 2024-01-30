@@ -44,7 +44,7 @@ public class Constants {
 
         public static final double WHEEL_RADIUS_METERS = Units.inchesToMeters(1.5);
 
-        public static final double MAX_WHEEL_SPEED_METERS_PER_SECOND = 4;
+        public static final double MAX_WHEEL_SPEED_METERS_PER_SECOND = 8;
 
         public static final Translation2d FRONT_LEFT_TRANSLATION =
                 new Translation2d(0.3112, 0.2604);
