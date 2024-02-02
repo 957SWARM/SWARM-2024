@@ -443,6 +443,10 @@ public class LimelightLib {
         return getLimelightNTDouble(limelightName, "ta");
     }
 
+    public static double getTHOR(String limelightName) {
+        return getLimelightNTDouble(limelightName, "thor");
+    }
+
     public static double getLatency_Pipeline(String limelightName) {
         return getLimelightNTDouble(limelightName, "tl");
     }

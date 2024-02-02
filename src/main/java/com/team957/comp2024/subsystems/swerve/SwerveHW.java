@@ -87,7 +87,8 @@ public class SwerveHW extends Swerve {
             steerOnboardControl = false;
 
             steer.setVoltage(-UtilityMath.clamp(Constants.MiscConstants.saturationVoltage, volts));
-            // I honestly have no idea what this code does but it was in the bunnybots swerve and
+            // I honestly have no idea what this code does but it was in the bunnybots
+            // swerve and
             // that worked fine???
         }
 

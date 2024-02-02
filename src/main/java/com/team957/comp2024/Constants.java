@@ -137,21 +137,26 @@ public class Constants {
 
         public static final boolean VISION_POSE_ESTIMATION_ENABLED = true;
 
+        public static final double LL_FOV_DEGREES = (29.8 * 2);
+        public static final double LL_FOV_PIXELS = 320;
+
+        public static final double NOTE_WIDTH = 14; // INCHES, SHOULD PROBABLY CHANGE TO METERS
+
         public static final Vector<N3> STATE_STDS =
                 VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5));
         public static final Vector<N3> VISION_STDS =
                 VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(30));
 
         public static final Transform3d LL1_TO_CENTER =
-                new Transform3d(new Translation3d(0, 0, 0), new Rotation3d(0, 0, 0));
+                new Transform3d(
+                        new Translation3d(.2159, -.2032, 0.381),
+                        new Rotation3d(
+                                0, 0, 0)); // YAW IN DEGREES, SHOULD PRBABLY CHANGE TO RADIANS
         public static final Transform3d LL2_TO_CENTER =
                 new Transform3d(new Translation3d(0, 0, 0), new Rotation3d(0, 0, 0));
 
-        // public static final PoseStrategy POSE_STRATEGY =
-        // PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR;
-        // public static final PoseStrategy POSE_FALLBACK_STRATEGY =
-        // PoseStrategy.LOWEST_AMBIGUITY;
-
         public static final double TARGET_AREA_CUTOFF = 0.2; // PERCENT OF SCREEN
+
+        public static final double TARGETING_KP = 0.1;
     }
 }

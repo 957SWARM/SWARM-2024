@@ -5,6 +5,7 @@ import com.ctre.phoenix6.SignalLogger;
 import com.team957.comp2024.Constants.PDHConstants;
 import com.team957.comp2024.Constants.SwerveConstants;
 import com.team957.comp2024.commands.ChoreoFollowingFactory;
+import com.team957.comp2024.commands.NoteTargetingCommand;
 import com.team957.comp2024.input.DefaultDriver;
 import com.team957.comp2024.input.DriverInput;
 import com.team957.comp2024.input.SimKeyboardDriver;
@@ -46,6 +47,8 @@ public class Robot extends TimedRobot implements Logged {
                     swerve::getPositions,
                     imu::getCorrectedAngle,
                     isReal());
+
+    NoteTargetingCommand testTargetingCommand = new NoteTargetingCommand(swerve, "limelight");
 
     // done this way for monologue's sake
     private final ChoreoFollowingFactory trajectoryFollowing = new ChoreoFollowingFactory();
@@ -94,9 +97,14 @@ public class Robot extends TimedRobot implements Logged {
         Monologue.setFileOnly(DriverStation.isFMSAttached());
         Monologue.updateAll();
 
-        poseEstimation.update();
+        // poseEstimation.update();
 
-        ui.setPose(poseEstimation.getPoseEstimate());
+        // ui.setPose(poseEstimation.getPoseEstimate());
+
+        System.out.println(
+                testTargetingCommand.getNotePose2d().getX()
+                        + " || "
+                        + testTargetingCommand.getNotePose2d().getY());
     }
 
     @Override
