@@ -141,6 +141,14 @@ public class Constants {
         public static final double PIVOT_TO_TIP_METERS = Units.inchesToMeters(14);
     }
 
+    public static final class ClimberConstants{
+        // wild guess
+        public static final double MAX_EXTENSION = .5;
+        public static final double STANDARD_VOLTAGE = 6;
+        // CAN ID not set
+        public static final int MOTOR_CANID = 0;
+    }
+
     public static final class AlertConstants {
         public static final double OVERCURRENT_THRESHOLD_AMPS = 120;
 
