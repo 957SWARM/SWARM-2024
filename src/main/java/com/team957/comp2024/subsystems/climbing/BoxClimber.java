@@ -1,7 +1,7 @@
-package com.team957.comp2024.subsystems.boxClimber;
+package com.team957.comp2024.subsystems.climbing;
 
 import com.team957.comp2024.Constants;
-import com.team957.comp2024.Constants.ClimberConstants;
+import com.team957.comp2024.Constants.BoxClimberConstants;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
@@ -27,7 +27,7 @@ public abstract class BoxClimber implements Subsystem, Logged{
     public Command raiseCommand(){
         return run(
             () -> {
-                setMotorVoltage(ClimberConstants.STANDARD_VOLTAGE);
+                setMotorVoltage(BoxClimberConstants.STANDARD_VOLTAGE);
             }
         );
     }
@@ -36,9 +36,13 @@ public abstract class BoxClimber implements Subsystem, Logged{
     public Command lowerCommand(){
         return run(
             () -> {
-                setMotorVoltage(-ClimberConstants.STANDARD_VOLTAGE);
+                setMotorVoltage(-BoxClimberConstants.STANDARD_VOLTAGE);
             }
         );
+    }
+
+    public static BoxClimber getBoxClimber(boolean isReal){
+        return (isReal) ? new BoxClimberHW() : new BoxClimberSim();
     }
 }
 //miles was here
