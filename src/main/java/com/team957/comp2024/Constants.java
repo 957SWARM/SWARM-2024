@@ -159,6 +159,16 @@ public class Constants {
         public static final boolean MOTOR_INVERTED = false;
     }
 
+    public static final class IntakeRollerConstants {
+        // CAN ID not set as of 2/1/2024
+        public static final int ROLLER_CANID = 0;
+        public static final int CURRENT_LIMIT = 30;
+        public static final boolean ROLLER_INVERTED = false;
+
+        public static final double INTAKE_VOLTAGE = 6;
+        public static final double PUKE_VOLTAGE = -INTAKE_VOLTAGE;
+    }
+
     public static final class AlertConstants {
         public static final double OVERCURRENT_THRESHOLD_AMPS = 120;
 
