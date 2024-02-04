@@ -14,6 +14,15 @@ public abstract class BoxClimber implements Subsystem, Logged{
 
     public abstract double getMotorAmps();
 
+    protected BoxClimber(){
+        register();
+    }
+
+    public static BoxClimber getBoxClimber(boolean isReal){
+        // change second BoxClimberHW() to BoxClimberSim() when sim class is created
+        return (isReal) ? new BoxClimberHW() : new BoxClimberHW();
+    }
+
     // puts the climber in rest
     public Command idleCommand(){
         return run(
@@ -41,8 +50,5 @@ public abstract class BoxClimber implements Subsystem, Logged{
         );
     }
 
-    public static BoxClimber getBoxClimber(boolean isReal){
-        return (isReal) ? new BoxClimberHW() : new BoxClimberSim();
-    }
 }
 //miles was here
