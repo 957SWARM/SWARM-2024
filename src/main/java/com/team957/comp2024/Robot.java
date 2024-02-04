@@ -1,24 +1,20 @@
 package com.team957.comp2024;
 
-import org.littletonrobotics.Alert;
-import org.littletonrobotics.Alert.AlertType;
-import org.littletonrobotics.urcl.URCL;
-
 import com.choreo.lib.ChoreoTrajectory;
 import com.ctre.phoenix6.SignalLogger;
+import com.team957.comp2024.Constants.PDHConstants;
 import com.team957.comp2024.Constants.ShooterConstants;
 import com.team957.comp2024.commands.ChoreoFollowingFactory;
 import com.team957.comp2024.input.DefaultDriver;
 import com.team957.comp2024.input.DriverInput;
 import com.team957.comp2024.input.SimKeyboardDriver;
 import com.team957.comp2024.subsystems.IMU;
+import com.team957.comp2024.subsystems.PDH;
 import com.team957.comp2024.subsystems.intake.IntakePivot;
 import com.team957.comp2024.subsystems.shooter.Shooter;
 import com.team957.comp2024.subsystems.swerve.Swerve;
 import com.team957.comp2024.util.SwarmChoreo;
 import com.team957.lib.util.DeltaTimeUtil;
-
-import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -30,6 +26,9 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import monologue.Logged;
 import monologue.Monologue;
+import org.littletonrobotics.Alert;
+import org.littletonrobotics.Alert.AlertType;
+import org.littletonrobotics.urcl.URCL;
 
 public class Robot extends TimedRobot implements Logged {
     // these need to be constructed so that
@@ -37,7 +36,7 @@ public class Robot extends TimedRobot implements Logged {
     private final IMU imu = new IMU();
 
     @SuppressWarnings("unused")
-    // private final PDH pdh = new PDH(PDHConstants.STARTING_SWITCHABLE_CHANNEL_STATE);
+    private final PDH pdh = new PDH(PDHConstants.STARTING_SWITCHABLE_CHANNEL_STATE);
 
     private final Swerve swerve = Swerve.getSwerve(isReal());
 
@@ -59,26 +58,20 @@ public class Robot extends TimedRobot implements Logged {
     private final Alert autoLoadFail = new Alert("Auto path failed to load!", AlertType.ERROR);
 
     private DriverInput input;
-    private SlewRateLimiter x = new SlewRateLimiter(.25);
-    private SlewRateLimiter y = new SlewRateLimiter(.25);
-    private SlewRateLimiter rot = new SlewRateLimiter(.25);
-
-    private double xOutput = 0;
-    private double yOutput = 0;
-    private double rotOutput = 0;
 
     // input.swerveX(), input.swerveY(), input.swerveRot()
     private final Command teleopDrive =
             swerve.getFieldRelativeControlCommand(
                     () -> {
-                        return new ChassisSpeeds(xOutput, yOutput, rotOutput);
+                        return new ChassisSpeeds(
+                                input.swerveX(), input.swerveY(), input.swerveRot());
                     },
                     localization::getRotationEstimate);
 
     // variables
     private double shooterVoltage = 0;
 
-    //triggers
+    // triggers
     Trigger shoot;
 
     private final Command teleopIntake = intakePivot.goToSetpoint(() -> 1.0);
@@ -104,9 +97,14 @@ public class Robot extends TimedRobot implements Logged {
         DriverStation.startDataLog(DataLogManager.getLog()); // same log used by monologue
 
         // trigger definitions
-        shoot = new Trigger(() -> driver.shoot())
-            .toggleOnTrue(Commands.runOnce(() -> shooterVoltage = ShooterConstants.DEFAULT_VOLTAGE))
-            .toggleOnFalse(Commands.runOnce(() -> shooterVoltage = ShooterConstants.SHOOTING_VOLTAGE));
+        shoot =
+                new Trigger(() -> driver.shoot())
+                        .toggleOnTrue(
+                                Commands.runOnce(
+                                        () -> shooterVoltage = ShooterConstants.DEFAULT_VOLTAGE))
+                        .toggleOnFalse(
+                                Commands.runOnce(
+                                        () -> shooterVoltage = ShooterConstants.SHOOTING_VOLTAGE));
     }
 
     @Override
@@ -117,12 +115,6 @@ public class Robot extends TimedRobot implements Logged {
 
         Monologue.setFileOnly(DriverStation.isFMSAttached());
         Monologue.updateAll();
-
-        // input values slew-limited before being passed into teleopDrive
-
-        xOutput = input.swerveX();
-        yOutput = input.swerveY();
-        rotOutput = input.swerveRot();
 
         localization.update();
     }
