@@ -88,6 +88,7 @@ public abstract class Swerve implements Subsystem, Logged {
         public void setDriveSetpointMPS(double metersPerSecond) {
             setDriveSetpoint(
                     metersPerSecond
+                            * Math.PI
                             / (SwerveConstants.WHEEL_RADIUS_METERS)); // got rid of dividing by 2pi
             // System.out.println("MPS: " + metersPerSecond);
         }

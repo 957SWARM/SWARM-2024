@@ -15,6 +15,7 @@ import com.team957.comp2024.subsystems.swerve.Swerve;
 import com.team957.comp2024.util.SwarmChoreo;
 import com.team957.lib.util.DeltaTimeUtil;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -22,6 +23,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import monologue.Logged;
 import monologue.Monologue;
 import org.littletonrobotics.Alert;
@@ -48,7 +50,16 @@ public class Robot extends TimedRobot implements Logged {
                     imu::getCorrectedAngle,
                     isReal());
 
-    NoteTargetingCommand testTargetingCommand = new NoteTargetingCommand(swerve, "limelight");
+    private DriverInput input;
+
+    NoteTargetingCommand testTargetingCommand =
+            new NoteTargetingCommand(swerve, poseEstimation, input, "limelight");
+
+    private final Command trackNoteCommand =
+            testTargetingCommand.getTrackNoteCommand(
+                    () -> input.swerveX(), () -> input.swerveY(), () -> imu.getCorrectedAngle());
+
+    private Trigger trackNoteTrigger;
 
     // done this way for monologue's sake
     private final ChoreoFollowingFactory trajectoryFollowing = new ChoreoFollowingFactory();
@@ -56,8 +67,6 @@ public class Robot extends TimedRobot implements Logged {
     public static final UI ui = new UI();
 
     private final Alert autoLoadFail = new Alert("Auto path failed to load!", AlertType.ERROR);
-
-    private DriverInput input;
 
     private final Command teleopDrive =
             swerve.getFieldRelativeControlCommand(
@@ -86,6 +95,12 @@ public class Robot extends TimedRobot implements Logged {
         Monologue.setupMonologue(this, "Robot", false, true);
 
         DriverStation.startDataLog(DataLogManager.getLog()); // same log used by monologue
+
+        /*
+         * trackNoteTrigger = new Trigger(() -> input.enableTracking())
+         * .whileFalse(teleopDrive)
+         * .whileTrue(trackNoteCommand);
+         */
     }
 
     @Override
@@ -99,17 +114,21 @@ public class Robot extends TimedRobot implements Logged {
 
         // poseEstimation.update();
 
-        // ui.setPose(poseEstimation.getPoseEstimate());
+        // ui.setPose(testTargetingCommand.getNotePose2dField());
 
         System.out.println(
-                testTargetingCommand.getNotePose2d().getX()
+                testTargetingCommand.getNotePose2dRobot().getX()
                         + " || "
-                        + testTargetingCommand.getNotePose2d().getY());
+                        + testTargetingCommand.getNotePose2dRobot().getY()
+                        + " || "
+                        + Units.radiansToDegrees(testTargetingCommand.getTargetAngle()));
     }
 
     @Override
     public void teleopInit() {
-        teleopDrive.schedule();
+        // teleopDrive.schedule();
+
+        trackNoteCommand.schedule();
 
         autoLoadFail.set(false);
     }
