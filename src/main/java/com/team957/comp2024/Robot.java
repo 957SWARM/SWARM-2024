@@ -5,7 +5,7 @@ import com.ctre.phoenix6.SignalLogger;
 import com.team957.comp2024.Constants.PDHConstants;
 import com.team957.comp2024.Constants.SwerveConstants;
 import com.team957.comp2024.commands.ChoreoFollowingFactory;
-import com.team957.comp2024.commands.NoteTargetingCommand;
+import com.team957.comp2024.commands.NoteTargeting;
 import com.team957.comp2024.input.DefaultDriver;
 import com.team957.comp2024.input.DriverInput;
 import com.team957.comp2024.input.SimKeyboardDriver;
@@ -15,7 +15,6 @@ import com.team957.comp2024.subsystems.swerve.Swerve;
 import com.team957.comp2024.util.SwarmChoreo;
 import com.team957.lib.util.DeltaTimeUtil;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -42,24 +41,21 @@ public class Robot extends TimedRobot implements Logged {
 
     private final DeltaTimeUtil dt = new DeltaTimeUtil();
 
-    private final LLlocalization poseEstimation =
-            new LLlocalization(
-                    SwerveConstants.KINEMATICS,
-                    swerve::getStates,
-                    swerve::getPositions,
-                    imu::getCorrectedAngle,
-                    isReal());
+    private final LLlocalization poseEstimation = new LLlocalization(
+            SwerveConstants.KINEMATICS,
+            swerve::getStates,
+            swerve::getPositions,
+            imu::getCorrectedAngle,
+            isReal());
 
     private DriverInput input;
 
-    NoteTargetingCommand testTargetingCommand =
-            new NoteTargetingCommand(swerve, poseEstimation, input, "limelight");
+    NoteTargeting noteTargeting = new NoteTargeting(swerve, poseEstimation, "limelight");
 
-    private final Command trackNoteCommand =
-            testTargetingCommand.getTrackNoteCommand(
-                    () -> input.swerveX(), () -> input.swerveY(), () -> imu.getCorrectedAngle());
+    private final Command noteTrackCommand = noteTargeting.getNoteTrackCommand(
+            () -> input.swerveX(), () -> input.swerveY(), () -> input.swerveRot());
 
-    private Trigger trackNoteTrigger;
+    private Trigger noteTrackingTrigger = new Trigger(() -> input.enableTracking() && noteTargeting.checkTarget());
 
     // done this way for monologue's sake
     private final ChoreoFollowingFactory trajectoryFollowing = new ChoreoFollowingFactory();
@@ -68,13 +64,12 @@ public class Robot extends TimedRobot implements Logged {
 
     private final Alert autoLoadFail = new Alert("Auto path failed to load!", AlertType.ERROR);
 
-    private final Command teleopDrive =
-            swerve.getFieldRelativeControlCommand(
-                    () -> {
-                        return new ChassisSpeeds(
-                                input.swerveX(), input.swerveY(), input.swerveRot());
-                    },
-                    poseEstimation::getRotationEstimate);
+    private final Command teleopDrive = swerve.getFieldRelativeControlCommand(
+            () -> {
+                return new ChassisSpeeds(
+                        input.swerveX(), input.swerveY(), input.swerveRot());
+            },
+            poseEstimation::getRotationEstimate);
 
     private Command autoCommand = new InstantCommand();
 
@@ -112,23 +107,15 @@ public class Robot extends TimedRobot implements Logged {
         Monologue.setFileOnly(DriverStation.isFMSAttached());
         Monologue.updateAll();
 
-        // poseEstimation.update();
+        poseEstimation.update();
 
-        // ui.setPose(testTargetingCommand.getNotePose2dField());
-
-        System.out.println(
-                testTargetingCommand.getNotePose2dRobot().getX()
-                        + " || "
-                        + testTargetingCommand.getNotePose2dRobot().getY()
-                        + " || "
-                        + Units.radiansToDegrees(testTargetingCommand.getTargetAngle()));
     }
 
     @Override
     public void teleopInit() {
-        // teleopDrive.schedule();
 
-        trackNoteCommand.schedule();
+        swerve.setDefaultCommand(teleopDrive);
+        noteTrackingTrigger.whileTrue(noteTrackCommand);
 
         autoLoadFail.set(false);
     }
@@ -147,11 +134,10 @@ public class Robot extends TimedRobot implements Logged {
             } else {
                 autoLoadFail.set(false);
 
-                autoCommand =
-                        Commands.runOnce(() -> poseEstimation.setPose(traj.getInitialPose()))
-                                .andThen(
-                                        trajectoryFollowing.getPathFollowingCommand(
-                                                swerve, traj, poseEstimation::getPoseEstimate));
+                autoCommand = Commands.runOnce(() -> poseEstimation.setPose(traj.getInitialPose()))
+                        .andThen(
+                                trajectoryFollowing.getPathFollowingCommand(
+                                        swerve, traj, poseEstimation::getPoseEstimate));
             }
         }
     }

@@ -135,7 +135,7 @@ public class Constants {
 
     public static final class VisionConstants {
 
-        public static final boolean VISION_POSE_ESTIMATION_ENABLED = true;
+        public static final boolean VISION_POSE_ESTIMATION_ENABLED = false;
 
         public static final double LL_FOV_DEGREES = (29.8 * 2);
         public static final double LL_FOV_PIXELS = 320;
@@ -153,9 +153,12 @@ public class Constants {
                 new Transform3d(new Translation3d(0, 0, 0), new Rotation3d(0, 0, 0));
 
         public static final double TARGET_AREA_CUTOFF = 0.2; // PERCENT OF SCREEN
-        public static final double TARGET_TX_CUTOFF = 20; // DEGREES
+        public static final double TARGET_TX_CUTOFF = 24; // DEGREES
+        public static final double TARGET_THOR_CUTOFF = 70; // PIXELS
 
-        public static final double TARGETING_KP = 5;
-        public static final double TARGETING_MIN_COMMAND = 0.05;
+        public static final double TRACKING_KP = 5;
+        public static final double TRACKING_MIN_COMMAND = 0.05;
+        public static final double TRACKING_STOP_THRESHOLD = 0.01; // RADIANS
+        public static final double MIN_COMMAND_TRESHOLD = 0.02; // RADIANS
     }
 }
