@@ -16,4 +16,25 @@ public interface DriverInput {
 
     // in true or false
     public boolean enableTracking();
+
+    // shoot
+    public boolean shoot();
+
+    // pivots intake
+    public boolean intake();
+
+    // raise hook
+    public boolean raiseHook();
+
+    // lower hooK?
+    public boolean lowerHook();
+
+    // winch upwards!
+    public boolean climb();
+
+    // take the note in
+    public boolean intakeNote();
+
+    // "puke" the note out
+    public boolean puke();
 }

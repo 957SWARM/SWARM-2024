@@ -1,5 +1,6 @@
 package com.team957.comp2024.input;
 
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.XboxController;
 
 public class DefaultDriver implements DriverInput {
@@ -11,19 +12,23 @@ public class DefaultDriver implements DriverInput {
 
     private final XboxController xboxController;
 
-    public DefaultDriver() {
+    private final SlewRateLimiter xLimiter = new SlewRateLimiter(20);
+    private final SlewRateLimiter yLimiter = new SlewRateLimiter(20);
+    private final SlewRateLimiter angularLimiter = new SlewRateLimiter(20);
 
+    public DefaultDriver() {
         xboxController = new XboxController(0);
     }
 
     @Override
     public double swerveX() {
-        return LIN_MAX_SPEED * xboxController.getLeftY();
+        // consistent polling rate so this is fine??
+        return xLimiter.calculate(LIN_MAX_SPEED * xboxController.getLeftY());
     }
 
     @Override
     public double swerveY() {
-        return LIN_MAX_SPEED * xboxController.getLeftX();
+        return yLimiter.calculate(LIN_MAX_SPEED * xboxController.getLeftX());
     }
 
     @Override
@@ -33,7 +38,42 @@ public class DefaultDriver implements DriverInput {
 
     @Override
     public double swerveRot() {
-        return ROT_MAX_SPEED * xboxController.getRightX();
+        return angularLimiter.calculate(ROT_MAX_SPEED * xboxController.getRightX());
+    }
+
+    @Override
+    public boolean shoot() {
+        return false;
+    }
+
+    @Override
+    public boolean intake() {
+        return false;
+    }
+
+    @Override
+    public boolean raiseHook() {
+        return false;
+    }
+
+    @Override
+    public boolean lowerHook() {
+        return false;
+    }
+
+    @Override
+    public boolean climb(){
+        return false;
+    }
+
+    @Override
+    public boolean intakeNote() {
+        return false;
+    }
+
+    @Override
+    public boolean puke() {
+        return false;
     }
 
     @Override

@@ -32,4 +32,40 @@ public class SimKeyboardDriver implements DriverInput {
     public boolean enableTracking() {
         return controller.getRightBumper();
     }
+
+    @Override
+    public boolean shoot() {
+        return false;
+    }
+
+    @Override
+    public boolean intake() {
+        return false;
+    }
+
+    @Override
+    public boolean raiseHook() {
+        return false;
+    }
+
+    @Override
+    public boolean lowerHook() {
+        return false;
+    }
+
+    @Override
+    public boolean climb() {
+        return false;
+    }
+
+    @Override
+    public boolean intakeNote() {
+        return false;
+    }
+
+    @Override
+    public boolean puke() {
+        return false;
+    }
+
 }

@@ -56,9 +56,10 @@ public class Constants {
                                 BACK_RIGHT_TRANSLATION,
                                 BACK_LEFT_TRANSLATION);
 
-                public static final double ONBOARD_DRIVE_CONTROLLER_KP = 0.0001; // 0.0004
+                public static final double ONBOARD_DRIVE_CONTROLLER_KP = 0.00003;
                 public static final double ONBOARD_DRIVE_CONTROLLER_KI = 0;
                 public static final double ONBOARD_DRIVE_CONTROLLER_KD = 0;
+                public static final double ONBOARD_DRIVE_CONTROLLER_KFF = 0.000125;
 
                 public static final double ONBOARD_STEER_CONTROLLER_KP = 2;
                 public static final double ONBOARD_STEER_CONTROLLER_KI = 0;
@@ -88,6 +89,23 @@ public class Constants {
                 public static final boolean BACK_RIGHT_DRIVE_INVERTED = true;
         }
 
+        public static final class ShooterConstants {
+                // CANIDs not set yet as of 1/25/2024
+                public static final int LEFT_CANID = 0;
+                public static final int RIGHT_CANID = 0;
+
+                public static final int CURRENT_LIMIT = 30;
+                public static final DCMotor SHOOTER_MOTOR = DCMotor.getNEO(1);
+                public static final double SHOOTER_REDUCTION = 1;
+                public static final double DEFAULT_VOLTAGE = 0;
+                public static final double SHOOTING_VOLTAGE = 11.0;
+
+                public static final boolean leftMotorInverted = false;
+                public static final boolean rightMotorInverted = true;
+                public static final boolean leftEncoderInverted = false;
+                public static final boolean rightEncoderInverted = true;
+        }
+
         public static final class AutoConstants {
                 public static final PIDConstants LINEAR_PATHFINDING_GAINS = new PIDConstants(5, 0, 0);
                 public static final PIDConstants ROTATIONAL_PATHFINDING_GAINS = new PIDConstants(5, 0, 0);
@@ -113,9 +131,43 @@ public class Constants {
                 public static final double MAX_ANGLE_RADIANS = Units.degreesToRadians(135);
 
                 public static final double PLANT_KS = 1;
-                public static final double PLANT_KV = 1;
-                public static final double PLANT_KA = 1;
-                public static final double PLANT_KG = 1;
+                public static final double PLANT_KV = 0.88;
+                public static final double PLANT_KA = 0.001;
+                public static final double PLANT_KG = 0.22;
+
+                public static final DCMotor DRIVE_MOTOR = DCMotor.getNEO(1);
+
+                public static final GearRatioHelper GEARING_HELPER = new GearRatioHelper(1, 45);
+
+                public static final double PIVOT_TO_TIP_METERS = Units.inchesToMeters(14);
+        }
+
+        public static final class BoxClimberConstants {
+                public static final double STANDARD_VOLTAGE = 6;
+                // CAN ID not set
+                public static final int MOTOR_CANID = 0;
+                public static final int CURRENT_LIMIT = 40;
+                // positive = going up. negative = going down.
+                public static final boolean MOTOR_INVERTED = false;
+        }
+
+        public static final class WinchConstants {
+                // CAN ID not set
+                public static final int MOTOR_CANID = 0;
+                public static final double STANDARD_VOLTAGE = 6;
+                public static final int CURRENT_LIMIT = 40;
+                // positive = going up. negative = going down.
+                public static final boolean MOTOR_INVERTED = false;
+        }
+
+        public static final class IntakeRollerConstants {
+                // CAN ID not set as of 2/1/2024
+                public static final int ROLLER_CANID = 0;
+                public static final int CURRENT_LIMIT = 30;
+                public static final boolean ROLLER_INVERTED = false;
+
+                public static final double INTAKE_VOLTAGE = 6;
+                public static final double PUKE_VOLTAGE = -INTAKE_VOLTAGE;
         }
 
         public static final class AlertConstants {
