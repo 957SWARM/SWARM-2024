@@ -1,5 +1,9 @@
 package com.team957.comp2024;
 
+import org.littletonrobotics.Alert;
+import org.littletonrobotics.Alert.AlertType;
+import org.littletonrobotics.urcl.URCL;
+
 import com.choreo.lib.ChoreoTrajectory;
 import com.ctre.phoenix6.SignalLogger;
 import com.team957.comp2024.Constants.PDHConstants;
@@ -10,11 +14,15 @@ import com.team957.comp2024.input.DriverInput;
 import com.team957.comp2024.input.SimKeyboardDriver;
 import com.team957.comp2024.subsystems.IMU;
 import com.team957.comp2024.subsystems.PDH;
+import com.team957.comp2024.subsystems.climbing.BoxClimber;
+import com.team957.comp2024.subsystems.climbing.Winch;
 import com.team957.comp2024.subsystems.intake.IntakePivot;
+import com.team957.comp2024.subsystems.intake.IntakeRoller;
 import com.team957.comp2024.subsystems.shooter.Shooter;
 import com.team957.comp2024.subsystems.swerve.Swerve;
 import com.team957.comp2024.util.SwarmChoreo;
 import com.team957.lib.util.DeltaTimeUtil;
+
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -26,9 +34,6 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import monologue.Logged;
 import monologue.Monologue;
-import org.littletonrobotics.Alert;
-import org.littletonrobotics.Alert.AlertType;
-import org.littletonrobotics.urcl.URCL;
 
 public class Robot extends TimedRobot implements Logged {
     // these need to be constructed so that
@@ -43,6 +48,12 @@ public class Robot extends TimedRobot implements Logged {
     private final Shooter shooter = Shooter.getShooter(isReal());
 
     private final IntakePivot intakePivot = IntakePivot.getIntakePivot(isReal());
+
+    private final IntakeRoller intakeRoller = IntakeRoller.getIntakeRoller(isReal());
+
+    private final BoxClimber boxClimber = BoxClimber.getBoxClimber(isReal());
+
+    private final Winch winch = Winch.getWinch(isReal());
 
     private final DeltaTimeUtil dt = new DeltaTimeUtil();
 
@@ -70,9 +81,17 @@ public class Robot extends TimedRobot implements Logged {
 
     // variables
     private double shooterVoltage = 0;
+    // whether or not the robot has a note
+    private boolean hasNote = false;
 
     // triggers
-    Trigger shoot;
+    private Trigger shoot;
+    private Trigger intake;
+    private Trigger puke;
+    private Trigger raiseHook;
+    private Trigger lowerHook;
+    private Trigger climb;
+
 
     private final Command teleopIntake = intakePivot.goToSetpoint(() -> 1.0);
 
@@ -96,15 +115,70 @@ public class Robot extends TimedRobot implements Logged {
 
         DriverStation.startDataLog(DataLogManager.getLog()); // same log used by monologue
 
-        // trigger definitions
+        // trigger definitions:
+        // shoot trigger needs to also check if intakePivot is retracted
         shoot =
-                new Trigger(() -> driver.shoot())
-                        .toggleOnTrue(
-                                Commands.runOnce(
-                                        () -> shooterVoltage = ShooterConstants.DEFAULT_VOLTAGE))
-                        .toggleOnFalse(
-                                Commands.runOnce(
-                                        () -> shooterVoltage = ShooterConstants.SHOOTING_VOLTAGE));
+            new Trigger(driver::shoot)
+                    .toggleOnTrue(
+                            Commands.runOnce(
+                                    () -> shooterVoltage = ShooterConstants.DEFAULT_VOLTAGE))
+                    .toggleOnTrue(
+                        intakeRoller.pukeNoteCommand()  //pukes note into shooter
+                    )
+                    .toggleOnFalse(
+                            Commands.runOnce(
+                                    () -> shooterVoltage = ShooterConstants.SHOOTING_VOLTAGE))
+                    .toggleOnFalse(
+                        intakeRoller.idleCommand()  // makes sure the intake is off
+                    );
+        
+        // should add intakePivot into this trigger so that both the roller and intakePivot coordinate
+        intake =
+            new Trigger(() -> !hasNote && driver.intake())
+                .toggleOnTrue(
+                    intakeRoller.intakeNoteCommand()
+                )
+                .toggleOnFalse(
+                    intakeRoller.idleCommand()
+                );
+
+        // should add intakePivot into this trigger so that both the roller and intakePivot coordinate
+        puke = 
+            new Trigger(driver::puke)
+                .toggleOnTrue(
+                    intakeRoller.pukeNoteCommand()
+                )
+                .toggleOnFalse(
+                    intakeRoller.idleCommand()
+                );
+                
+        raiseHook = 
+            new Trigger(driver::raiseHook)
+                .onTrue(
+                    boxClimber.raiseCommand()
+                )
+                .onFalse(
+                    boxClimber.idleCommand()
+                );
+        
+        lowerHook = 
+            new Trigger(driver::lowerHook)
+                .onTrue(
+                    boxClimber.lowerCommand()
+                )
+                .onFalse(
+                    boxClimber.idleCommand()
+                );
+
+        climb =
+            new Trigger(driver::climb)
+                .onTrue(
+                    winch.raiseCommand()
+                )
+                .onFalse(
+                    winch.idleCommand()
+                );
+                
     }
 
     @Override
@@ -125,6 +199,11 @@ public class Robot extends TimedRobot implements Logged {
         shooter.defaultShooterControlCommand(() -> shooterVoltage).schedule();
 
         teleopIntake.schedule();
+
+        // Default commands
+        boxClimber.setDefaultCommand(boxClimber.idleCommand());
+        winch.setDefaultCommand(winch.idleCommand());
+        intakeRoller.setDefaultCommand(intakeRoller.idleCommand());
 
         autoLoadFail.set(false);
     }

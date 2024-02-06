@@ -45,4 +45,34 @@ public class DefaultDriver implements DriverInput {
     public boolean shoot() {
         return false;
     }
+
+    @Override
+    public boolean intake() {
+        return false;
+    }
+
+    @Override
+    public boolean raiseHook() {
+        return false;
+    }
+
+    @Override
+    public boolean lowerHook() {
+        return false;
+    }
+
+    @Override
+    public boolean climb(){
+        return false;
+    }
+
+    @Override
+    public boolean intakeNote() {
+        return false;
+    }
+
+    @Override
+    public boolean puke() {
+        return false;
+    }
 }

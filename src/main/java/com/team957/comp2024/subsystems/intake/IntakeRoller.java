@@ -2,6 +2,8 @@ package com.team957.comp2024.subsystems.intake;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
+
 import java.util.function.Supplier;
 
 import com.team957.comp2024.Constants.IntakeRollerConstants;
@@ -39,13 +41,13 @@ public abstract class IntakeRoller implements Subsystem, Logged {
                 });
     }
 
-    // is it called puking??? I feel like there is a better term that is evading me
+    // puking is given higher priority scheduling over intaking
     public Command pukeNoteCommand(){
         return run(
             () -> {
                 setRollerVoltage(IntakeRollerConstants.PUKE_VOLTAGE);
             }
-        );
+        ).withInterruptBehavior(InterruptionBehavior.kCancelIncoming);
     }
 
     // stops the intake roller

@@ -1,10 +1,10 @@
 package com.team957.comp2024.subsystems.climbing;
 
-import com.team957.comp2024.Constants;
 import com.team957.comp2024.Constants.BoxClimberConstants;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import monologue.Logged;
 
 public abstract class BoxClimber implements Subsystem, Logged{
@@ -38,7 +38,7 @@ public abstract class BoxClimber implements Subsystem, Logged{
             () -> {
                 setMotorVoltage(BoxClimberConstants.STANDARD_VOLTAGE);
             }
-        );
+        ).withInterruptBehavior(InterruptionBehavior.kCancelIncoming);
     }
 
     // lowers the climber
