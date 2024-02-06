@@ -35,4 +35,9 @@ public class DefaultDriver implements DriverInput {
     public double swerveRot() {
         return ROT_MAX_SPEED * xboxController.getRightX();
     }
+
+    @Override
+    public boolean enableTracking() {
+        return xboxController.getRightBumper();
+    }
 }

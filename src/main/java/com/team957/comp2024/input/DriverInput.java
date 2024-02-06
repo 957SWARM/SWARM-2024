@@ -13,4 +13,7 @@ public interface DriverInput {
 
     // in radians/sec
     public double swerveRot();
+
+    // in true or false
+    public boolean enableTracking();
 }

@@ -29,9 +29,8 @@ public class Localization implements Logged {
             Supplier<SwerveModulePosition[]> modulePositions,
             Supplier<Rotation2d> gyro,
             boolean fakeGyro) {
-        odometry =
-                new SwerveDriveOdometry(
-                        SwerveConstants.KINEMATICS, gyro.get(), modulePositions.get());
+        odometry = new SwerveDriveOdometry(
+                SwerveConstants.KINEMATICS, gyro.get(), modulePositions.get());
 
         this.moduleStates = moduleStates;
         this.modulePositions = modulePositions;
@@ -44,8 +43,7 @@ public class Localization implements Logged {
         double dt = dtUtil.getTimeSecondsSinceLastCall();
 
         simGyro.calculate(
-                SwerveConstants.KINEMATICS.toChassisSpeeds(moduleStates.get())
-                        .omegaRadiansPerSecond,
+                SwerveConstants.KINEMATICS.toChassisSpeeds(moduleStates.get()).omegaRadiansPerSecond,
                 dt);
 
         if (fakeGyro) {

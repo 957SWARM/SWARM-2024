@@ -20,7 +20,8 @@ import monologue.Logged;
 
 public abstract class Swerve implements Subsystem, Logged {
     public abstract static class ModuleIO implements Logged {
-        protected ModuleIO() {}
+        protected ModuleIO() {
+        }
 
         // starting values of these does not effect how the module is controlled
         // just what "*IsOnboardControlLoop() returns before "set*()" is called
@@ -28,10 +29,13 @@ public abstract class Swerve implements Subsystem, Logged {
         protected boolean driveOnboardControl = false;
 
         /**
-         * Sets the setpoint for the onboard controller. If none is present (running in simulation),
+         * Sets the setpoint for the onboard controller. If none is present (running in
+         * simulation),
          * instantly snaps the steer to its setpoint.
          *
-         * <p>If steer is currently not running off of onboard closed-loop, switches to that mode.
+         * <p>
+         * If steer is currently not running off of onboard closed-loop, switches to
+         * that mode.
          *
          * @param radians Setpoint for the azimuth, in radians.
          */
@@ -40,16 +44,20 @@ public abstract class Swerve implements Subsystem, Logged {
         /**
          * Sets the applied voltage to the steer motor.
          *
-         * <p>If steer is currently not running off of voltage control mode, switches to that mode.
+         * <p>
+         * If steer is currently not running off of voltage control mode, switches to
+         * that mode.
          *
          * @param radians Voltage to be applied.
          */
         public abstract void setSteerVoltage(double volts);
 
         /**
-         * Gets the voltage applied, either directly or through a controller, to the steer motor.
+         * Gets the voltage applied, either directly or through a controller, to the
+         * steer motor.
          *
-         * <p>Does not work with controllers in simulation.
+         * <p>
+         * Does not work with controllers in simulation.
          *
          * @return The set steer voltage.
          */
@@ -73,20 +81,27 @@ public abstract class Swerve implements Subsystem, Logged {
         public abstract boolean brakeModeIsActive();
 
         /**
-         * Sets the setpoint for the onboard controller. If none is present (running in simulation),
+         * Sets the setpoint for the onboard controller. If none is present (running in
+         * simulation),
          * instantly snaps the drive to its setpoint.
          *
-         * <p>If drive is currently not running off of onboard closed-loop, switches to that mode.
+         * <p>
+         * If drive is currently not running off of onboard closed-loop, switches to
+         * that mode.
          *
          * @param radians Setpoint for the drive, in radians per second.
          */
         public abstract void setDriveSetpoint(double radPerSecond);
 
         /**
-         * Sets the setpoint for the onboard controller, using units of meters per second. If none
-         * is present (running in simulation), instantly snaps the drive to its setpoint.
+         * Sets the setpoint for the onboard controller, using units of meters per
+         * second. If none
+         * is present (running in simulation), instantly snaps the drive to its
+         * setpoint.
          *
-         * <p>If drive is currently not running off of onboard closed-loop, switches to that mode.
+         * <p>
+         * If drive is currently not running off of onboard closed-loop, switches to
+         * that mode.
          *
          * @param radians Setpoint for the drive, in meters per second.
          */
@@ -100,16 +115,20 @@ public abstract class Swerve implements Subsystem, Logged {
         /**
          * Sets the applied voltage to the drive motor.
          *
-         * <p>If drive is currently not running off of voltage control mode, switches to that mode.
+         * <p>
+         * If drive is currently not running off of voltage control mode, switches to
+         * that mode.
          *
          * @param radians Voltage to be applied.
          */
         public abstract void setDriveVoltage(double volts);
 
         /**
-         * Gets the voltage applied, either directly or through a controller, to the drive motor.
+         * Gets the voltage applied, either directly or through a controller, to the
+         * drive motor.
          *
-         * <p>Does not work with controllers in simulation.
+         * <p>
+         * Does not work with controllers in simulation.
          *
          * @return The set drive voltage.
          */
@@ -151,7 +170,7 @@ public abstract class Swerve implements Subsystem, Logged {
         @Log.NT
         public SwerveModulePosition getPosition() {
             return new SwerveModulePosition(
-                    getDrivePositionMeters(), new Rotation2d(getSteerPositionRadians()));
+                    -getDrivePositionMeters(), new Rotation2d(getSteerPositionRadians()));
         }
 
         protected abstract void update(double dt);
@@ -177,35 +196,33 @@ public abstract class Swerve implements Subsystem, Logged {
         this.backRight = backRight;
         this.backLeft = backLeft;
 
-        steerRoutine =
-                new SysIdRoutine(
-                        new SysIdRoutine.Config(),
-                        new SysIdRoutine.Mechanism(
-                                (Measure<Voltage> volts) -> {
-                                    double asNumber = volts.magnitude();
+        steerRoutine = new SysIdRoutine(
+                new SysIdRoutine.Config(),
+                new SysIdRoutine.Mechanism(
+                        (Measure<Voltage> volts) -> {
+                            double asNumber = volts.magnitude();
 
-                                    frontLeft.setSteerVoltage(asNumber);
-                                    frontRight.setSteerVoltage(asNumber);
-                                    backRight.setSteerVoltage(asNumber);
-                                    backLeft.setSteerVoltage(asNumber);
-                                },
-                                null,
-                                this));
+                            frontLeft.setSteerVoltage(asNumber);
+                            frontRight.setSteerVoltage(asNumber);
+                            backRight.setSteerVoltage(asNumber);
+                            backLeft.setSteerVoltage(asNumber);
+                        },
+                        null,
+                        this));
 
-        driveRoutine =
-                new SysIdRoutine(
-                        new SysIdRoutine.Config(),
-                        new SysIdRoutine.Mechanism(
-                                (Measure<Voltage> volts) -> {
-                                    double asNumber = volts.magnitude();
+        driveRoutine = new SysIdRoutine(
+                new SysIdRoutine.Config(),
+                new SysIdRoutine.Mechanism(
+                        (Measure<Voltage> volts) -> {
+                            double asNumber = volts.magnitude();
 
-                                    frontLeft.setDriveVoltage(asNumber);
-                                    frontRight.setDriveVoltage(asNumber);
-                                    backRight.setDriveVoltage(asNumber);
-                                    backLeft.setDriveVoltage(asNumber);
-                                },
-                                null,
-                                this));
+                            frontLeft.setDriveVoltage(asNumber);
+                            frontRight.setDriveVoltage(asNumber);
+                            backRight.setDriveVoltage(asNumber);
+                            backLeft.setDriveVoltage(asNumber);
+                        },
+                        null,
+                        this));
 
         register();
     }
@@ -213,17 +230,17 @@ public abstract class Swerve implements Subsystem, Logged {
     @Log.NT
     public SwerveModuleState[] getStates() {
         return new SwerveModuleState[] {
-            frontLeft.getState(), frontRight.getState(), backRight.getState(), backLeft.getState()
+                frontLeft.getState(), frontRight.getState(), backRight.getState(), backLeft.getState()
         };
     }
 
     @Log.NT
     public SwerveModulePosition[] getPositions() {
         return new SwerveModulePosition[] {
-            frontLeft.getPosition(),
-            frontRight.getPosition(),
-            backRight.getPosition(),
-            backLeft.getPosition()
+                frontLeft.getPosition(),
+                frontRight.getPosition(),
+                backRight.getPosition(),
+                backLeft.getPosition()
         };
     }
 
@@ -255,22 +272,21 @@ public abstract class Swerve implements Subsystem, Logged {
 
                     this.log("chassisSpeedsSetpoint", setpoint);
 
-                    SwerveModuleState[] states =
-                            SwerveConstants.KINEMATICS.toSwerveModuleStates(
-                                    ChassisSpeeds.discretize(setpoint, Robot.kDefaultPeriod));
+                    SwerveModuleState[] states = SwerveConstants.KINEMATICS.toSwerveModuleStates(
+                            ChassisSpeeds.discretize(setpoint, Robot.kDefaultPeriod));
 
                     SwerveDriveKinematics.desaturateWheelSpeeds(
                             states, SwerveConstants.MAX_WHEEL_SPEED_METERS_PER_SECOND);
 
                     return new SwerveModuleState[] {
-                        SwerveModuleState.optimize(
-                                states[0], new Rotation2d(frontLeft.getSteerPositionRadians())),
-                        SwerveModuleState.optimize(
-                                states[1], new Rotation2d(frontRight.getSteerPositionRadians())),
-                        SwerveModuleState.optimize(
-                                states[2], new Rotation2d(backRight.getSteerPositionRadians())),
-                        SwerveModuleState.optimize(
-                                states[3], new Rotation2d(backLeft.getSteerPositionRadians()))
+                            SwerveModuleState.optimize(
+                                    states[0], new Rotation2d(frontLeft.getSteerPositionRadians())),
+                            SwerveModuleState.optimize(
+                                    states[1], new Rotation2d(frontRight.getSteerPositionRadians())),
+                            SwerveModuleState.optimize(
+                                    states[2], new Rotation2d(backRight.getSteerPositionRadians())),
+                            SwerveModuleState.optimize(
+                                    states[3], new Rotation2d(backLeft.getSteerPositionRadians()))
                     };
                 });
     }
@@ -278,9 +294,8 @@ public abstract class Swerve implements Subsystem, Logged {
     public Command getFieldRelativeControlCommand(
             Supplier<ChassisSpeeds> fieldRelativeChassisSpeeds, Supplier<Rotation2d> robotHeading) {
         return getChassisRelativeControlCommand(
-                () ->
-                        ChassisSpeeds.fromFieldRelativeSpeeds(
-                                fieldRelativeChassisSpeeds.get(), robotHeading.get()));
+                () -> ChassisSpeeds.fromFieldRelativeSpeeds(
+                        fieldRelativeChassisSpeeds.get(), robotHeading.get()));
     }
 
     public Command getSysIdSteerQuasistatic(boolean forward) {
