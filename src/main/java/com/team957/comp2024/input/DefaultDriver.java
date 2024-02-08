@@ -33,7 +33,7 @@ public class DefaultDriver implements DriverInput {
 
     @Override
     public boolean zeroGyro() {
-        return xboxController.getBackButton();
+        return xboxController.getRawButton(8);
     }
 
     @Override
@@ -43,41 +43,55 @@ public class DefaultDriver implements DriverInput {
 
     @Override
     public boolean shoot() {
-        return false;
+        return xboxController.getYButton();
     }
 
     @Override
     public boolean intake() {
-        return false;
+        return xboxController.getXButton();
     }
 
     @Override
     public boolean raiseHook() {
-        return false;
+        return xboxController.getRightBumper();
     }
 
     @Override
     public boolean lowerHook() {
-        return false;
+        return xboxController.getLeftBumper();
     }
 
     @Override
     public boolean climb(){
-        return false;
+        return xboxController.getBButton();
     }
 
     @Override
     public boolean intakeNote() {
-        return false;
+        return xboxController.getXButton();
+    }
+
+    // bind this!
+    @Override
+    public boolean eject() {
+        return (xboxController.getPOV() == 180);
     }
 
     @Override
-    public boolean puke() {
-        return false;
+    public boolean enableNoteTracking() {
+        return (xboxController.getRightTriggerAxis() > .5);
     }
 
     @Override
-    public boolean enableTracking() {
-        return xboxController.getRightBumper();
+    public boolean enableAprilTagTracking(){
+        return (xboxController.getLeftTriggerAxis() > .5);
     }
+
+    // pivots intake to intake position
+    // if down pad is down
+    @Override
+    public boolean pivotAmp(){
+        return (xboxController.getPOV() == 0);
+    }
+    
 }

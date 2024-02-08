@@ -167,7 +167,7 @@ public class Constants {
                 public static final boolean ROLLER_INVERTED = false;
 
                 public static final double INTAKE_VOLTAGE = 6;
-                public static final double PUKE_VOLTAGE = -INTAKE_VOLTAGE;
+                public static final double EJECT_VOLTAGE = -INTAKE_VOLTAGE;
         }
 
         public static final class AlertConstants {

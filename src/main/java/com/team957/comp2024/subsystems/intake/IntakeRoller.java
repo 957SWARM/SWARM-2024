@@ -42,10 +42,10 @@ public abstract class IntakeRoller implements Subsystem, Logged {
     }
 
     // puking is given higher priority scheduling over intaking
-    public Command pukeNoteCommand(){
+    public Command ejectNoteCommand(){
         return run(
             () -> {
-                setRollerVoltage(IntakeRollerConstants.PUKE_VOLTAGE);
+                setRollerVoltage(IntakeRollerConstants.EJECT_VOLTAGE);
             }
         ).withInterruptBehavior(InterruptionBehavior.kCancelIncoming);
     }

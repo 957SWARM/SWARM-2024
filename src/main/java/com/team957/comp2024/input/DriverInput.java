@@ -15,7 +15,9 @@ public interface DriverInput {
     public double swerveRot();
 
     // in true or false
-    public boolean enableTracking();
+    public boolean enableNoteTracking();
+
+    public boolean enableAprilTagTracking();
 
     // shoot
     public boolean shoot();
@@ -35,6 +37,9 @@ public interface DriverInput {
     // take the note in
     public boolean intakeNote();
 
-    // "puke" the note out
-    public boolean puke();
+    // eject the note out
+    public boolean eject();
+
+    // brings pivot to amp position
+    public boolean pivotAmp();
 }

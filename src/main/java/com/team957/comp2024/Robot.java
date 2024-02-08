@@ -73,8 +73,6 @@ public class Robot extends TimedRobot implements Logged {
     private final Command noteTrackCommand = noteTargeting.getNoteTrackCommand(
             () -> input.swerveX(), () -> input.swerveY(), () -> input.swerveRot());
 
-    private Trigger noteTrackingTrigger = new Trigger(() -> input.enableTracking() && noteTargeting.checkTarget());
-
     // done this way for monologue's sake
     private final ChoreoFollowingFactory trajectoryFollowing = new ChoreoFollowingFactory();
 
@@ -97,10 +95,13 @@ public class Robot extends TimedRobot implements Logged {
     // triggers
     private Trigger shoot;
     private Trigger intake;
-    private Trigger puke;
+    private Trigger eject;
     private Trigger raiseHook;
     private Trigger lowerHook;
     private Trigger climb;
+    private Trigger noteTrackingTrigger;
+    private Trigger aprilTagTrackingTrigger;
+//  private Trigger pivotAmp;
 
     private final Command teleopIntake = intakePivot.goToSetpoint(() -> 1.0);
 
@@ -131,7 +132,7 @@ public class Robot extends TimedRobot implements Logged {
                         Commands.runOnce(
                                 () -> shooterVoltage = ShooterConstants.DEFAULT_VOLTAGE))
                 .toggleOnTrue(
-                        intakeRoller.pukeNoteCommand() // pukes note into shooter
+                        intakeRoller.ejectNoteCommand() // ejects note into shooter
                 )
                 .toggleOnFalse(
                         Commands.runOnce(
@@ -150,9 +151,9 @@ public class Robot extends TimedRobot implements Logged {
 
         // should add intakePivot into this trigger so that both the roller and
         // intakePivot coordinate
-        puke = new Trigger(driver::puke)
+        eject = new Trigger(driver::eject)
                 .toggleOnTrue(
-                        intakeRoller.pukeNoteCommand())
+                        intakeRoller.ejectNoteCommand())
                 .toggleOnFalse(
                         intakeRoller.idleCommand());
 
@@ -174,6 +175,16 @@ public class Robot extends TimedRobot implements Logged {
                 .onFalse(
                         winch.idleCommand());
 
+        noteTrackingTrigger = new Trigger(() -> input.enableNoteTracking() && noteTargeting.checkTarget())
+                .whileTrue(noteTrackCommand);
+
+ /*       pivotAmp = new Trigger(driver::pivotAmp)
+                .onTrue(
+                        intakeRoller.intakeNoteCommand()
+                )
+                .onFalse(
+                        intakeRoller.idleCommand()
+                ); */
     }
 
     @Override
@@ -193,7 +204,6 @@ public class Robot extends TimedRobot implements Logged {
     public void teleopInit() {
 
         swerve.setDefaultCommand(teleopDrive);
-        noteTrackingTrigger.whileTrue(noteTrackCommand);
         shooter.defaultShooterControlCommand(() -> shooterVoltage).schedule();
 
         teleopIntake.schedule();
