@@ -99,13 +99,18 @@ public class LLlocalization {
                                     - (LimelightLib.getLatency_Pipeline(limelightName) / 1000.0)
                                     - (LimelightLib.getLatency_Capture(limelightName) / 1000.0);
 
-                    System.out.println(visionPose2d.getX() + " || " + visionPose2d.getY());
-
                     poseEstimator.addVisionMeasurement(visionPose2d, timeStampSeconds);
                 }
             }
         }
     }
+
+    /*
+     * public double getVelocityMetersPerSecond(){
+     * Swerve test;
+     * return kinematics.toChassisSpeeds(test.getStates()).
+     * }
+     */
 
     public Pose2d getPoseEstimate() {
         return poseEstimator.getEstimatedPosition();

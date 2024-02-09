@@ -41,21 +41,24 @@ public class Robot extends TimedRobot implements Logged {
 
     private final DeltaTimeUtil dt = new DeltaTimeUtil();
 
-    private final LLlocalization poseEstimation = new LLlocalization(
-            SwerveConstants.KINEMATICS,
-            swerve::getStates,
-            swerve::getPositions,
-            imu::getCorrectedAngle,
-            isReal());
+    private final LLlocalization poseEstimation =
+            new LLlocalization(
+                    SwerveConstants.KINEMATICS,
+                    swerve::getStates,
+                    swerve::getPositions,
+                    imu::getCorrectedAngle,
+                    isReal());
 
     private DriverInput input;
 
     NoteTargeting noteTargeting = new NoteTargeting(swerve, poseEstimation, "limelight");
 
-    private final Command noteTrackCommand = noteTargeting.getNoteTrackCommand(
-            () -> input.swerveX(), () -> input.swerveY(), () -> input.swerveRot());
+    private final Command noteTrackCommand =
+            noteTargeting.getNoteTrackCommand(
+                    () -> input.swerveX(), () -> input.swerveY(), () -> input.swerveRot());
 
-    private Trigger noteTrackingTrigger = new Trigger(() -> input.enableTracking() && noteTargeting.checkTarget());
+    private Trigger noteTrackingTrigger =
+            new Trigger(() -> input.enableTracking() && noteTargeting.checkTarget());
 
     // done this way for monologue's sake
     private final ChoreoFollowingFactory trajectoryFollowing = new ChoreoFollowingFactory();
@@ -64,12 +67,13 @@ public class Robot extends TimedRobot implements Logged {
 
     private final Alert autoLoadFail = new Alert("Auto path failed to load!", AlertType.ERROR);
 
-    private final Command teleopDrive = swerve.getFieldRelativeControlCommand(
-            () -> {
-                return new ChassisSpeeds(
-                        input.swerveX(), input.swerveY(), input.swerveRot());
-            },
-            poseEstimation::getRotationEstimate);
+    private final Command teleopDrive =
+            swerve.getFieldRelativeControlCommand(
+                    () -> {
+                        return new ChassisSpeeds(
+                                input.swerveX(), input.swerveY(), input.swerveRot());
+                    },
+                    poseEstimation::getRotationEstimate);
 
     private Command autoCommand = new InstantCommand();
 
@@ -108,7 +112,6 @@ public class Robot extends TimedRobot implements Logged {
         Monologue.updateAll();
 
         poseEstimation.update();
-
     }
 
     @Override
@@ -134,10 +137,11 @@ public class Robot extends TimedRobot implements Logged {
             } else {
                 autoLoadFail.set(false);
 
-                autoCommand = Commands.runOnce(() -> poseEstimation.setPose(traj.getInitialPose()))
-                        .andThen(
-                                trajectoryFollowing.getPathFollowingCommand(
-                                        swerve, traj, poseEstimation::getPoseEstimate));
+                autoCommand =
+                        Commands.runOnce(() -> poseEstimation.setPose(traj.getInitialPose()))
+                                .andThen(
+                                        trajectoryFollowing.getPathFollowingCommand(
+                                                swerve, traj, poseEstimation::getPoseEstimate));
             }
         }
     }
