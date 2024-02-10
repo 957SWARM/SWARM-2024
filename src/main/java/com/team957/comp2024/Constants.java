@@ -146,6 +146,19 @@ public class Constants {
         public static final GearRatioHelper GEARING_HELPER = new GearRatioHelper(1, 45);
 
         public static final double PIVOT_TO_TIP_METERS = Units.inchesToMeters(14);
+
+        public static final int INTAKE_PIVOT_MOTOR_CANID = 0;
+
+        public static final int INTAKE_PIVOT_CURRENT_LIMIT_AMPS = 40;
+
+        public static final boolean INTAKE_PIVOT_MOTOR_INVERTED = false;
+
+        // reported angle when the pivot is at "zero" (straight ahead)
+        public static final double INTAKE_PIVOT_OFFSET_RADIANS = 0;
+
+        public static final double ONBOARD_CONTROLLER_KP = 1;
+        public static final double ONBOARD_CONTROLLER_KI = 0;
+        public static final double ONBOARD_CONTROLLER_KD = 0;
     }
 
     public static final class BoxClimberConstants {

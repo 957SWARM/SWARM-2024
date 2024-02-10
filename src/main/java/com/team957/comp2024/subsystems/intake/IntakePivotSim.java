@@ -42,19 +42,6 @@ public class IntakePivotSim extends IntakePivot {
     }
 
     @Override
-    protected void setFeedforward(double volts) {
-        // model.setInput(volts);
-    }
-
-    @Override
-    protected void setSetpointUnsafe(double setpointRadians) {
-        model.setState(setpointRadians, 0);
-
-        // this kind of defeats the point of sim, but I don't have a working
-        // model of the system with feedback loop at this point so :(
-    }
-
-    @Override
     protected void setVoltageUnsafe(double volts) {
         this.inputVolts = volts;
 
@@ -66,5 +53,10 @@ public class IntakePivotSim extends IntakePivot {
         super.periodic();
 
         model.update(Robot.kDefaultPeriod);
+    }
+
+    @Override
+    protected void setFeedforwardAndSetpointUnsafe(double volts, double setpointRadians) {
+        model.setState(setpointRadians, 0); // revlib bad >:(
     }
 }
