@@ -46,14 +46,12 @@ public class Constants {
 
         public static final double MAX_WHEEL_SPEED_METERS_PER_SECOND = 4;
 
-        public static final Translation2d FRONT_LEFT_TRANSLATION =
-                new Translation2d(0.3112, 0.2604);
+        public static final Translation2d FRONT_LEFT_TRANSLATION = new Translation2d(0.3302, 0.254);
         public static final Translation2d FRONT_RIGHT_TRANSLATION =
-                new Translation2d(0.3112, -0.2604);
+                new Translation2d(0.3302, -0.254);
         public static final Translation2d BACK_RIGHT_TRANSLATION =
-                new Translation2d(-0.3112, -0.2604);
-        public static final Translation2d BACK_LEFT_TRANSLATION =
-                new Translation2d(-0.3112, 0.2604);
+                new Translation2d(-0.3302, -0.254);
+        public static final Translation2d BACK_LEFT_TRANSLATION = new Translation2d(-0.3302, 0.254);
 
         public static final SwerveDriveKinematics KINEMATICS =
                 new SwerveDriveKinematics(
@@ -97,8 +95,8 @@ public class Constants {
 
     public static final class ShooterConstants {
         // CANIDs not set yet as of 1/25/2024
-        public static final int LEFT_CANID = 0;
-        public static final int RIGHT_CANID = 0;
+        public static final int LEFT_CANID = 9;
+        public static final int RIGHT_CANID = 10;
 
         public static final int CURRENT_LIMIT = 30;
         public static final DCMotor SHOOTER_MOTOR = DCMotor.getNEO(1);
@@ -147,14 +145,14 @@ public class Constants {
 
         public static final double PIVOT_TO_TIP_METERS = Units.inchesToMeters(14);
 
-        public static final int INTAKE_PIVOT_MOTOR_CANID = 0;
+        public static final int INTAKE_PIVOT_MOTOR_CANID = 11;
 
         public static final int INTAKE_PIVOT_CURRENT_LIMIT_AMPS = 40;
 
         public static final boolean INTAKE_PIVOT_MOTOR_INVERTED = false;
 
         // reported angle when the pivot is at "zero" (straight ahead)
-        public static final double INTAKE_PIVOT_OFFSET_RADIANS = 0;
+        public static final double INTAKE_PIVOT_OFFSET_RADIANS = 11;
 
         public static final double ONBOARD_CONTROLLER_KP = 1;
         public static final double ONBOARD_CONTROLLER_KI = 0;
@@ -164,7 +162,7 @@ public class Constants {
     public static final class BoxClimberConstants {
         public static final double STANDARD_VOLTAGE = 6;
         // CAN ID not set
-        public static final int MOTOR_CANID = 0;
+        public static final int MOTOR_CANID = 13;
         public static final int CURRENT_LIMIT = 40;
         // positive = going up. negative = going down.
         public static final boolean MOTOR_INVERTED = false;
@@ -172,7 +170,7 @@ public class Constants {
 
     public static final class WinchConstants {
         // CAN ID not set
-        public static final int MOTOR_CANID = 0;
+        public static final int MOTOR_CANID = 14;
         public static final double STANDARD_VOLTAGE = 6;
         public static final int CURRENT_LIMIT = 40;
         // positive = going up. negative = going down.
@@ -180,8 +178,7 @@ public class Constants {
     }
 
     public static final class IntakeRollerConstants {
-        // CAN ID not set as of 2/1/2024
-        public static final int ROLLER_CANID = 0;
+        public static final int ROLLER_CANID = 12;
         public static final int CURRENT_LIMIT = 30;
         public static final boolean ROLLER_INVERTED = false;
 
