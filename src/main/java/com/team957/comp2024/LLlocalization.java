@@ -2,10 +2,9 @@ package com.team957.comp2024;
 
 import com.team957.comp2024.Constants.SwerveConstants;
 import com.team957.comp2024.Constants.VisionConstants;
+import com.team957.comp2024.util.LimelightLib;
 import com.team957.lib.math.filters.IntegratingFilter;
 import com.team957.lib.util.DeltaTimeUtil;
-import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -20,7 +19,6 @@ import java.util.function.Supplier;
 
 public class LLlocalization {
 
-    private final SwerveDriveKinematics kinematics;
     private final Supplier<SwerveModuleState[]> moduleStates;
     private final Supplier<SwerveModulePosition[]> modulePositions;
     private final Supplier<Rotation2d> gyro;
@@ -28,9 +26,6 @@ public class LLlocalization {
 
     private final IntegratingFilter simGyro = new IntegratingFilter(0);
     private final DeltaTimeUtil dtUtil = new DeltaTimeUtil();
-
-    private final AprilTagFieldLayout ATLayout =
-            AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
 
     private Pose2d visionPose2d = new Pose2d();
 
@@ -43,7 +38,6 @@ public class LLlocalization {
             Supplier<Rotation2d> gyro,
             boolean robotReal) {
 
-        this.kinematics = kinematics;
         this.moduleStates = moduleStates;
         this.modulePositions = modulePositions;
         this.gyro = gyro;

@@ -62,7 +62,7 @@ public class DefaultDriver implements DriverInput {
     }
 
     @Override
-    public boolean climb(){
+    public boolean climb() {
         return xboxController.getBButton();
     }
 
@@ -83,15 +83,14 @@ public class DefaultDriver implements DriverInput {
     }
 
     @Override
-    public boolean enableAprilTagTracking(){
+    public boolean enableAprilTagTracking() {
         return (xboxController.getLeftTriggerAxis() > .5);
     }
 
     // pivots intake to intake position
     // if down pad is down
     @Override
-    public boolean pivotAmp(){
+    public boolean pivotAmp() {
         return (xboxController.getPOV() == 0);
     }
-    
 }

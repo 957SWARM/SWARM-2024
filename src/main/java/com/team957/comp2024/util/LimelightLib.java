@@ -1,4 +1,4 @@
-package com.team957.comp2024;
+package com.team957.comp2024.util;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonFormat.Shape;

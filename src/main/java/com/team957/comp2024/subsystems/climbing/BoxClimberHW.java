@@ -1,17 +1,16 @@
 package com.team957.comp2024.subsystems.climbing;
 
-import com.team957.comp2024.Constants.BoxClimberConstants;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import com.ctre.phoenix6.hardware.TalonFX;
+import com.team957.comp2024.Constants.BoxClimberConstants;
 
+public class BoxClimberHW extends BoxClimber {
 
-public class BoxClimberHW extends BoxClimber{
-    
     private final TalonSRX climbMotor = new TalonSRX(BoxClimberConstants.MOTOR_CANID);
- 
-    public BoxClimberHW(){
-        // not sure if there is an equivalent of restore factory defaults that needs to be run for talons
+
+    public BoxClimberHW() {
+        // not sure if there is an equivalent of restore factory defaults that needs to be run for
+        // talons
         climbMotor.clearStickyFaults();
 
         climbMotor.configPeakCurrentLimit(BoxClimberConstants.CURRENT_LIMIT);
@@ -31,7 +30,6 @@ public class BoxClimberHW extends BoxClimber{
 
     @Override
     public double getMotorAmps() {
-        return climbMotor.getOutputCurrent();
+        return climbMotor.getSupplyCurrent();
     }
-
 }

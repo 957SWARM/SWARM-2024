@@ -1,6 +1,6 @@
 package com.team957.comp2024.subsystems.intake;
 
-public class IntakeRollerSim extends IntakeRoller{
+public class IntakeRollerSim extends IntakeRoller {
 
     @Override
     public void setRollerVoltage(double voltage) {
@@ -18,7 +18,4 @@ public class IntakeRollerSim extends IntakeRoller{
         // TODO Auto-generated method stub
         return 0;
     }
-
- 
-    
 }

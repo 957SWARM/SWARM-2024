@@ -2,8 +2,8 @@ package com.team957.comp2024.commands;
 
 import com.team957.comp2024.Constants.VisionConstants;
 import com.team957.comp2024.LLlocalization;
-import com.team957.comp2024.LimelightLib;
 import com.team957.comp2024.subsystems.swerve.Swerve;
+import com.team957.comp2024.util.LimelightLib;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -76,10 +76,11 @@ public class NoteTargeting extends Command {
     }
 
     public Pose2d getNotePose2dField() { // QUESTIONABLE... ALSO HAVENT ADDED ROBOT POSE
-        double c = Math.sqrt(
-                (Math.abs(getNotePose2dRobot().getX())
-                        * Math.abs(getNotePose2dRobot().getX()))
-                        + (getNotePose2dRobot().getY() * getNotePose2dRobot().getY()));
+        double c =
+                Math.sqrt(
+                        (Math.abs(getNotePose2dRobot().getX())
+                                        * Math.abs(getNotePose2dRobot().getX()))
+                                + (getNotePose2dRobot().getY() * getNotePose2dRobot().getY()));
         double b = Math.asin(getNotePose2dRobot().getY() / c);
         double a = poseEstimation.getRotationEstimate().getRadians();
         double targetAngle = Math.abs(Units.degreesToRadians(90) - b - Math.abs(a));
@@ -100,14 +101,18 @@ public class NoteTargeting extends Command {
         } else {
             targetYLL = (groundDistance * Math.sin(Units.degreesToRadians(Math.abs(tx))));
         }
-        targetXLL = Math.sqrt(
-                (groundDistance * groundDistance)
-                        - (Math.abs(targetYLL) * Math.abs(targetYLL)));
+        targetXLL =
+                Math.sqrt(
+                        (groundDistance * groundDistance)
+                                - (Math.abs(targetYLL) * Math.abs(targetYLL)));
 
-        double targetXRobot = targetXLL + Units.metersToInches(VisionConstants.LL1_TO_CENTER.getX());
-        double targetYRobot = targetYLL + Units.metersToInches(VisionConstants.LL1_TO_CENTER.getY());
+        double targetXRobot =
+                targetXLL + Units.metersToInches(VisionConstants.LL1_TO_CENTER.getX());
+        double targetYRobot =
+                targetYLL + Units.metersToInches(VisionConstants.LL1_TO_CENTER.getY());
 
-        Pose2d targetPose = new Pose2d(new Translation2d(targetXRobot, targetYRobot), new Rotation2d());
+        Pose2d targetPose =
+                new Pose2d(new Translation2d(targetXRobot, targetYRobot), new Rotation2d());
 
         return targetPose;
     }
@@ -115,27 +120,30 @@ public class NoteTargeting extends Command {
     public double getNoteDistance() {
         double tx = LimelightLib.getTX(limelightName);
         double thor = LimelightLib.getTHOR(limelightName);
-        double txp = map(
-                tx,
-                -(VisionConstants.LL_FOV_DEGREES / 2),
-                (VisionConstants.LL_FOV_DEGREES / 2),
-                0,
-                VisionConstants.LL_FOV_PIXELS);
+        double txp =
+                map(
+                        tx,
+                        -(VisionConstants.LL_FOV_DEGREES / 2),
+                        (VisionConstants.LL_FOV_DEGREES / 2),
+                        0,
+                        VisionConstants.LL_FOV_PIXELS);
         double txpOffset = txp + (thor / 2);
-        double txOffset = map(
-                txpOffset,
-                0,
-                VisionConstants.LL_FOV_PIXELS,
-                -(VisionConstants.LL_FOV_DEGREES / 2),
-                (VisionConstants.LL_FOV_DEGREES / 2));
+        double txOffset =
+                map(
+                        txpOffset,
+                        0,
+                        VisionConstants.LL_FOV_PIXELS,
+                        -(VisionConstants.LL_FOV_DEGREES / 2),
+                        (VisionConstants.LL_FOV_DEGREES / 2));
         double angle = Math.abs(txOffset - tx);
 
         double c = (VisionConstants.NOTE_WIDTH / 2) / Math.sin(Units.degreesToRadians(angle));
 
-        double distance = Math.sqrt(
-                (c * c)
-                        - ((VisionConstants.NOTE_WIDTH / 2)
-                                * (VisionConstants.NOTE_WIDTH / 2)));
+        double distance =
+                Math.sqrt(
+                        (c * c)
+                                - ((VisionConstants.NOTE_WIDTH / 2)
+                                        * (VisionConstants.NOTE_WIDTH / 2)));
 
         // super secret krabby patty distance formula 3
         double distanceCorrected = (distance - ((1.15 * (distance - 5)) - distance)) * .95;
@@ -148,10 +156,11 @@ public class NoteTargeting extends Command {
 
     public double getNoteGroundDistance() {
         double distance = getNoteDistance();
-        double groundDistance = Math.sqrt(
-                (distance * distance)
-                        - (VisionConstants.LL1_TO_CENTER.getZ()
-                                * VisionConstants.LL1_TO_CENTER.getZ()));
+        double groundDistance =
+                Math.sqrt(
+                        (distance * distance)
+                                - (VisionConstants.LL1_TO_CENTER.getZ()
+                                        * VisionConstants.LL1_TO_CENTER.getZ()));
         return groundDistance;
     }
 
@@ -159,9 +168,11 @@ public class NoteTargeting extends Command {
         boolean trackable = true;
         if (!LimelightLib.getTV(limelightName)) {
             trackable = false;
-        } else if ((Math.abs(LimelightLib.getTX(limelightName)) > VisionConstants.TARGET_TX_CUTOFF)) {
+        } else if ((Math.abs(LimelightLib.getTX(limelightName))
+                > VisionConstants.TARGET_TX_CUTOFF)) {
             trackable = false;
-        } else if ((Math.abs(LimelightLib.getTHOR(limelightName)) < VisionConstants.TARGET_THOR_CUTOFF)) {
+        } else if ((Math.abs(LimelightLib.getTHOR(limelightName))
+                < VisionConstants.TARGET_THOR_CUTOFF)) {
             trackable = false;
         }
         return trackable;
