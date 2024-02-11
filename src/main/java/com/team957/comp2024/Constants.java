@@ -143,6 +143,14 @@ public class Constants {
         public static final double PROFILE_OVERRUN_TOLERANCE_SECONDS = 0.4;
     }
 
+    public static final class OnTheFlyPathingConstants {
+        public static final double OTF_MAX_LINEAR_VEL = 2.5;
+        public static final double OTF_MAX_LINEAR_ACCEL = 6;
+
+        public static final double OTF_MAX_ANGULAR_VEL = 10;
+        public static final double OTF_MAX_ANGULAR_ACCEL = 10;
+    }
+
     public static final class IMUConstants {
         public static final boolean YAW_AXIS_INVERTED = true;
         // this should NOT be applied to the navx.getRotation2D(), that's already offset
