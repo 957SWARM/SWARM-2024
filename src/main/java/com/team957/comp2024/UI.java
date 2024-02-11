@@ -1,5 +1,10 @@
 package com.team957.comp2024;
 
+import com.team957.comp2024.input.DefaultDriver;
+import com.team957.comp2024.input.DefaultOperator;
+import com.team957.comp2024.input.DriverInput;
+import com.team957.comp2024.input.OperatorInput;
+import com.team957.comp2024.input.SimKeyboardDriver;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -10,9 +15,9 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import java.util.function.Consumer;
 import monologue.Annotations.IgnoreLogged;
 import monologue.Annotations.Log;
 import monologue.LogLevel;
@@ -97,7 +102,11 @@ public class UI implements Logged {
 
     private final Alert lowVoltage = new Alert("Low battery voltage!", AlertType.WARNING);
 
-    private final SendableChooser<Command> autoChooser = new SendableChooser<>();
+    @Log.NT private final SendableChooser<Command> autoChooser = new SendableChooser<>();
+
+    @Log.NT private final SendableChooser<DriverInput> driverChooser = new SendableChooser<>();
+
+    @Log.NT private final SendableChooser<OperatorInput> operatorChooser = new SendableChooser<>();
 
     private UI() {
         if (!Robot.isReal()) new Alert("Robot is simulated!", AlertType.INFO).set(true);
@@ -105,7 +114,14 @@ public class UI implements Logged {
 
         autoChooser.setDefaultOption("Do Nothing", new InstantCommand());
 
-        SmartDashboard.putData(autoChooser);
+        if (Robot.isReal()) {
+            driverChooser.setDefaultOption("Default Driver", new DefaultDriver());
+            driverChooser.addOption("Sim Keyboard Driver", new SimKeyboardDriver());
+        } else {
+            driverChooser.setDefaultOption("Sim Keyboard Driver", new SimKeyboardDriver());
+            driverChooser.addOption("Default Driver", new DefaultDriver());
+        }
+        operatorChooser.setDefaultOption("Default Operator", new DefaultOperator());
     }
 
     public void setSwerveStates(SwerveModuleState[] states) {
@@ -165,4 +181,15 @@ public class UI implements Logged {
     public Command getAuto() {
         return autoChooser.getSelected();
     }
+
+    public void setDriverInputChangeCallback(Consumer<DriverInput> callback) {
+        driverChooser.onChange(callback);
+    }
+
+    public void setOperatorInputChangeCallback(Consumer<OperatorInput> callback) {
+        operatorChooser.onChange(callback);
+    }
+    // TODO: can utilization
+    // TODO: push automation indicators to dashboard
+    // TODO: push note state to dashboard
 }

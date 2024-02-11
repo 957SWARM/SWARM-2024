@@ -65,7 +65,7 @@ public class SimKeyboardDriver implements DriverInput {
 
     @Override
     public boolean enableAprilTagTracking() {
-        return false; // TODO
+        return false;
     }
 
     @Override
@@ -75,6 +75,6 @@ public class SimKeyboardDriver implements DriverInput {
 
     @Override
     public boolean pivotAmp() {
-        return false; // TODO
+        return false;
     }
 }
