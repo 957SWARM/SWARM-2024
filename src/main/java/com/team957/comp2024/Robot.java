@@ -88,8 +88,6 @@ public class Robot extends TimedRobot implements Logged {
                     },
                     poseEstimation::getRotationEstimate);
 
-    // variables
-    private double shooterVoltage = 0;
     // whether or not the robot has a note
     private boolean hasNote = false;
 
@@ -103,8 +101,6 @@ public class Robot extends TimedRobot implements Logged {
     private Trigger noteTrackingTrigger;
     private Trigger aprilTagTrackingTrigger;
     //  private Trigger pivotAmp;
-
-    private final Command teleopIntake = intakePivot.goToSetpoint(() -> 1.0);
 
     @Override
     public void robotInit() {
@@ -131,6 +127,9 @@ public class Robot extends TimedRobot implements Logged {
         ui.addAuto("Near Four Piece", autos.nearFourPiece());
         ui.addAuto("Top Five Piece", autos.topFivePiece());
 
+        ui.setDriverInputChangeCallback((driverInput) -> this.input = driverInput);
+        ui.setOperatorInputChangeCallback((operatorInput) -> {});
+
         // trigger definitions:
         // shoot trigger needs to also check if intakePivot is retracted
         shoot =
@@ -143,6 +142,8 @@ public class Robot extends TimedRobot implements Logged {
                         .toggleOnFalse(
                                 intakeRoller.idleCommand() // makes sure the intake is off
                                 );
+
+        // TODO: need to reimplement all pivot/roller/shooter superstructure logic, badly
 
         // should add intakePivot into this trigger so that both the roller and
         // intakePivot coordinate
@@ -202,9 +203,8 @@ public class Robot extends TimedRobot implements Logged {
     public void teleopInit() {
 
         swerve.setDefaultCommand(teleopDrive);
-        shooter.defaultShooterControlCommand(() -> shooterVoltage).schedule();
 
-        teleopIntake.schedule();
+        shooter.setDefaultCommand(shooter.idle());
 
         // Default commands
         boxClimber.setDefaultCommand(boxClimber.idleCommand());
