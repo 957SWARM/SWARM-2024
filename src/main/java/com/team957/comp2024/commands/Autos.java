@@ -3,7 +3,7 @@ package com.team957.comp2024.commands;
 import com.choreo.lib.Choreo;
 import com.choreo.lib.ChoreoTrajectory;
 import com.team957.comp2024.Constants;
-import com.team957.comp2024.Localization;
+import com.team957.comp2024.LLlocalization;
 import com.team957.comp2024.subsystems.intake.IntakePivot;
 import com.team957.comp2024.subsystems.swerve.Swerve;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -16,13 +16,13 @@ public class Autos {
         private final Swerve swerve;
         private final IntakePivot pivot;
         private final ArrayList<ChoreoTrajectory> traj;
-        private final Localization localization;
+        private final LLlocalization localization;
 
         AutoPhaseFactory(
                 Swerve swerve,
                 IntakePivot pivot,
                 ArrayList<ChoreoTrajectory> traj,
-                Localization localization) {
+                LLlocalization localization) {
             this.swerve = swerve;
             this.pivot = pivot;
             this.traj = traj;
@@ -83,7 +83,7 @@ public class Autos {
     }
 
     public static Command middleTwoPiece(
-            Swerve swerve, IntakePivot pivot, Localization localization) {
+            Swerve swerve, IntakePivot pivot, LLlocalization localization) {
 
         AutoPhaseFactory factory =
                 new AutoPhaseFactory(
@@ -97,7 +97,7 @@ public class Autos {
     }
 
     public static Command topNearThreePiece(
-            Swerve swerve, IntakePivot pivot, Localization localization) {
+            Swerve swerve, IntakePivot pivot, LLlocalization localization) {
         AutoPhaseFactory factory =
                 new AutoPhaseFactory(
                         swerve,
@@ -115,7 +115,7 @@ public class Autos {
     }
 
     public static Command topCenterFourPiece(
-            Swerve swerve, IntakePivot pivot, Localization localization) {
+            Swerve swerve, IntakePivot pivot, LLlocalization localization) {
         AutoPhaseFactory factory =
                 new AutoPhaseFactory(
                         swerve,
@@ -135,7 +135,7 @@ public class Autos {
     }
 
     public static Command nearFourPiece(
-            Swerve swerve, IntakePivot pivot, Localization localization) {
+            Swerve swerve, IntakePivot pivot, LLlocalization localization) {
         AutoPhaseFactory factory =
                 new AutoPhaseFactory(
                         swerve, pivot, Choreo.getTrajectoryGroup("nearFourPiece"), localization);
@@ -153,7 +153,7 @@ public class Autos {
     }
 
     public static Command topFivePiece(
-            Swerve swerve, IntakePivot pivot, Localization localization) {
+            Swerve swerve, IntakePivot pivot, LLlocalization localization) {
         AutoPhaseFactory factory =
                 new AutoPhaseFactory(
                         swerve, pivot, Choreo.getTrajectoryGroup("topFivePiece"), localization);

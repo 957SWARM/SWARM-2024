@@ -53,14 +53,6 @@ public abstract class IntakePivot implements Subsystem, Logged {
 
     protected abstract void setVoltageUnsafe(double volts);
 
-    public void setSetpoint(double radians) {
-        setSetpointUnsafe(
-                UtilityMath.clamp(
-                        IntakePivotConstants.MAX_ANGLE_RADIANS,
-                        IntakePivotConstants.MIN_ANGLE_RADIANS,
-                        radians));
-    }
-
     @Log.NT
     public abstract double getPositionRadians();
 
@@ -91,9 +83,16 @@ public abstract class IntakePivot implements Subsystem, Logged {
      *
      * @param volts Signed feedforward voltage.
      */
-    protected abstract void setFeedforward(double volts);
+    public void setFeedforwardAndSetpoint(double volts, double setpointRadians) {
+        setFeedforwardAndSetpointUnsafe(
+                volts,
+                UtilityMath.clamp(
+                        IntakePivotConstants.MAX_ANGLE_RADIANS,
+                        IntakePivotConstants.MIN_ANGLE_RADIANS,
+                        setpointRadians));
+    }
 
-    protected abstract void setSetpointUnsafe(double setpointRadians);
+    protected abstract void setFeedforwardAndSetpointUnsafe(double volts, double setpointRadians);
 
     public Command getSysIdQuasistatic(boolean forward) {
         return routine.quasistatic(forward ? Direction.kForward : Direction.kReverse);
@@ -137,10 +136,9 @@ public abstract class IntakePivot implements Subsystem, Logged {
                     log("profiled", profiled.position);
                     log("profiledV", profiled.velocity);
 
-                    setSetpoint(profiled.position);
-
-                    setFeedforward(
-                            feedforward.calculate(profiled.position, profiled.velocity, accel));
+                    setFeedforwardAndSetpoint(
+                            feedforward.calculate(profiled.position, profiled.velocity, accel),
+                            profiled.position);
                 });
     }
 

@@ -151,7 +151,7 @@ public abstract class Swerve implements Subsystem, Logged {
         @Log.NT
         public SwerveModulePosition getPosition() {
             return new SwerveModulePosition(
-                    getDrivePositionMeters(), new Rotation2d(getSteerPositionRadians()));
+                    -getDrivePositionMeters(), new Rotation2d(getSteerPositionRadians()));
         }
 
         protected abstract void update(double dt);

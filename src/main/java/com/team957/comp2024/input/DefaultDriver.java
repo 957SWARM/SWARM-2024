@@ -1,5 +1,6 @@
 package com.team957.comp2024.input;
 
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.XboxController;
 
 public class DefaultDriver implements DriverInput {
@@ -11,28 +12,85 @@ public class DefaultDriver implements DriverInput {
 
     private final XboxController xboxController;
 
-    public DefaultDriver() {
+    private final SlewRateLimiter xLimiter = new SlewRateLimiter(20);
+    private final SlewRateLimiter yLimiter = new SlewRateLimiter(20);
+    private final SlewRateLimiter angularLimiter = new SlewRateLimiter(20);
 
+    public DefaultDriver() {
         xboxController = new XboxController(0);
     }
 
     @Override
     public double swerveX() {
-        return LIN_MAX_SPEED * xboxController.getLeftY();
+        // consistent polling rate so this is fine??
+        return xLimiter.calculate(LIN_MAX_SPEED * xboxController.getLeftY());
     }
 
     @Override
     public double swerveY() {
-        return LIN_MAX_SPEED * xboxController.getLeftX();
+        return yLimiter.calculate(LIN_MAX_SPEED * xboxController.getLeftX());
     }
 
     @Override
     public boolean zeroGyro() {
-        return xboxController.getBackButton();
+        return xboxController.getRawButton(8);
     }
 
     @Override
     public double swerveRot() {
-        return ROT_MAX_SPEED * xboxController.getRightX();
+        return angularLimiter.calculate(ROT_MAX_SPEED * xboxController.getRightX());
+    }
+
+    @Override
+    public boolean shoot() {
+        return xboxController.getYButton();
+    }
+
+    @Override
+    public boolean intake() {
+        return xboxController.getXButton();
+    }
+
+    @Override
+    public boolean raiseHook() {
+        return xboxController.getRightBumper();
+    }
+
+    @Override
+    public boolean lowerHook() {
+        return xboxController.getLeftBumper();
+    }
+
+    @Override
+    public boolean climb() {
+        return xboxController.getBButton();
+    }
+
+    @Override
+    public boolean intakeNote() {
+        return xboxController.getXButton();
+    }
+
+    // bind this!
+    @Override
+    public boolean eject() {
+        return (xboxController.getPOV() == 180);
+    }
+
+    @Override
+    public boolean enableNoteTracking() {
+        return (xboxController.getRightTriggerAxis() > .5);
+    }
+
+    @Override
+    public boolean enableAprilTagTracking() {
+        return (xboxController.getLeftTriggerAxis() > .5);
+    }
+
+    // pivots intake to intake position
+    // if down pad is down
+    @Override
+    public boolean pivotAmp() {
+        return (xboxController.getPOV() == 0);
     }
 }

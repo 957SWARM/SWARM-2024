@@ -3,7 +3,7 @@ package com.team957.comp2024.commands;
 import com.choreo.lib.ChoreoControlFunction;
 import com.choreo.lib.ChoreoTrajectory;
 import com.team957.comp2024.Constants.AutoConstants;
-import com.team957.comp2024.Localization;
+import com.team957.comp2024.LLlocalization;
 import com.team957.comp2024.UI;
 import com.team957.comp2024.subsystems.swerve.Swerve;
 import com.team957.lib.controllers.feedback.PID;
@@ -45,7 +45,7 @@ public class ChoreoFollowingFactory implements Logged {
     public Command getPathFollowingCommand(
             Swerve swerve,
             ChoreoTrajectory trajectory,
-            Localization localization,
+            LLlocalization localization,
             boolean resetPoseToInitial) {
         final PID xController = new PID(AutoConstants.LINEAR_PATHFINDING_GAINS, 0);
         final PID yController = new PID(AutoConstants.LINEAR_PATHFINDING_GAINS, 0);
