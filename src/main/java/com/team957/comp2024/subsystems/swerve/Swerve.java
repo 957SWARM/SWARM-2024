@@ -1,5 +1,6 @@
 package com.team957.comp2024.subsystems.swerve;
 
+import com.team957.comp2024.Constants;
 import com.team957.comp2024.Constants.SwerveConstants;
 import com.team957.comp2024.Robot;
 import com.team957.comp2024.UI;
@@ -225,6 +226,11 @@ public abstract class Swerve implements Subsystem, Logged {
             backRight.getPosition(),
             backLeft.getPosition()
         };
+    }
+
+    @Log.NT
+    public ChassisSpeeds getForwardKinematicChassisSpeeds() {
+        return Constants.SwerveConstants.KINEMATICS.toChassisSpeeds(getStates());
     }
 
     public Command getModuleControllerCommand(Supplier<SwerveModuleState[]> setpoints) {
