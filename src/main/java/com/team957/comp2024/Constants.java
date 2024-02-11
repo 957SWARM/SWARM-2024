@@ -111,8 +111,13 @@ public class Constants {
     }
 
     public static final class AutoConstants {
-        public static final PIDConstants LINEAR_PATHFINDING_GAINS = new PIDConstants(5, 0, 0);
-        public static final PIDConstants ROTATIONAL_PATHFINDING_GAINS = new PIDConstants(5, 0, 0);
+        public static final PIDConstants LINEAR_PATHFINDING_GAINS = new PIDConstants(10, 0, .6);
+        public static final PIDConstants ROTATIONAL_PATHFINDING_GAINS = new PIDConstants(10, 0, 0);
+
+        public static final double SHOOT_BUFFER_SECONDS = 0.75;
+        public static final double INTAKE_BUFFER_SECONDS = 0.5;
+
+        public static final double DEFAULT_PIVOT_DELAY_SECONDS = 0.5;
     }
 
     public static final class IMUConstants {
@@ -145,6 +150,10 @@ public class Constants {
 
         public static final double PIVOT_TO_TIP_METERS = Units.inchesToMeters(14);
 
+        public static final double FLOOR_INTAKE_ANGLE_RADIANS = Units.degreesToRadians(-7.5);
+        public static final double STOW_INTAKE_ANGLE_RADIANS = Units.degreesToRadians(100);
+        public static final double HANDOFF_INTAKE_ANGLE_RADIANS = Units.degreesToRadians(132.5);
+        public static final double AMP_INTAKE_ANGLE_RADIANS = Units.degreesToRadians(75);
         public static final int INTAKE_PIVOT_MOTOR_CANID = 11;
 
         public static final int INTAKE_PIVOT_CURRENT_LIMIT_AMPS = 40;

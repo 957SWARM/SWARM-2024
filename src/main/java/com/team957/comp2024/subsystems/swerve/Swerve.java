@@ -299,6 +299,24 @@ public abstract class Swerve implements Subsystem, Logged {
         return driveRoutine.dynamic(forward ? Direction.kForward : Direction.kReverse);
     }
 
+    public Command lockDrivetrain() {
+        return run(() -> {
+                    this.frontLeft.setBrakeMode(true);
+                    this.frontRight.setBrakeMode(true);
+                    this.backRight.setBrakeMode(true);
+                    this.backLeft.setBrakeMode(true);
+                })
+                .andThen(
+                        getModuleControllerCommand(
+                                () ->
+                                        new SwerveModuleState[] {
+                                            new SwerveModuleState(0, new Rotation2d(Math.PI / 4)),
+                                            new SwerveModuleState(0, new Rotation2d(-Math.PI / 4)),
+                                            new SwerveModuleState(0, new Rotation2d(Math.PI / 4)),
+                                            new SwerveModuleState(0, new Rotation2d(-Math.PI / 4))
+                                        }));
+    }
+
     @Override
     public void periodic() {
         UI.instance.setSwerveStates(getStates());

@@ -79,7 +79,7 @@ public class UI implements Logged {
 
     private final MechanismLigament2d intakeVisBody =
             intakeVis
-                    .getRoot("root", 1, .5)
+                    .getRoot("root", 1.25, .25)
                     .append(
                             new MechanismLigament2d(
                                     "intake",
