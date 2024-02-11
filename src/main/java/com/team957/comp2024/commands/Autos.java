@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import java.util.ArrayList;
 import java.util.Optional;
-
 import org.littletonrobotics.Alert;
 import org.littletonrobotics.Alert.AlertType;
 
@@ -86,25 +85,31 @@ public class Autos {
     private final Shooter shooter;
     private final LLlocalization localization;
 
-    private final Alert loadFailureAlert = new Alert("Autonomous trajectory failed to load!", AlertType.ERROR);
+    private final Alert loadFailureAlert =
+            new Alert("Autonomous trajectory failed to load!", AlertType.ERROR);
 
-    public Autos(Swerve swerve, IntakePivot intakePivot, IntakeRoller intakeRoller, Shooter shooter, LLlocalization localization) {
-            this.swerve = swerve;
-            this.intakePivot = intakePivot;
-            this.intakeRoller = intakeRoller;
-            this.shooter = shooter;
-            this.localization = localization;
+    public Autos(
+            Swerve swerve,
+            IntakePivot intakePivot,
+            IntakeRoller intakeRoller,
+            Shooter shooter,
+            LLlocalization localization) {
+        this.swerve = swerve;
+        this.intakePivot = intakePivot;
+        this.intakeRoller = intakeRoller;
+        this.shooter = shooter;
+        this.localization = localization;
     }
 
     private Optional<ArrayList<ChoreoTrajectory>> safeLoadTrajectory(String trajName) {
         var trajPhases = Choreo.getTrajectoryGroup(trajName);
 
         if (trajPhases == null) {
-                loadFailureAlert.set(true);
-                return Optional.empty();
+            loadFailureAlert.set(true);
+            return Optional.empty();
         } else {
-                loadFailureAlert.set(false);
-                return Optional.of(trajPhases);
+            loadFailureAlert.set(false);
+            return Optional.of(trajPhases);
         }
     }
 
@@ -122,10 +127,10 @@ public class Autos {
         if (!phases.isPresent()) return new InstantCommand();
 
         AutoPhaseFactory factory =
-                new AutoPhaseFactory(
-                        swerve, intakePivot, phases.get(), localization);
+                new AutoPhaseFactory(swerve, intakePivot, phases.get(), localization);
 
-        return intakePivot.toHandoff()
+        return intakePivot
+                .toHandoff()
                 .withTimeout(Constants.AutoConstants.SHOOT_BUFFER_SECONDS)
                 .andThen(factory.floorTrajectoryPhase(0, true))
                 .andThen(factory.shootTrajectoryPhase(1, false))
@@ -138,13 +143,10 @@ public class Autos {
         if (!phases.isPresent()) return new InstantCommand();
 
         AutoPhaseFactory factory =
-                new AutoPhaseFactory(
-                        swerve,
-                        intakePivot,
-                        phases.get(),
-                        localization);
+                new AutoPhaseFactory(swerve, intakePivot, phases.get(), localization);
 
-        return intakePivot.toHandoff()
+        return intakePivot
+                .toHandoff()
                 .withTimeout(Constants.AutoConstants.SHOOT_BUFFER_SECONDS)
                 .andThen(factory.floorTrajectoryPhase(0, true))
                 .andThen(factory.shootTrajectoryPhase(1, false))
@@ -159,13 +161,10 @@ public class Autos {
         if (!phases.isPresent()) return new InstantCommand();
 
         AutoPhaseFactory factory =
-                new AutoPhaseFactory(
-                        swerve,
-                        intakePivot,
-                        phases.get(),
-                        localization);
+                new AutoPhaseFactory(swerve, intakePivot, phases.get(), localization);
 
-        return intakePivot.toHandoff()
+        return intakePivot
+                .toHandoff()
                 .withTimeout(Constants.AutoConstants.SHOOT_BUFFER_SECONDS)
                 .andThen(factory.floorTrajectoryPhase(0, true))
                 .andThen(factory.shootTrajectoryPhase(1, false))
@@ -182,10 +181,10 @@ public class Autos {
         if (!phases.isPresent()) return new InstantCommand();
 
         AutoPhaseFactory factory =
-                new AutoPhaseFactory(
-                        swerve, intakePivot, phases.get(), localization);
+                new AutoPhaseFactory(swerve, intakePivot, phases.get(), localization);
 
-        return intakePivot.toHandoff()
+        return intakePivot
+                .toHandoff()
                 .withTimeout(Constants.AutoConstants.SHOOT_BUFFER_SECONDS)
                 .andThen(factory.floorTrajectoryPhase(0, 0, true))
                 .andThen(factory.shootTrajectoryPhase(1, false))
@@ -203,10 +202,10 @@ public class Autos {
         if (!phases.isPresent()) return new InstantCommand();
 
         AutoPhaseFactory factory =
-                new AutoPhaseFactory(
-                        swerve, intakePivot,phases.get(), localization);
+                new AutoPhaseFactory(swerve, intakePivot, phases.get(), localization);
 
-        return intakePivot.toHandoff()
+        return intakePivot
+                .toHandoff()
                 .withTimeout(Constants.AutoConstants.SHOOT_BUFFER_SECONDS)
                 .andThen(factory.floorTrajectoryPhase(0, 1, true))
                 .andThen(factory.shootTrajectoryPhase(1, false))
