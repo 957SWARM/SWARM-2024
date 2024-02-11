@@ -68,6 +68,8 @@ public class LLlocalization {
         } else {
             poseEstimator.update(new Rotation2d(simGyro.getCurrentOutput()), modulePositions.get());
         }
+
+        UI.instance.setPose(poseEstimator.getEstimatedPosition());
     }
 
     public void estimateVisionPose(String limelightName) {
