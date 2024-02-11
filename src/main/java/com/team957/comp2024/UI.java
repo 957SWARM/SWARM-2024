@@ -9,12 +9,18 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import monologue.Annotations.IgnoreLogged;
 import monologue.Annotations.Log;
 import monologue.LogLevel;
 import monologue.Logged;
 import org.littletonrobotics.Alert;
 import org.littletonrobotics.Alert.AlertType;
+
+import com.team957.comp2024.commands.Autos;
 
 public class UI implements Logged {
     private SwerveModuleState[] moduleStates =
@@ -93,9 +99,15 @@ public class UI implements Logged {
 
     private final Alert lowVoltage = new Alert("Low battery voltage!", AlertType.WARNING);
 
+    private final SendableChooser<Command> autoChooser = new SendableChooser<>();
+
     private UI() {
         if (!Robot.isReal()) new Alert("Robot is simulated!", AlertType.INFO).set(true);
         if (DriverStation.isFMSAttached()) new Alert("FMS connected!", AlertType.INFO).set(true);
+
+        autoChooser.setDefaultOption("Do Nothing", new InstantCommand());
+
+        SmartDashboard.putData(autoChooser);
     }
 
     public void setSwerveStates(SwerveModuleState[] states) {
@@ -146,5 +158,23 @@ public class UI implements Logged {
         log("mainPowerPathResistanceOhms", resistance);
 
         highResistance.set(resistance > Constants.AlertConstants.HIGH_RESISTANCE_THRESHOLD_OHMS);
+    }
+
+    public void addAutos(Autos autos) {
+        autoChooser.addOption("Shoot Preload", autos.shootPreloadBumperAuto());
+
+        autoChooser.addOption("Middle Two Piece", autos.middleTwoPiece());
+
+        autoChooser.addOption("Top Near Three Piece", autos.topNearThreePiece());
+
+        autoChooser.addOption("Top Center Four Piece", autos.topCenterFourPiece());
+
+        autoChooser.addOption("Near Four Piece", autos.nearFourPiece());
+
+        autoChooser.addOption("Top Five Piece", autos.topFivePiece());
+    }
+
+    public Command getAuto() {
+        return autoChooser.getSelected();
     }
 }
