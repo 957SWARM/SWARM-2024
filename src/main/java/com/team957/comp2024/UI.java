@@ -20,8 +20,6 @@ import monologue.Logged;
 import org.littletonrobotics.Alert;
 import org.littletonrobotics.Alert.AlertType;
 
-import com.team957.comp2024.commands.Autos;
-
 public class UI implements Logged {
     private SwerveModuleState[] moduleStates =
             new SwerveModuleState[] {
@@ -160,18 +158,8 @@ public class UI implements Logged {
         highResistance.set(resistance > Constants.AlertConstants.HIGH_RESISTANCE_THRESHOLD_OHMS);
     }
 
-    public void addAutos(Autos autos) {
-        autoChooser.addOption("Shoot Preload", autos.shootPreloadBumperAuto());
-
-        autoChooser.addOption("Middle Two Piece", autos.middleTwoPiece());
-
-        autoChooser.addOption("Top Near Three Piece", autos.topNearThreePiece());
-
-        autoChooser.addOption("Top Center Four Piece", autos.topCenterFourPiece());
-
-        autoChooser.addOption("Near Four Piece", autos.nearFourPiece());
-
-        autoChooser.addOption("Top Five Piece", autos.topFivePiece());
+    public void addAuto(String name, Command auto) {
+        autoChooser.addOption(name, auto);
     }
 
     public Command getAuto() {

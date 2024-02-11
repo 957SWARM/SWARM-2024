@@ -1,11 +1,9 @@
 package com.team957.comp2024.subsystems.shooter;
 
+import com.team957.comp2024.Constants;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import java.util.function.Supplier;
-
-import com.team957.comp2024.Constants;
-
 import monologue.Annotations.Log;
 import monologue.Logged;
 
@@ -51,14 +49,17 @@ public abstract class Shooter implements Subsystem, Logged {
     }
 
     public Command subwooferShot() {
-        return defaultShooterControlCommand(() -> Constants.ShooterConstants.SUBWOOFER_CONTROL_EFFORT_VOLTS);
+        return defaultShooterControlCommand(
+                () -> Constants.ShooterConstants.SUBWOOFER_CONTROL_EFFORT_VOLTS);
     }
 
     public Command idle() {
-        return defaultShooterControlCommand(() -> Constants.ShooterConstants.IDLE_CONTROL_EFFORT_VOLTS);
+        return defaultShooterControlCommand(
+                () -> Constants.ShooterConstants.IDLE_CONTROL_EFFORT_VOLTS);
     }
 
     public Command halfCourtShot() {
-        return defaultShooterControlCommand(() -> Constants.ShooterConstants.HALF_COURT_CONTROL_EFFORT_VOLTS);
+        return defaultShooterControlCommand(
+                () -> Constants.ShooterConstants.HALF_COURT_CONTROL_EFFORT_VOLTS);
     }
 }

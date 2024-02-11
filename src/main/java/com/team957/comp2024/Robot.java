@@ -64,7 +64,8 @@ public class Robot extends TimedRobot implements Logged {
                     imu::getCorrectedAngle,
                     isReal());
 
-        private final Autos autos = new Autos(swerve, intakePivot, intakeRoller, shooter, poseEstimation);
+    private final Autos autos =
+            new Autos(swerve, intakePivot, intakeRoller, shooter, poseEstimation);
 
     private DriverInput input;
 
@@ -123,19 +124,22 @@ public class Robot extends TimedRobot implements Logged {
 
         DriverStation.startDataLog(DataLogManager.getLog()); // same log used by monologue
 
-        ui.addAutos(autos);
+        ui.addAuto("Shoot Preload", autos.shootPreloadBumperAuto());
+        ui.addAuto("Middle Two Piece", autos.middleTwoPiece());
+        ui.addAuto("Top Near Three Piece", autos.topNearThreePiece());
+        ui.addAuto("Top Center Four Piece", autos.topCenterFourPiece());
+        ui.addAuto("Near Four Piece", autos.nearFourPiece());
+        ui.addAuto("Top Five Piece", autos.topFivePiece());
 
         // trigger definitions:
         // shoot trigger needs to also check if intakePivot is retracted
         shoot =
                 new Trigger(driver::shoot)
-                        .toggleOnTrue(
-                                shooter.idle())
+                        .toggleOnTrue(shooter.idle())
                         .toggleOnTrue(
                                 intakeRoller.ejectNoteCommand() // ejects note into shooter
                                 )
-                        .toggleOnFalse(
-                                shooter.subwooferShot())
+                        .toggleOnFalse(shooter.subwooferShot())
                         .toggleOnFalse(
                                 intakeRoller.idleCommand() // makes sure the intake is off
                                 );
