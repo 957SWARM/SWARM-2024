@@ -2,7 +2,6 @@ package com.team957.comp2024;
 
 import com.ctre.phoenix6.SignalLogger;
 import com.team957.comp2024.Constants.PDHConstants;
-import com.team957.comp2024.Constants.ShooterConstants;
 import com.team957.comp2024.Constants.SwerveConstants;
 import com.team957.comp2024.commands.Autos;
 import com.team957.comp2024.commands.ChoreoFollowingFactory;
@@ -25,12 +24,9 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import monologue.Logged;
 import monologue.Monologue;
-import org.littletonrobotics.Alert;
-import org.littletonrobotics.Alert.AlertType;
 import org.littletonrobotics.urcl.URCL;
 
 public class Robot extends TimedRobot implements Logged {
@@ -38,7 +34,6 @@ public class Robot extends TimedRobot implements Logged {
     // monologue can work its reflection magic
     private final IMU imu = new IMU();
 
-    @SuppressWarnings("unused")
     private final UI ui = UI.instance;
 
     @SuppressWarnings("unused")
@@ -69,6 +64,8 @@ public class Robot extends TimedRobot implements Logged {
                     imu::getCorrectedAngle,
                     isReal());
 
+        private final Autos autos = new Autos(swerve, intakePivot, intakeRoller, shooter, poseEstimation);
+
     private DriverInput input;
 
     NoteTargeting noteTargeting = new NoteTargeting(swerve, poseEstimation, "limelight");
@@ -81,8 +78,6 @@ public class Robot extends TimedRobot implements Logged {
     // private final ChoreoFollowingFactory trajectoryFollowing = new ChoreoFollowingFactory();
 
     private final DriverInput driver = new DefaultDriver();
-
-    private final Alert autoLoadFail = new Alert("Auto path failed to load!", AlertType.ERROR);
 
     private final Command teleopDrive =
             swerve.getFieldRelativeControlCommand(
@@ -128,19 +123,19 @@ public class Robot extends TimedRobot implements Logged {
 
         DriverStation.startDataLog(DataLogManager.getLog()); // same log used by monologue
 
+        ui.addAutos(autos);
+
         // trigger definitions:
         // shoot trigger needs to also check if intakePivot is retracted
         shoot =
                 new Trigger(driver::shoot)
                         .toggleOnTrue(
-                                Commands.runOnce(
-                                        () -> shooterVoltage = ShooterConstants.DEFAULT_VOLTAGE))
+                                shooter.idle())
                         .toggleOnTrue(
                                 intakeRoller.ejectNoteCommand() // ejects note into shooter
                                 )
                         .toggleOnFalse(
-                                Commands.runOnce(
-                                        () -> shooterVoltage = ShooterConstants.SHOOTING_VOLTAGE))
+                                shooter.subwooferShot())
                         .toggleOnFalse(
                                 intakeRoller.idleCommand() // makes sure the intake is off
                                 );
@@ -211,10 +206,6 @@ public class Robot extends TimedRobot implements Logged {
         boxClimber.setDefaultCommand(boxClimber.idleCommand());
         winch.setDefaultCommand(winch.idleCommand());
         intakeRoller.setDefaultCommand(intakeRoller.idleCommand());
-
-        teleopIntake.schedule();
-
-        autoLoadFail.set(false);
     }
 
     @Override
@@ -222,7 +213,6 @@ public class Robot extends TimedRobot implements Logged {
 
     @Override
     public void autonomousInit() {
-        Autos.topFivePiece(swerve, intakePivot, poseEstimation)
-                .schedule(); // TODO implement auto switching
+        ui.getAuto().schedule();
     }
 }

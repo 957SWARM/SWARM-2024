@@ -5,14 +5,20 @@ import com.choreo.lib.ChoreoTrajectory;
 import com.team957.comp2024.Constants;
 import com.team957.comp2024.LLlocalization;
 import com.team957.comp2024.subsystems.intake.IntakePivot;
+import com.team957.comp2024.subsystems.intake.IntakeRoller;
+import com.team957.comp2024.subsystems.shooter.Shooter;
 import com.team957.comp2024.subsystems.swerve.Swerve;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import java.util.ArrayList;
+import java.util.Optional;
+
+import org.littletonrobotics.Alert;
+import org.littletonrobotics.Alert.AlertType;
 
 public class Autos {
-    private static class AutoPhaseFactory {
+    private class AutoPhaseFactory {
         private final Swerve swerve;
         private final IntakePivot pivot;
         private final ArrayList<ChoreoTrajectory> traj;
@@ -74,38 +80,71 @@ public class Autos {
         }
     }
 
-    public static Command doNothingAuto() {
+    private final Swerve swerve;
+    private final IntakePivot intakePivot;
+    private final IntakeRoller intakeRoller;
+    private final Shooter shooter;
+    private final LLlocalization localization;
+
+    private final Alert loadFailureAlert = new Alert("Autonomous trajectory failed to load!", AlertType.ERROR);
+
+    public Autos(Swerve swerve, IntakePivot intakePivot, IntakeRoller intakeRoller, Shooter shooter, LLlocalization localization) {
+            this.swerve = swerve;
+            this.intakePivot = intakePivot;
+            this.intakeRoller = intakeRoller;
+            this.shooter = shooter;
+            this.localization = localization;
+    }
+
+    private Optional<ArrayList<ChoreoTrajectory>> safeLoadTrajectory(String trajName) {
+        var trajPhases = Choreo.getTrajectoryGroup(trajName);
+
+        if (trajPhases == null) {
+                loadFailureAlert.set(true);
+                return Optional.empty();
+        } else {
+                loadFailureAlert.set(false);
+                return Optional.of(trajPhases);
+        }
+    }
+
+    public Command doNothingAuto() {
         return new InstantCommand();
     }
 
-    public static Command shootPreloadBumperAuto() {
+    public Command shootPreloadBumperAuto() {
         return new InstantCommand(); // shooter not implemented
     }
 
-    public static Command middleTwoPiece(
-            Swerve swerve, IntakePivot pivot, LLlocalization localization) {
+    public Command middleTwoPiece() {
+        var phases = safeLoadTrajectory("middleTwoPiece");
+
+        if (!phases.isPresent()) return new InstantCommand();
 
         AutoPhaseFactory factory =
                 new AutoPhaseFactory(
-                        swerve, pivot, Choreo.getTrajectoryGroup("middleTwoPiece"), localization);
+                        swerve, intakePivot, phases.get(), localization);
 
-        return pivot.toHandoff()
+        return intakePivot.toHandoff()
                 .withTimeout(Constants.AutoConstants.SHOOT_BUFFER_SECONDS)
                 .andThen(factory.floorTrajectoryPhase(0, true))
                 .andThen(factory.shootTrajectoryPhase(1, false))
                 .andThen(factory.lock());
     }
 
-    public static Command topNearThreePiece(
-            Swerve swerve, IntakePivot pivot, LLlocalization localization) {
+    public Command topNearThreePiece() {
+        var phases = safeLoadTrajectory("topNearThreePiece");
+
+        if (!phases.isPresent()) return new InstantCommand();
+
         AutoPhaseFactory factory =
                 new AutoPhaseFactory(
                         swerve,
-                        pivot,
-                        Choreo.getTrajectoryGroup("topNearThreePiece"),
+                        intakePivot,
+                        phases.get(),
                         localization);
 
-        return pivot.toHandoff()
+        return intakePivot.toHandoff()
                 .withTimeout(Constants.AutoConstants.SHOOT_BUFFER_SECONDS)
                 .andThen(factory.floorTrajectoryPhase(0, true))
                 .andThen(factory.shootTrajectoryPhase(1, false))
@@ -114,16 +153,19 @@ public class Autos {
                 .andThen(factory.lock());
     }
 
-    public static Command topCenterFourPiece(
-            Swerve swerve, IntakePivot pivot, LLlocalization localization) {
+    public Command topCenterFourPiece() {
+        var phases = safeLoadTrajectory("topCenterFourPiece");
+
+        if (!phases.isPresent()) return new InstantCommand();
+
         AutoPhaseFactory factory =
                 new AutoPhaseFactory(
                         swerve,
-                        pivot,
-                        Choreo.getTrajectoryGroup("topCenterFourPiece"),
+                        intakePivot,
+                        phases.get(),
                         localization);
 
-        return pivot.toHandoff()
+        return intakePivot.toHandoff()
                 .withTimeout(Constants.AutoConstants.SHOOT_BUFFER_SECONDS)
                 .andThen(factory.floorTrajectoryPhase(0, true))
                 .andThen(factory.shootTrajectoryPhase(1, false))
@@ -134,13 +176,16 @@ public class Autos {
                 .andThen(factory.lock());
     }
 
-    public static Command nearFourPiece(
-            Swerve swerve, IntakePivot pivot, LLlocalization localization) {
+    public Command nearFourPiece() {
+        var phases = safeLoadTrajectory("nearFourPiece");
+
+        if (!phases.isPresent()) return new InstantCommand();
+
         AutoPhaseFactory factory =
                 new AutoPhaseFactory(
-                        swerve, pivot, Choreo.getTrajectoryGroup("nearFourPiece"), localization);
+                        swerve, intakePivot, phases.get(), localization);
 
-        return pivot.toHandoff()
+        return intakePivot.toHandoff()
                 .withTimeout(Constants.AutoConstants.SHOOT_BUFFER_SECONDS)
                 .andThen(factory.floorTrajectoryPhase(0, 0, true))
                 .andThen(factory.shootTrajectoryPhase(1, false))
@@ -152,13 +197,16 @@ public class Autos {
                 .andThen(factory.lock());
     }
 
-    public static Command topFivePiece(
-            Swerve swerve, IntakePivot pivot, LLlocalization localization) {
+    public Command topFivePiece() {
+        var phases = safeLoadTrajectory("topFivePiece");
+
+        if (!phases.isPresent()) return new InstantCommand();
+
         AutoPhaseFactory factory =
                 new AutoPhaseFactory(
-                        swerve, pivot, Choreo.getTrajectoryGroup("topFivePiece"), localization);
+                        swerve, intakePivot,phases.get(), localization);
 
-        return pivot.toHandoff()
+        return intakePivot.toHandoff()
                 .withTimeout(Constants.AutoConstants.SHOOT_BUFFER_SECONDS)
                 .andThen(factory.floorTrajectoryPhase(0, 1, true))
                 .andThen(factory.shootTrajectoryPhase(1, false))
