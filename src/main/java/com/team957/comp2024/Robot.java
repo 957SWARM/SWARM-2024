@@ -213,7 +213,9 @@ public class Robot extends TimedRobot implements Logged {
     }
 
     @Override
-    public void disabledPeriodic() {}
+    public void disabledInit() {
+        CommandScheduler.getInstance().cancelAll();
+    }
 
     @Override
     public void autonomousInit() {

@@ -33,6 +33,18 @@ public class LLlocalization implements Logged {
 
     private final SwerveDrivePoseEstimator poseEstimator;
 
+    // this is 100% a code smell, but something is screwy with the pose estimator unless we flip
+    // these
+    private SwerveModulePosition[] invertDistances(SwerveModulePosition[] positions) {
+        SwerveModulePosition[] flipped = positions;
+
+        for (SwerveModulePosition position : flipped)
+            position.distanceMeters = -position.distanceMeters;
+
+        return flipped;
+    }
+    ;
+
     public LLlocalization(
             SwerveDriveKinematics kinematics,
             Supplier<SwerveModuleState[]> moduleStates,
@@ -49,7 +61,7 @@ public class LLlocalization implements Logged {
                 new SwerveDrivePoseEstimator(
                         kinematics,
                         gyro.get(),
-                        modulePositions.get(),
+                        invertDistances(modulePositions.get()),
                         new Pose2d(),
                         VisionConstants.STATE_STDS,
                         VisionConstants.VISION_STDS);
@@ -63,13 +75,17 @@ public class LLlocalization implements Logged {
                         .omegaRadiansPerSecond,
                 dt);
 
+        Rotation2d rotation;
+
         if (robotReal) {
             estimateVisionPose("limelight");
 
-            poseEstimator.update(gyro.get(), modulePositions.get());
+            rotation = gyro.get();
         } else {
-            poseEstimator.update(new Rotation2d(simGyro.getCurrentOutput()), modulePositions.get());
+            rotation = new Rotation2d(simGyro.getCurrentOutput());
         }
+
+        poseEstimator.update(rotation, invertDistances(modulePositions.get()));
 
         UI.instance.setPose(poseEstimator.getEstimatedPosition());
     }
@@ -116,11 +132,8 @@ public class LLlocalization implements Logged {
     }
 
     public void setPose(Pose2d pose) {
-        if (robotReal) {
-            poseEstimator.resetPosition(gyro.get(), modulePositions.get(), pose);
-        } else {
-            poseEstimator.resetPosition(
-                    new Rotation2d(simGyro.getCurrentOutput()), modulePositions.get(), pose);
-        }
+        Rotation2d rot = (robotReal) ? gyro.get() : new Rotation2d(simGyro.getCurrentOutput());
+
+        poseEstimator.resetPosition(rot, invertDistances(modulePositions.get()), pose);
     }
 }
