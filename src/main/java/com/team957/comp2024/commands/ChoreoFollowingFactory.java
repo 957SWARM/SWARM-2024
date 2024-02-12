@@ -29,6 +29,8 @@ public class ChoreoFollowingFactory implements Logged {
             double yFF = referenceState.velocityY;
             double tFF = referenceState.angularVelocity;
 
+            this.log("referenceChassisSpeeds", new ChassisSpeeds(xFF, yFF, tFF));
+
             x.setSetpoint(referenceState.x);
             double xFB = x.calculate(pose.getX());
 
