@@ -5,6 +5,7 @@ import com.ctre.phoenix6.SignalLogger;
 import com.team957.comp2024.Constants.MiscConstants;
 import com.team957.comp2024.Constants.PDHConstants;
 import com.team957.comp2024.Constants.SwerveConstants;
+import com.team957.comp2024.commands.Autos;
 import com.team957.comp2024.commands.ChoreoFollowingFactory;
 import com.team957.comp2024.commands.NoteTargeting;
 import com.team957.comp2024.commands.OnTheFlyPathing;
@@ -84,6 +85,9 @@ public class Robot extends TimedRobot implements Logged {
                     isReal());
 
     private final OnTheFlyPathing otf = OnTheFlyPathing.instance;
+
+    private final Autos autos =
+            new Autos(swerve, pivot, intakeRoller, shooter, poseEstimation, this::getAlliance);
 
     private DriverInput input;
 
