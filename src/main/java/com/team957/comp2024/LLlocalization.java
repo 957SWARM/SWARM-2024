@@ -16,8 +16,10 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
 import java.util.function.Supplier;
+import monologue.Annotations.Log;
+import monologue.Logged;
 
-public class LLlocalization {
+public class LLlocalization implements Logged {
 
     private final Supplier<SwerveModuleState[]> moduleStates;
     private final Supplier<SwerveModulePosition[]> modulePositions;
@@ -103,10 +105,12 @@ public class LLlocalization {
         }
     }
 
+    @Log.NT
     public Pose2d getPoseEstimate() {
         return poseEstimator.getEstimatedPosition();
     }
 
+    @Log.NT
     public Rotation2d getRotationEstimate() {
         return poseEstimator.getEstimatedPosition().getRotation();
     }
