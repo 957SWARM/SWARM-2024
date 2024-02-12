@@ -6,6 +6,7 @@ import com.team957.comp2024.Constants.SwerveConstants;
 import com.team957.comp2024.commands.Autos;
 import com.team957.comp2024.commands.ChoreoFollowingFactory;
 import com.team957.comp2024.commands.NoteTargeting;
+import com.team957.comp2024.commands.OnTheFlyPathing;
 import com.team957.comp2024.input.DefaultDriver;
 import com.team957.comp2024.input.DriverInput;
 import com.team957.comp2024.input.SimKeyboardDriver;
@@ -18,6 +19,8 @@ import com.team957.comp2024.subsystems.intake.IntakeRoller;
 import com.team957.comp2024.subsystems.shooter.Shooter;
 import com.team957.comp2024.subsystems.swerve.Swerve;
 import com.team957.lib.util.DeltaTimeUtil;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -63,6 +66,8 @@ public class Robot extends TimedRobot implements Logged {
                     swerve::getPositions,
                     imu::getCorrectedAngle,
                     isReal());
+
+    private final OnTheFlyPathing otf = OnTheFlyPathing.instance;
 
     private final Autos autos =
             new Autos(swerve, intakePivot, intakeRoller, shooter, poseEstimation);
@@ -219,6 +224,11 @@ public class Robot extends TimedRobot implements Logged {
 
     @Override
     public void autonomousInit() {
-        ui.getAuto().schedule();
+        // ui.getAuto().schedule();
+        otf.otfPathingCommand(
+                        swerve,
+                        () -> new Pose2d(1.35, 5.5, new Rotation2d()),
+                        poseEstimation::getPoseEstimate)
+                .schedule();
     }
 }
