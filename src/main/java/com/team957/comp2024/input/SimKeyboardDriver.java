@@ -10,12 +10,12 @@ public class SimKeyboardDriver implements DriverInput {
 
     @Override
     public double swerveX() {
-        return maxLinearSpeed * -controller.getLeftY();
+        return maxLinearSpeed * controller.getLeftY();
     }
 
     @Override
     public double swerveY() {
-        return maxLinearSpeed * -controller.getLeftX();
+        return maxLinearSpeed * controller.getLeftX();
     }
 
     @Override
