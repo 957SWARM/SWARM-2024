@@ -36,7 +36,7 @@ public class UI implements Logged {
 
     @IgnoreLogged public static final UI instance = new UI();
 
-    private double rotationDegrees = 0;
+    private double rotation = 0;
 
     private double currentAmps = 0;
     private double voltage = 0;
@@ -49,14 +49,14 @@ public class UI implements Logged {
                     builder.setSmartDashboardType("SwerveDrive");
 
                     builder.addDoubleProperty(
-                            "Front Left Angle", () -> moduleStates[0].angle.getDegrees(), null);
+                            "Front Left Angle", () -> moduleStates[0].angle.getRadians(), null);
                     builder.addDoubleProperty(
                             "Front Left Velocity",
                             () -> moduleStates[0].speedMetersPerSecond,
                             null);
 
                     builder.addDoubleProperty(
-                            "Front Right Angle", () -> moduleStates[1].angle.getDegrees(), null);
+                            "Front Right Angle", () -> moduleStates[1].angle.getRadians(), null);
 
                     builder.addDoubleProperty(
                             "Front Right Velocity",
@@ -64,19 +64,19 @@ public class UI implements Logged {
                             null);
 
                     builder.addDoubleProperty(
-                            "Back Right Angle", () -> moduleStates[2].angle.getDegrees(), null);
+                            "Back Right Angle", () -> moduleStates[2].angle.getRadians(), null);
                     builder.addDoubleProperty(
                             "Back Right Velocity",
                             () -> moduleStates[2].speedMetersPerSecond,
                             null);
 
                     builder.addDoubleProperty(
-                            "Back Left Angle", () -> moduleStates[3].angle.getDegrees(), null);
+                            "Back Left Angle", () -> moduleStates[3].angle.getRadians(), null);
 
                     builder.addDoubleProperty(
                             "Back Left Velocity", () -> moduleStates[3].speedMetersPerSecond, null);
 
-                    builder.addDoubleProperty("Robot Angle", () -> rotationDegrees, null);
+                    builder.addDoubleProperty("Robot Angle", () -> rotation, null);
                 }
             };
 
@@ -131,8 +131,7 @@ public class UI implements Logged {
     public void setPose(Pose2d pose) {
         fieldVis.setRobotPose(pose);
 
-        rotationDegrees =
-                pose.getRotation().getDegrees(); // for the sake of swerve viz getting an angle
+        rotation = pose.getRotation().getRadians(); // for the sake of swerve viz getting an angle
     }
 
     public void setSetpointPose(Pose2d setpointPose) {
