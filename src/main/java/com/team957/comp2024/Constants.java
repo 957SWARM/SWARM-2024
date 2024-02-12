@@ -112,23 +112,13 @@ public class Constants {
     }
 
     public static final class AutoConstants {
-        public static final PIDConstants LINEAR_PATHFINDING_GAINS = new PIDConstants(10, 0, .6);
+        public static final PIDConstants LINEAR_PATHFINDING_GAINS = new PIDConstants(10, 0, 0);
         public static final PIDConstants ROTATIONAL_PATHFINDING_GAINS = new PIDConstants(10, 0, 0);
 
         public static final double SHOOT_BUFFER_SECONDS = 0.75;
         public static final double INTAKE_BUFFER_SECONDS = 0.5;
 
         public static final double DEFAULT_PIVOT_DELAY_SECONDS = 0.5;
-    }
-
-    public static final class OnTheFlyPathingConstants {
-        public static final double OTF_MAX_LINEAR_VEL = 2.5;
-        public static final double OTF_MAX_LINEAR_ACCEL = 6;
-
-        public static final double OTF_MAX_ANGULAR_VEL = 10;
-        public static final double OTF_MAX_ANGULAR_ACCEL = 10;
-
-        public static final double OTF_ROTATION_CHOICE_FORWARD_BIAS_SECONDS = 0.25;
     }
 
     public static final class IMUConstants {

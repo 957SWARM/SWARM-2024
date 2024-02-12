@@ -6,6 +6,7 @@ import com.team957.comp2024.Constants.SwerveConstants;
 import com.team957.comp2024.commands.Autos;
 import com.team957.comp2024.commands.ChoreoFollowingFactory;
 import com.team957.comp2024.commands.NoteTargeting;
+import com.team957.comp2024.commands.OnTheFlyPathing;
 import com.team957.comp2024.input.DefaultDriver;
 import com.team957.comp2024.input.DriverInput;
 import com.team957.comp2024.input.SimKeyboardDriver;
@@ -64,6 +65,8 @@ public class Robot extends TimedRobot implements Logged {
                     swerve::getPositions,
                     imu::getCorrectedAngle,
                     isReal());
+
+    private final OnTheFlyPathing otf = OnTheFlyPathing.instance;
 
     private final Autos autos =
             new Autos(swerve, intakePivot, intakeRoller, shooter, poseEstimation);
