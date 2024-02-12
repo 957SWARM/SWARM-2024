@@ -128,6 +128,8 @@ public class Constants {
 
         public static final double OTF_MAX_ANGULAR_VEL = 10;
         public static final double OTF_MAX_ANGULAR_ACCEL = 10;
+
+        public static final double OTF_ROTATION_CHOICE_FORWARD_BIAS_SECONDS = 0.25;
     }
 
     public static final class IMUConstants {
