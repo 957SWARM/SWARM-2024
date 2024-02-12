@@ -4,6 +4,7 @@ import com.team957.comp2024.Constants;
 import com.team957.comp2024.Robot;
 import com.team957.comp2024.subsystems.swerve.Swerve;
 import com.team957.lib.controllers.feedback.PID;
+import com.team957.lib.math.UtilityMath;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
@@ -38,6 +39,8 @@ public class OnTheFlyPathing {
                 new PID(Constants.AutoConstants.ROTATIONAL_PATHFINDING_GAINS, 0, true);
 
         // i love java
+        // every object allocation adds garbage collector overhead,
+        // and would be a LOT of them here without really ugly code
         State reusableCurrentState = new State();
         State reusableGoalState = new State();
 
@@ -52,6 +55,9 @@ public class OnTheFlyPathing {
                             swerve.getForwardKinematicChassisSpeeds().vxMetersPerSecond;
                     double chassisRelVY =
                             swerve.getForwardKinematicChassisSpeeds().vyMetersPerSecond;
+
+                    double chassisOmega =
+                            swerve.getForwardKinematicChassisSpeeds().omegaRadiansPerSecond;
 
                     // have to transform chassis-relative ik into world-relative
                     reusableCurrentState.position = actualPose.getX();
@@ -85,7 +91,44 @@ public class OnTheFlyPathing {
                     xController.setSetpoint(xProfiled);
                     yController.setSetpoint(yProfiled);
 
-                    // TODO: figure out profiling for wrapped angle and then finish?
+                    reusableCurrentState.position = actualPose.getRotation().getRadians();
+                    reusableCurrentState.velocity = chassisOmega;
+
+                    reusableGoalState.position =
+                            UtilityMath.normalizeAngleRadians(finalPose.getRotation().getRadians());
+
+                    // set interal goal for positive rotation
+                    double positiveRotationSetpoint =
+                            angularProfile.calculate(
+                                            Robot.kDefaultPeriod,
+                                            reusableCurrentState,
+                                            reusableGoalState)
+                                    .position;
+
+                    double timeToPositiveRotation =
+                            angularProfile.timeLeftUntil(finalPose.getRotation().getRadians());
+
+                    reusableGoalState.position =
+                            UtilityMath.normalizeAngleRadians(finalPose.getRotation().getRadians())
+                                    - 2 * Math.PI;
+
+                    double negativeRotationSetpoint =
+                            angularProfile.calculate(
+                                            Robot.kDefaultPeriod,
+                                            reusableCurrentState,
+                                            reusableGoalState)
+                                    .position;
+
+                    double timeToNegativeRotation =
+                            angularProfile.timeLeftUntil(finalPose.getRotation().getRadians());
+
+                    // slight forward bias to prevent oscillation around antipode
+                    if (timeToPositiveRotation
+                                    + Constants.OnTheFlyPathingConstants
+                                            .OTF_ROTATION_CHOICE_FORWARD_BIAS_SECONDS
+                            > timeToNegativeRotation)
+                        thetaController.setSetpoint(positiveRotationSetpoint);
+                    else thetaController.setSetpoint(negativeRotationSetpoint);
 
                     return new ChassisSpeeds(
                             xController.calculate(actualPose.getX()),
