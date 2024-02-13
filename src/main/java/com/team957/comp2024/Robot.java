@@ -339,7 +339,14 @@ public class Robot extends TimedRobot implements Logged {
     }
 
     @Override
-    public void teleopInit() {}
+    public void teleopInit() {
+        // shooter.setDefaultCommand(shooter.idle());
+
+        // Default commands
+        // boxClimber.setDefaultCommand(boxClimber.idleCommand());
+        // winch.setDefaultCommand(winch.idleCommand());
+        // intakeRoller.setDefaultCommand(intakeRoller.idleCommand());
+    }
 
     @Override
     public void disabledInit() {
