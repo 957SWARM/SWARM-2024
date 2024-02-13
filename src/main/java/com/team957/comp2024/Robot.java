@@ -132,51 +132,51 @@ public class Robot extends TimedRobot implements Logged {
 
         // trigger definitions:
         // shoot trigger needs to also check if intakePivot is retracted
-        shoot =
-                new Trigger(driver::shoot)
-                        .toggleOnTrue(shooter.idle())
-                        .toggleOnTrue(
-                                intakeRoller.ejectNoteCommand() // ejects note into shooter
-                                )
-                        .toggleOnFalse(shooter.subwooferShot())
-                        .toggleOnFalse(
-                                intakeRoller.idleCommand() // makes sure the intake is off
-                                );
+        // shoot =
+        //         new Trigger(driver::shoot)
+        //                 .toggleOnTrue(shooter.idle())
+        //                 .toggleOnTrue(
+        //                         intakeRoller.ejectNoteCommand() // ejects note into shooter
+        //                         )
+        //                 .toggleOnFalse(shooter.subwooferShot())
+        //                 .toggleOnFalse(
+        //                         intakeRoller.idleCommand() // makes sure the intake is off
+        //                         );
 
         // TODO: need to reimplement all pivot/roller/shooter superstructure logic, badly
 
         // should add intakePivot into this trigger so that both the roller and
         // intakePivot coordinate
-        intake =
-                new Trigger(() -> !hasNote && driver.intake())
-                        .toggleOnTrue(intakeRoller.intakeNoteCommand())
-                        .toggleOnFalse(intakeRoller.idleCommand());
+        // intake =
+        //         new Trigger(() -> !hasNote && driver.intake())
+        //                 .toggleOnTrue(intakeRoller.intakeNoteCommand())
+        //                 .toggleOnFalse(intakeRoller.idleCommand());
 
-        // should add intakePivot into this trigger so that both the roller and
-        // intakePivot coordinate
-        eject =
-                new Trigger(driver::eject)
-                        .toggleOnTrue(intakeRoller.ejectNoteCommand())
-                        .toggleOnFalse(intakeRoller.idleCommand());
+        // // should add intakePivot into this trigger so that both the roller and
+        // // intakePivot coordinate
+        // eject =
+        //         new Trigger(driver::eject)
+        //                 .toggleOnTrue(intakeRoller.ejectNoteCommand())
+        //                 .toggleOnFalse(intakeRoller.idleCommand());
 
-        raiseHook =
-                new Trigger(driver::raiseHook)
-                        .onTrue(boxClimber.raiseCommand())
-                        .onFalse(boxClimber.idleCommand());
+        // raiseHook =
+        //         new Trigger(driver::raiseHook)
+        //                 .onTrue(boxClimber.raiseCommand())
+        //                 .onFalse(boxClimber.idleCommand());
 
-        lowerHook =
-                new Trigger(driver::lowerHook)
-                        .onTrue(boxClimber.lowerCommand())
-                        .onFalse(boxClimber.idleCommand());
+        // lowerHook =
+        //         new Trigger(driver::lowerHook)
+        //                 .onTrue(boxClimber.lowerCommand())
+        //                 .onFalse(boxClimber.idleCommand());
 
-        climb =
-                new Trigger(driver::climb)
-                        .onTrue(winch.raiseCommand())
-                        .onFalse(winch.idleCommand());
+        // climb =
+        //         new Trigger(driver::climb)
+        //                 .onTrue(winch.raiseCommand())
+        //                 .onFalse(winch.idleCommand());
 
-        noteTrackingTrigger =
-                new Trigger(() -> input.enableNoteTracking() && noteTargeting.checkTarget())
-                        .whileTrue(noteTrackCommand);
+        // noteTrackingTrigger =
+        //         new Trigger(() -> input.enableNoteTracking() && noteTargeting.checkTarget())
+        //                 .whileTrue(noteTrackCommand);
 
         /*       pivotAmp = new Trigger(driver::pivotAmp)
         .onTrue(
@@ -204,12 +204,12 @@ public class Robot extends TimedRobot implements Logged {
 
         swerve.setDefaultCommand(teleopDrive);
 
-        shooter.setDefaultCommand(shooter.idle());
+        // shooter.setDefaultCommand(shooter.idle());
 
         // Default commands
-        boxClimber.setDefaultCommand(boxClimber.idleCommand());
-        winch.setDefaultCommand(winch.idleCommand());
-        intakeRoller.setDefaultCommand(intakeRoller.idleCommand());
+        // boxClimber.setDefaultCommand(boxClimber.idleCommand());
+        // winch.setDefaultCommand(winch.idleCommand());
+        // intakeRoller.setDefaultCommand(intakeRoller.idleCommand());
     }
 
     @Override
@@ -217,6 +217,6 @@ public class Robot extends TimedRobot implements Logged {
 
     @Override
     public void autonomousInit() {
-        ui.getAuto().schedule();
+        // ui.getAuto().schedule();
     }
 }
