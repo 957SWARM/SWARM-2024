@@ -70,6 +70,6 @@ public class IntakePivotHW extends IntakePivot {
         double unoffset =
                 setpointRadians + Constants.IntakePivotConstants.INTAKE_PIVOT_OFFSET_RADIANS;
 
-        controller.setReference(unoffset / 2 * Math.PI, ControlType.kPosition, 0, volts);
+        controller.setReference(unoffset / (2 * Math.PI), ControlType.kPosition, 0, volts);
     }
 }
