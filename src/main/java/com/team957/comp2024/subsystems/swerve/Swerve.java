@@ -320,5 +320,9 @@ public abstract class Swerve implements Subsystem, Logged {
     @Override
     public void periodic() {
         UI.instance.setSwerveStates(getStates());
+
+        Command activeCommand = getCurrentCommand();
+
+        if (activeCommand != null) log("activeCommand", activeCommand.getName());
     }
 }

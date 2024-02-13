@@ -72,4 +72,12 @@ public class IntakePivotHW extends IntakePivot {
 
         controller.setReference(unoffset / (2 * Math.PI), ControlType.kPosition, 0, volts);
     }
+
+    @Override
+    public void periodic() {
+        super.periodic();
+
+        // not required to override this, but want to prevent accidentially overriding the code in
+        // superclass
+    }
 }

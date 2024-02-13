@@ -2,7 +2,6 @@ package com.team957.comp2024.subsystems.climbing;
 
 import com.team957.comp2024.Constants.BoxClimberConstants;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import monologue.Logged;
 
@@ -15,6 +14,13 @@ public abstract class BoxClimber implements Subsystem, Logged {
 
     protected BoxClimber() {
         register();
+    }
+
+    @Override
+    public void periodic() {
+        Command activeCommand = getCurrentCommand();
+
+        if (activeCommand != null) log("activeCommand", activeCommand.getName());
     }
 
     public static BoxClimber getBoxClimber(boolean isReal) {
@@ -34,8 +40,7 @@ public abstract class BoxClimber implements Subsystem, Logged {
     public Command raiseCommand() {
         return run(() -> {
                     setMotorVoltage(BoxClimberConstants.STANDARD_VOLTAGE);
-                })
-                .withInterruptBehavior(InterruptionBehavior.kCancelIncoming);
+                });
     }
 
     // lowers the climber

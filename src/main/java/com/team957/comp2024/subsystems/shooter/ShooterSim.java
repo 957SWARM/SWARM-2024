@@ -47,6 +47,8 @@ public class ShooterSim extends Shooter {
 
     @Override
     public void periodic() {
+        super.periodic();
+
         sim.update(Robot.kDefaultPeriod);
     }
 }

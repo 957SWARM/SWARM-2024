@@ -254,4 +254,12 @@ public class SwerveHW extends Swerve {
                         Constants.SwerveConstants.BACK_LEFT_STEER_OFFSET_RADIANS,
                         Constants.SwerveConstants.BACK_LEFT_DRIVE_INVERTED));
     }
+
+    @Override
+    public void periodic() {
+        super.periodic();
+        
+        // not required to override this, but want to prevent accidentially overriding the code in
+        // superclass
+    }
 }

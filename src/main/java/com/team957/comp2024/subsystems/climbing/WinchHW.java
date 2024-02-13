@@ -30,4 +30,12 @@ public class WinchHW extends Winch {
     public double getWinchAmps() {
         return winch.getOutputCurrent();
     }
+
+    @Override
+    public void periodic() {
+        super.periodic();
+        
+        // not required to override this, but want to prevent accidentially overriding the code in
+        // superclass
+    }
 }

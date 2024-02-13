@@ -33,8 +33,14 @@ public abstract class Shooter implements Subsystem, Logged {
     public abstract double getVelocity();
 
     protected Shooter() {
-
         register();
+    }
+
+    @Override
+    public void periodic() {
+        Command activeCommand = getCurrentCommand();
+
+        if (activeCommand != null) log("activeCommand", activeCommand.getName());
     }
 
     public static Shooter getShooter(boolean isReal) {

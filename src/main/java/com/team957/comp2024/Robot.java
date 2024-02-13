@@ -9,8 +9,9 @@ import com.team957.comp2024.commands.NoteTargeting;
 import com.team957.comp2024.input.DefaultDriver;
 import com.team957.comp2024.input.DriverInput;
 import com.team957.comp2024.input.SimKeyboardDriver;
-import com.team957.comp2024.subsystems.IMU;
-import com.team957.comp2024.subsystems.PDH;
+import com.team957.comp2024.peripherals.IMU;
+import com.team957.comp2024.peripherals.LLlocalization;
+import com.team957.comp2024.peripherals.PDH;
 import com.team957.comp2024.subsystems.climbing.BoxClimber;
 import com.team957.comp2024.subsystems.climbing.Winch;
 import com.team957.comp2024.subsystems.intake.IntakePivot;
@@ -40,7 +41,6 @@ public class Robot extends TimedRobot implements Logged {
     @SuppressWarnings("unused")
     private final ChoreoFollowingFactory trajectoryFollowing = ChoreoFollowingFactory.instance;
 
-    @SuppressWarnings("unused")
     private final PDH pdh = new PDH(PDHConstants.STARTING_SWITCHABLE_CHANNEL_STATE);
 
     private final Swerve swerve = Swerve.getSwerve(isReal());
@@ -192,6 +192,9 @@ public class Robot extends TimedRobot implements Logged {
         Monologue.updateAll();
 
         poseEstimation.update();
+
+        imu.periodic();
+        pdh.periodic();
     }
 
     @Override

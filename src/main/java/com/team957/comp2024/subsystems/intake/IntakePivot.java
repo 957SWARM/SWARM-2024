@@ -75,6 +75,10 @@ public abstract class IntakePivot implements Subsystem, Logged {
     @Override
     public void periodic() {
         UI.instance.setIntakeAngle(getPositionRadians());
+
+        Command activeCommand = getCurrentCommand();
+
+        if (activeCommand != null) log("activeCommand", activeCommand.getName());
     }
 
     /**

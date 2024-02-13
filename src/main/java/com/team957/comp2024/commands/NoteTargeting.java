@@ -1,7 +1,7 @@
 package com.team957.comp2024.commands;
 
 import com.team957.comp2024.Constants.VisionConstants;
-import com.team957.comp2024.LLlocalization;
+import com.team957.comp2024.peripherals.LLlocalization;
 import com.team957.comp2024.subsystems.swerve.Swerve;
 import com.team957.comp2024.util.LimelightLib;
 import edu.wpi.first.math.geometry.Pose2d;

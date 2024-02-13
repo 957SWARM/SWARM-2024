@@ -42,6 +42,10 @@ public abstract class IntakeRoller implements Subsystem, Logged {
     @Override
     public void periodic() {
         debouncedNotePresent = noteIsPresentDebouncer.calculate(noteIsPresent());
+
+        Command activeCommand = getCurrentCommand();
+
+        if (activeCommand != null) log("activeCommand", activeCommand.getName());
     }
 
     public static IntakeRoller getIntakeRoller(boolean isReal) {

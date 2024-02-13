@@ -16,6 +16,13 @@ public abstract class Winch implements Subsystem, Logged {
         register();
     }
 
+    @Override
+    public void periodic() {
+        Command activeCommand = getCurrentCommand();
+
+        if (activeCommand != null) log("activeCommand", activeCommand.getName());
+    }
+
     public static Winch getWinch(boolean isReal) {
         // change second WinchHW() to WinchSim() when sim class is created
         return (isReal) ? new WinchHW() : new WinchHW();
