@@ -116,7 +116,8 @@ public abstract class IntakePivot implements Subsystem, Logged {
                         IntakePivotConstants.PLANT_KV,
                         IntakePivotConstants.PLANT_KA);
 
-        return run(() -> setFeedforwardAndSetpoint(feedforward.calculate(setpoint, 0), setpoint));
+        return run(() -> setFeedforwardAndSetpoint(feedforward.calculate(setpoint, 0), setpoint))
+                .withName("holdPosition");
     }
 
     public Command goToSetpoint(Supplier<Double> setpointRadians) {
@@ -161,11 +162,13 @@ public abstract class IntakePivot implements Subsystem, Logged {
                                 UtilityMath.epsilonEqualsAbsolute(
                                         setpointRadians.get(),
                                         getPositionRadians(),
-                                        IntakePivotConstants.AT_SETPOINT_MARGIN_RADIANS));
+                                        IntakePivotConstants.AT_SETPOINT_MARGIN_RADIANS))
+                .withName("goToSetpoint");
     }
 
     public Command toFloor() {
-        return goToSetpoint(() -> Constants.IntakePivotConstants.FLOOR_INTAKE_ANGLE_RADIANS);
+        return goToSetpoint(() -> Constants.IntakePivotConstants.FLOOR_INTAKE_ANGLE_RADIANS)
+                .withName("toFloor");
     }
 
     public Command holdFloor() {
@@ -173,7 +176,8 @@ public abstract class IntakePivot implements Subsystem, Logged {
     }
 
     public Command toStow() {
-        return goToSetpoint(() -> Constants.IntakePivotConstants.STOW_INTAKE_ANGLE_RADIANS);
+        return goToSetpoint(() -> Constants.IntakePivotConstants.STOW_INTAKE_ANGLE_RADIANS)
+                .withName("toStow");
     }
 
     public Command holdStow() {
@@ -181,7 +185,8 @@ public abstract class IntakePivot implements Subsystem, Logged {
     }
 
     public Command toHandoff() {
-        return goToSetpoint(() -> Constants.IntakePivotConstants.HANDOFF_INTAKE_ANGLE_RADIANS);
+        return goToSetpoint(() -> Constants.IntakePivotConstants.HANDOFF_INTAKE_ANGLE_RADIANS)
+                .withName("toHandoff");
     }
 
     public Command holdHandoff() {
@@ -189,7 +194,8 @@ public abstract class IntakePivot implements Subsystem, Logged {
     }
 
     public Command toAmp() {
-        return goToSetpoint(() -> Constants.IntakePivotConstants.AMP_INTAKE_ANGLE_RADIANS);
+        return goToSetpoint(() -> Constants.IntakePivotConstants.AMP_INTAKE_ANGLE_RADIANS)
+                .withName("toAmp");
     }
 
     public Command holdAmp() {

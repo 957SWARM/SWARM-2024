@@ -54,7 +54,8 @@ public abstract class IntakeRoller implements Subsystem, Logged {
 
     // intakes notes at constant voltage
     public Command floorIntake() {
-        return run(() -> setRollerVoltage(IntakeRollerConstants.FLOOR_INTAKE_VOLTAGE));
+        return run(() -> setRollerVoltage(IntakeRollerConstants.FLOOR_INTAKE_VOLTAGE))
+                .withName("floorIntake");
     }
 
     public Command floorIntakeUntilNote() {
@@ -63,11 +64,12 @@ public abstract class IntakeRoller implements Subsystem, Logged {
 
     // stops the intake roller
     public Command idle() {
-        return runOnce(() -> setRollerVoltage(0));
+        return runOnce(() -> setRollerVoltage(0)).withName("idle");
     }
 
     public Command shooterHandoff() {
-        return run(() -> setRollerVoltage(IntakeRollerConstants.SHOOTER_HANDOFF_VOLTAGE));
+        return run(() -> setRollerVoltage(IntakeRollerConstants.SHOOTER_HANDOFF_VOLTAGE))
+                .withName("shooterHandoff");
     }
 
     public Command shooterHandoffUntilNoteGone() {
@@ -75,7 +77,8 @@ public abstract class IntakeRoller implements Subsystem, Logged {
     }
 
     public Command ampShot() {
-        return run(() -> setRollerVoltage(IntakeRollerConstants.AMP_SHOT_VOLTAGE));
+        return run(() -> setRollerVoltage(IntakeRollerConstants.AMP_SHOT_VOLTAGE))
+                .withName("ampShot");
     }
 
     public Command ampShotUntilNoteGone() {

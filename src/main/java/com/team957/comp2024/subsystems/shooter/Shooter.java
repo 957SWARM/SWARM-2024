@@ -56,16 +56,19 @@ public abstract class Shooter implements Subsystem, Logged {
 
     public Command subwooferShot() {
         return defaultShooterControlCommand(
-                () -> Constants.ShooterConstants.SUBWOOFER_CONTROL_EFFORT_VOLTS);
+                        () -> Constants.ShooterConstants.SUBWOOFER_CONTROL_EFFORT_VOLTS)
+                .withName("subwooferShot");
     }
 
     public Command idle() {
         return defaultShooterControlCommand(
-                () -> Constants.ShooterConstants.IDLE_CONTROL_EFFORT_VOLTS);
+                        () -> Constants.ShooterConstants.IDLE_CONTROL_EFFORT_VOLTS)
+                .withName("idle");
     }
 
     public Command halfCourtShot() {
         return defaultShooterControlCommand(
-                () -> Constants.ShooterConstants.HALF_COURT_CONTROL_EFFORT_VOLTS);
+                        () -> Constants.ShooterConstants.HALF_COURT_CONTROL_EFFORT_VOLTS)
+                .withName("halfCourtShot");
     }
 }

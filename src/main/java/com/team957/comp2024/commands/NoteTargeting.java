@@ -46,7 +46,8 @@ public class NoteTargeting {
                                     -getTrackingAngle(getTargetAngle()));
                         },
                         poseEstimation::getRotationEstimate)
-                .unless(() -> !checkTarget());
+                .unless(() -> !checkTarget())
+                .withName("noteTargeting");
     }
 
     private double getTrackingAngle(double targetAngle) {

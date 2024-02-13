@@ -258,7 +258,7 @@ public class SwerveHW extends Swerve {
     @Override
     public void periodic() {
         super.periodic();
-        
+
         // not required to override this, but want to prevent accidentially overriding the code in
         // superclass
     }

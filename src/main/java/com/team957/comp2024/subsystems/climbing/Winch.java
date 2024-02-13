@@ -30,17 +30,17 @@ public abstract class Winch implements Subsystem, Logged {
 
     // puts the climber in rest
     public Command idleCommand() {
-        return run(
-                () -> {
+        return run(() -> {
                     setWinchVoltage(0);
-                });
+                })
+                .withName("idle");
     }
 
     // raises the winch
     public Command raiseCommand() {
-        return run(
-                () -> {
+        return run(() -> {
                     setWinchVoltage(WinchConstants.STANDARD_VOLTAGE);
-                });
+                })
+                .withName("raise");
     }
 }
