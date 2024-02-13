@@ -206,6 +206,10 @@ public class Constants {
         public static final double LOW_VOLTAGE_THRESHOLD = 10.5;
     }
 
+    public static final class OIConstants {
+        public static final int DRIVER_PORT = 0;
+    }
+
     public static final class VisionConstants {
 
         public static final boolean VISION_POSE_ESTIMATION_ENABLED = false;
