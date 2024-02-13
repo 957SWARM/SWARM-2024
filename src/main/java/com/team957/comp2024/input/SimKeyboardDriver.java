@@ -29,6 +29,11 @@ public class SimKeyboardDriver implements DriverInput {
     }
 
     @Override
+    public boolean enableNoteTracking() {
+        return controller.getRightBumper();
+    }
+
+    @Override
     public boolean shoot() {
         return false;
     }
@@ -59,7 +64,7 @@ public class SimKeyboardDriver implements DriverInput {
     }
 
     @Override
-    public boolean enableNoteTracking() {
+    public boolean eject() {
         return false;
     }
 
@@ -69,12 +74,8 @@ public class SimKeyboardDriver implements DriverInput {
     }
 
     @Override
-    public boolean eject() {
-        return false;
-    }
-
-    @Override
     public boolean pivotAmp() {
         return false;
     }
+
 }
