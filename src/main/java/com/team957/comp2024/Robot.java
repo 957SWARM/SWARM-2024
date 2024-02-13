@@ -149,15 +149,14 @@ public class Robot extends TimedRobot implements Logged {
 
         speaker.toggleOnTrue(
                 shooter.subwooferShot()
-                        .alongWith(
+                        .raceWith(
                                 intakePivot
                                         .toHandoff()
                                         .andThen(
                                                 intakeRoller
                                                         .shooterHandoffUntilNoteGone()
-                                                        .alongWith(intakePivot.holdPosition()))
-                                        .andThen(
-                                                intakePivot.holdStow().alongWith(shooter.idle()))));
+                                                        .alongWith(intakePivot.holdPosition())))
+                        .andThen(intakePivot.holdStow()));
 
         amp.toggleOnTrue(
                 intakePivot
