@@ -46,14 +46,12 @@ public class Constants {
 
         public static final double MAX_WHEEL_SPEED_METERS_PER_SECOND = 4;
 
-        public static final Translation2d FRONT_LEFT_TRANSLATION =
-                new Translation2d(0.3112, 0.2604);
+        public static final Translation2d FRONT_LEFT_TRANSLATION = new Translation2d(0.3302, 0.254);
         public static final Translation2d FRONT_RIGHT_TRANSLATION =
-                new Translation2d(0.3112, -0.2604);
+                new Translation2d(0.3302, -0.254);
         public static final Translation2d BACK_RIGHT_TRANSLATION =
-                new Translation2d(-0.3112, -0.2604);
-        public static final Translation2d BACK_LEFT_TRANSLATION =
-                new Translation2d(-0.3112, 0.2604);
+                new Translation2d(-0.3302, -0.254);
+        public static final Translation2d BACK_LEFT_TRANSLATION = new Translation2d(-0.3302, 0.254);
 
         public static final SwerveDriveKinematics KINEMATICS =
                 new SwerveDriveKinematics(
