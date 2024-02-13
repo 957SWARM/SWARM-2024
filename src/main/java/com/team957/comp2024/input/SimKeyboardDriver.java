@@ -35,7 +35,7 @@ public class SimKeyboardDriver implements DriverInput {
 
     @Override
     public boolean speaker() {
-        return controller.getBButton();
+        return false;
     }
 
     @Override
