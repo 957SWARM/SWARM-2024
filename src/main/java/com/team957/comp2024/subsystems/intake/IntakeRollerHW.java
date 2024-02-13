@@ -1,15 +1,23 @@
 package com.team957.comp2024.subsystems.intake;
 
+import com.playingwithfusion.TimeOfFlight;
+import com.playingwithfusion.TimeOfFlight.RangingMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.team957.comp2024.Constants.IntakeRollerConstants;
+import java.util.function.Supplier;
 
 public class IntakeRollerHW extends IntakeRoller {
+    double tofReadingMeters = 0;
 
     private final CANSparkMax roller =
             new CANSparkMax(IntakeRollerConstants.ROLLER_CANID, MotorType.kBrushless);
 
+    private final TimeOfFlight tof = new TimeOfFlight(IntakeRollerConstants.TOF_CANID);
+
     public IntakeRollerHW() {
+        tof.setRangingMode(RangingMode.Short, IntakeRollerConstants.TOF_TIMING_BUDGET_MS);
+
         roller.restoreFactoryDefaults();
 
         roller.setSmartCurrentLimit(IntakeRollerConstants.CURRENT_LIMIT);
@@ -24,12 +32,27 @@ public class IntakeRollerHW extends IntakeRoller {
     }
 
     @Override
-    public double getRollerVoltage() {
-        return roller.getBusVoltage();
+    public double getRollerAmps() {
+        return roller.getOutputCurrent();
     }
 
     @Override
-    public double getRollerAmps() {
-        return roller.getOutputCurrent();
+    public double getAppliedVoltage() {
+        return roller.getAppliedOutput() * roller.getBusVoltage();
+    }
+
+    @Override
+    public boolean noteIsPresent() {
+        return (tofReadingMeters <= IntakeRollerConstants.TOF_NOTE_PRESENT_THRESHOLD_METERS);
+    }
+
+    @Override
+    public void setSimulationNoteIsPresentMock(Supplier<Boolean> mock) {}
+
+    @Override
+    public void periodic() {
+        super.periodic();
+
+        tofReadingMeters = tof.getRange() * 1000;
     }
 }

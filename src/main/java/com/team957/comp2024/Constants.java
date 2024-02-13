@@ -193,8 +193,18 @@ public class Constants {
         public static final int CURRENT_LIMIT = 30;
         public static final boolean ROLLER_INVERTED = false;
 
-        public static final double INTAKE_VOLTAGE = 6;
-        public static final double EJECT_VOLTAGE = -INTAKE_VOLTAGE;
+        public static final double FLOOR_INTAKE_VOLTAGE = 6;
+        public static final double EJECT_VOLTAGE = -9;
+        public static final double SHOOTER_HANDOFF_VOLTAGE = -9;
+        public static final double AMP_SHOT_VOLTAGE = -12;
+
+        public static final int TOF_CANID = 63; // TODO
+
+        public static final double TOF_TIMING_BUDGET_MS = 24;
+
+        public static final double TOF_NOTE_PRESENT_THRESHOLD_METERS = .5; // TODO
+
+        public static final double TOF_NOTE_PRESENT_DEBOUNCE_SECONDS = 0.1;
     }
 
     public static final class AlertConstants {

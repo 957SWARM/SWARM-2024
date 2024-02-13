@@ -160,6 +160,6 @@ public abstract class IntakePivot implements Subsystem, Logged {
 
     public static IntakePivot getIntakePivot(boolean isReal) {
         if (!isReal) return new IntakePivotSim();
-        else return null; // not implemented
+        else return new IntakePivotHW(); // not implemented
     }
 }
