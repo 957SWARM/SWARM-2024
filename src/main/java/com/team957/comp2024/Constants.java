@@ -94,7 +94,6 @@ public class Constants {
     }
 
     public static final class ShooterConstants {
-        // CANIDs not set yet as of 1/25/2024
         public static final int LEFT_CANID = 9;
         public static final int RIGHT_CANID = 10;
 
@@ -102,7 +101,7 @@ public class Constants {
         public static final DCMotor SHOOTER_MOTOR = DCMotor.getNEO(1);
         public static final double SHOOTER_REDUCTION = 1;
 
-        public static final double IDLE_CONTROL_EFFORT_VOLTS = 4;
+        public static final double IDLE_CONTROL_EFFORT_VOLTS = 2;
         public static final double SUBWOOFER_CONTROL_EFFORT_VOLTS = 9;
         public static final double HALF_COURT_CONTROL_EFFORT_VOLTS = 12;
 
@@ -168,6 +167,8 @@ public class Constants {
         public static final double ONBOARD_CONTROLLER_KP = 1;
         public static final double ONBOARD_CONTROLLER_KI = 0;
         public static final double ONBOARD_CONTROLLER_KD = 0;
+
+        public static final double AT_SETPOINT_MARGIN_RADIANS = Units.degreesToRadians(2);
     }
 
     public static final class BoxClimberConstants {
@@ -194,7 +195,6 @@ public class Constants {
         public static final boolean ROLLER_INVERTED = false;
 
         public static final double FLOOR_INTAKE_VOLTAGE = 6;
-        public static final double EJECT_VOLTAGE = -9;
         public static final double SHOOTER_HANDOFF_VOLTAGE = -9;
         public static final double AMP_SHOT_VOLTAGE = -12;
 

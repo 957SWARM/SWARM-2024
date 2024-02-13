@@ -102,6 +102,19 @@ public abstract class IntakePivot implements Subsystem, Logged {
         return routine.dynamic(forward ? Direction.kForward : Direction.kReverse);
     }
 
+    public Command holdPosition() {
+        double setpoint = getPositionRadians();
+
+        ArmFeedforward feedforward =
+                new ArmFeedforward(
+                        IntakePivotConstants.PLANT_KS,
+                        IntakePivotConstants.PLANT_KG,
+                        IntakePivotConstants.PLANT_KV,
+                        IntakePivotConstants.PLANT_KA);
+
+        return run(() -> setFeedforwardAndSetpoint(feedforward.calculate(setpoint, 0), setpoint));
+    }
+
     public Command goToSetpoint(Supplier<Double> setpointRadians) {
         ExponentialProfile profile =
                 new ExponentialProfile(
@@ -121,8 +134,7 @@ public abstract class IntakePivot implements Subsystem, Logged {
         State current = new State();
         State goal = new State();
 
-        return run(
-                () -> {
+        return run(() -> {
                     current.position = getPositionRadians();
                     current.velocity = getVelocityRadiansPerSecond();
 
@@ -139,23 +151,45 @@ public abstract class IntakePivot implements Subsystem, Logged {
                     setFeedforwardAndSetpoint(
                             feedforward.calculate(profiled.position, profiled.velocity, accel),
                             profiled.position);
-                });
+                })
+                .until(
+                        () ->
+                                UtilityMath.epsilonEqualsAbsolute(
+                                        setpointRadians.get(),
+                                        getPositionRadians(),
+                                        IntakePivotConstants.AT_SETPOINT_MARGIN_RADIANS));
     }
 
     public Command toFloor() {
         return goToSetpoint(() -> Constants.IntakePivotConstants.FLOOR_INTAKE_ANGLE_RADIANS);
     }
 
+    public Command holdFloor() {
+        return toFloor().andThen(holdPosition());
+    }
+
     public Command toStow() {
         return goToSetpoint(() -> Constants.IntakePivotConstants.STOW_INTAKE_ANGLE_RADIANS);
+    }
+
+    public Command holdStow() {
+        return toStow().andThen(holdPosition());
     }
 
     public Command toHandoff() {
         return goToSetpoint(() -> Constants.IntakePivotConstants.HANDOFF_INTAKE_ANGLE_RADIANS);
     }
 
+    public Command holdHandoff() {
+        return toHandoff().andThen(holdPosition());
+    }
+
     public Command toAmp() {
         return goToSetpoint(() -> Constants.IntakePivotConstants.AMP_INTAKE_ANGLE_RADIANS);
+    }
+
+    public Command holdAmp() {
+        return toAmp().andThen(holdPosition());
     }
 
     public static IntakePivot getIntakePivot(boolean isReal) {

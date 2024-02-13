@@ -57,18 +57,9 @@ public abstract class IntakeRoller implements Subsystem, Logged {
         return floorIntake().until(this::debouncedNoteIsPresent).andThen(idle());
     }
 
-    // puking is given higher priority scheduling over intaking
-    public Command eject() {
-        return run(() -> setRollerVoltage(IntakeRollerConstants.EJECT_VOLTAGE));
-    }
-
-    public Command ejectUntilNoteGone() {
-        return eject().until(() -> !debouncedNoteIsPresent()).andThen(idle());
-    }
-
     // stops the intake roller
     public Command idle() {
-        return run(() -> setRollerVoltage(0));
+        return runOnce(() -> setRollerVoltage(0));
     }
 
     public Command shooterHandoff() {
