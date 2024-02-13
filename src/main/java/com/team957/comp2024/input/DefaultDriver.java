@@ -1,5 +1,7 @@
 package com.team957.comp2024.input;
 
+import com.team957.comp2024.Constants.OIConstants;
+
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.XboxController;
 
@@ -17,7 +19,7 @@ public class DefaultDriver implements DriverInput {
     private final SlewRateLimiter angularLimiter = new SlewRateLimiter(20);
 
     public DefaultDriver() {
-        xboxController = new XboxController(0);
+        xboxController = new XboxController(OIConstants.DRIVER_PORT);
     }
 
     @Override
@@ -62,7 +64,7 @@ public class DefaultDriver implements DriverInput {
     }
 
     @Override
-    public boolean climb() {
+    public boolean climb(){
         return xboxController.getBButton();
     }
 
@@ -83,14 +85,15 @@ public class DefaultDriver implements DriverInput {
     }
 
     @Override
-    public boolean enableAprilTagTracking() {
+    public boolean enableAprilTagTracking(){
         return (xboxController.getLeftTriggerAxis() > .5);
     }
 
     // pivots intake to intake position
     // if down pad is down
     @Override
-    public boolean pivotAmp() {
+    public boolean pivotAmp(){
         return (xboxController.getPOV() == 0);
     }
+    
 }
