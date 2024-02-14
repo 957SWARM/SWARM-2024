@@ -17,7 +17,9 @@ public interface DriverInput {
     // in true or false
     public boolean noteTracking();
 
-    public boolean enableAprilTagTracking();
+    public boolean otfAmp();
+
+    public boolean otfSpeaker();
 
     // shoot
     public boolean speaker();

@@ -1,6 +1,8 @@
 package com.team957.comp2024;
 
 import com.ctre.phoenix6.SignalLogger;
+import com.team957.comp2024.Constants.MiscConstants;
+import com.team957.comp2024.Constants.OtfPathingConstants;
 import com.team957.comp2024.Constants.PDHConstants;
 import com.team957.comp2024.Constants.SwerveConstants;
 import com.team957.comp2024.commands.Autos;
@@ -25,6 +27,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -70,7 +73,8 @@ public class Robot extends TimedRobot implements Logged {
     private final OnTheFlyPathing otf = OnTheFlyPathing.instance;
 
     private final Autos autos =
-            new Autos(swerve, intakePivot, intakeRoller, shooter, poseEstimation);
+            new Autos(
+                    swerve, intakePivot, intakeRoller, shooter, poseEstimation, this::getAlliance);
 
     private DriverInput input;
 
@@ -89,7 +93,8 @@ public class Robot extends TimedRobot implements Logged {
     private Trigger climb;
 
     private Trigger noteTracking;
-    private Trigger aprilTagTrackingTrigger;
+    private Trigger otfAmp;
+    private Trigger otfSpeaker;
 
     private double fieldRelRotationOffset = 0;
 
@@ -142,7 +147,8 @@ public class Robot extends TimedRobot implements Logged {
         floorIntake = new Trigger(input::floorIntake);
 
         noteTracking = new Trigger(input::noteTracking);
-        aprilTagTrackingTrigger = new Trigger(input::enableAprilTagTracking);
+        otfAmp = new Trigger(input::otfAmp);
+        otfSpeaker = new Trigger(input::otfSpeaker);
 
         resetFieldRelZero.onTrue(
                 Commands.runOnce(
@@ -163,9 +169,34 @@ public class Robot extends TimedRobot implements Logged {
                 ScoringSequences.coordinatedFloorIntake(intakePivot, intakeRoller)
                         .andThen(intakePivot.holdPosition()));
 
-        noteTracking.onTrue(
+        noteTracking.toggleOnTrue(
                 noteTargeting.getNoteTrackCommand(
                         () -> input.swerveX(), () -> input.swerveY(), () -> input.swerveRot()));
+
+        otfAmp.toggleOnTrue(
+                otf.otfPathingCommand(
+                        swerve,
+                        () -> {
+                            return (getAlliance() == Alliance.Blue)
+                                    ? OtfPathingConstants.OTF_AMP_POSE_BLUE
+                                    : OtfPathingConstants.OTF_AMP_POSE_RED;
+                        },
+                        poseEstimation::getPoseEstimate));
+
+        otfSpeaker.toggleOnTrue(
+                otf.otfPathingCommand(
+                        swerve,
+                        () -> {
+                            Alliance alliance =
+                                    DriverStation.getAlliance().isPresent()
+                                            ? DriverStation.getAlliance().get()
+                                            : MiscConstants.DEFAULT_ALLIANCE;
+
+                            return (alliance == Alliance.Blue)
+                                    ? OtfPathingConstants.OTF_SPEAKER_POSE_BLUE
+                                    : OtfPathingConstants.OTF_SPEAKER_POSE_RED;
+                        },
+                        poseEstimation::getPoseEstimate));
     }
 
     @Override
@@ -194,5 +225,11 @@ public class Robot extends TimedRobot implements Logged {
     @Override
     public void autonomousInit() {
         ui.getAuto().schedule();
+    }
+
+    public Alliance getAlliance() {
+        return DriverStation.getAlliance().isPresent()
+                ? DriverStation.getAlliance().get()
+                : MiscConstants.DEFAULT_ALLIANCE;
     }
 }

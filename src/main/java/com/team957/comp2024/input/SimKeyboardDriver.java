@@ -64,8 +64,13 @@ public class SimKeyboardDriver implements DriverInput {
     }
 
     @Override
-    public boolean enableAprilTagTracking() {
-        return false;
+    public boolean otfAmp() {
+        return controller.getAButton();
+    }
+
+    @Override
+    public boolean otfSpeaker() {
+        return controller.getBButton();
     }
 
     @Override

@@ -78,8 +78,13 @@ public class DefaultDriver implements DriverInput {
     }
 
     @Override
-    public boolean enableAprilTagTracking() {
+    public boolean otfSpeaker() {
         return (xboxController.getLeftTriggerAxis() > .5);
+    }
+
+    @Override
+    public boolean otfAmp() {
+        return false; // TODO
     }
 
     @Override

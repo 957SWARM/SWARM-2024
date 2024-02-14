@@ -4,6 +4,8 @@ import com.team957.lib.controllers.feedback.PID.PIDConstants;
 import com.team957.lib.util.GearRatioHelper;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -12,10 +14,13 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 public class Constants {
     public static final class MiscConstants {
         public static final double SATURATION_VOLTAGE = 12;
+
+        public static final Alliance DEFAULT_ALLIANCE = Alliance.Blue;
     }
 
     public static final class SwerveConstants {
@@ -249,5 +254,16 @@ public class Constants {
         public static final double TRACKING_MIN_COMMAND = 0.05;
         public static final double TRACKING_STOP_THRESHOLD = 0.01; // RADIANS
         public static final double MIN_COMMAND_TRESHOLD = 0.02; // RADIANS
+    }
+
+    public static final class OtfPathingConstants {
+        public static final Pose2d OTF_SPEAKER_POSE_BLUE = new Pose2d(1.6, 5.5, new Rotation2d());
+        public static final Pose2d OTF_SPEAKER_POSE_RED =
+                new Pose2d(15, 5.5, new Rotation2d(Math.PI));
+
+        public static final Pose2d OTF_AMP_POSE_BLUE =
+                new Pose2d(1.9, 7.6, new Rotation2d(Math.PI / 2));
+        public static final Pose2d OTF_AMP_POSE_RED =
+                new Pose2d(14.75, 7.6, new Rotation2d(-Math.PI / 2));
     }
 }
