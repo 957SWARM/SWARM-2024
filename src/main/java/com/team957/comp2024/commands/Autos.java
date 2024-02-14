@@ -38,9 +38,9 @@ public class Autos {
             return ChoreoFollowingFactory.instance
                     .getPathFollowingCommand(swerve, traj.get(phaseIndex), localization, resetPose)
                     .alongWith(new WaitCommand(pivotDelaySeconds).andThen(pivot.toHandoff()))
-                    .withTimeout(
-                            traj.get(phaseIndex).getTotalTime()
-                                    + Constants.AutoConstants.SHOOT_BUFFER_SECONDS);
+                    .andThen(
+                            ScoringSequences.coordinatedSubwooferShot(
+                                    shooter, intakePivot, intakeRoller));
         }
 
         Command shootTrajectoryPhase(int phaseIndex, boolean resetPose) {
@@ -51,10 +51,11 @@ public class Autos {
         Command floorTrajectoryPhase(int phaseIndex, double pivotDelaySeconds, boolean resetPose) {
             return ChoreoFollowingFactory.instance
                     .getPathFollowingCommand(swerve, traj.get(phaseIndex), localization, resetPose)
-                    .alongWith(new WaitCommand(pivotDelaySeconds).andThen(pivot.toFloor()))
-                    .withTimeout(
-                            traj.get(phaseIndex).getTotalTime()
-                                    + Constants.AutoConstants.INTAKE_BUFFER_SECONDS);
+                    .alongWith(
+                            new WaitCommand(pivotDelaySeconds)
+                                    .andThen(
+                                            ScoringSequences.coordinatedFloorIntake(
+                                                    intakePivot, intakeRoller)));
         }
 
         Command floorTrajectoryPhase(int phaseIndex, boolean resetPose) {
@@ -65,8 +66,7 @@ public class Autos {
         Command stowTrajectoryPhase(int phaseIndex, double pivotDelaySeconds, boolean resetPose) {
             return ChoreoFollowingFactory.instance
                     .getPathFollowingCommand(swerve, traj.get(phaseIndex), localization, resetPose)
-                    .alongWith(new WaitCommand(pivotDelaySeconds).andThen(pivot.toStow()))
-                    .withTimeout(traj.get(phaseIndex).getTotalTime());
+                    .raceWith(new WaitCommand(pivotDelaySeconds).andThen(pivot.holdStow()));
         }
 
         Command stowTrajectoryPhase(int phaseIndex, boolean resetPose) {
@@ -75,7 +75,7 @@ public class Autos {
         }
 
         Command lock() {
-            return swerve.lockDrivetrain().alongWith(pivot.toStow());
+            return swerve.lockDrivetrain().alongWith(pivot.holdStow());
         }
     }
 
@@ -118,7 +118,7 @@ public class Autos {
     }
 
     public Command shootPreloadBumperAuto() {
-        return new InstantCommand(); // shooter not implemented
+        return ScoringSequences.coordinatedSubwooferShot(shooter, intakePivot, intakeRoller);
     }
 
     public Command middleTwoPiece() {
@@ -129,9 +129,7 @@ public class Autos {
         AutoPhaseFactory factory =
                 new AutoPhaseFactory(swerve, intakePivot, phases.get(), localization);
 
-        return intakePivot
-                .toHandoff()
-                .withTimeout(Constants.AutoConstants.SHOOT_BUFFER_SECONDS)
+        return ScoringSequences.coordinatedSubwooferShot(shooter, intakePivot, intakeRoller)
                 .andThen(factory.floorTrajectoryPhase(0, true))
                 .andThen(factory.shootTrajectoryPhase(1, false))
                 .andThen(factory.lock());
@@ -145,9 +143,7 @@ public class Autos {
         AutoPhaseFactory factory =
                 new AutoPhaseFactory(swerve, intakePivot, phases.get(), localization);
 
-        return intakePivot
-                .toHandoff()
-                .withTimeout(Constants.AutoConstants.SHOOT_BUFFER_SECONDS)
+        return ScoringSequences.coordinatedSubwooferShot(shooter, intakePivot, intakeRoller)
                 .andThen(factory.floorTrajectoryPhase(0, true))
                 .andThen(factory.shootTrajectoryPhase(1, false))
                 .andThen(factory.floorTrajectoryPhase(2, false))
@@ -163,9 +159,7 @@ public class Autos {
         AutoPhaseFactory factory =
                 new AutoPhaseFactory(swerve, intakePivot, phases.get(), localization);
 
-        return intakePivot
-                .toHandoff()
-                .withTimeout(Constants.AutoConstants.SHOOT_BUFFER_SECONDS)
+        return ScoringSequences.coordinatedSubwooferShot(shooter, intakePivot, intakeRoller)
                 .andThen(factory.floorTrajectoryPhase(0, true))
                 .andThen(factory.shootTrajectoryPhase(1, false))
                 .andThen(factory.floorTrajectoryPhase(2, false))
@@ -183,9 +177,7 @@ public class Autos {
         AutoPhaseFactory factory =
                 new AutoPhaseFactory(swerve, intakePivot, phases.get(), localization);
 
-        return intakePivot
-                .toHandoff()
-                .withTimeout(Constants.AutoConstants.SHOOT_BUFFER_SECONDS)
+        return ScoringSequences.coordinatedSubwooferShot(shooter, intakePivot, intakeRoller)
                 .andThen(factory.floorTrajectoryPhase(0, 0, true))
                 .andThen(factory.shootTrajectoryPhase(1, false))
                 .andThen(factory.floorTrajectoryPhase(2, 0, false))
@@ -204,9 +196,7 @@ public class Autos {
         AutoPhaseFactory factory =
                 new AutoPhaseFactory(swerve, intakePivot, phases.get(), localization);
 
-        return intakePivot
-                .toHandoff()
-                .withTimeout(Constants.AutoConstants.SHOOT_BUFFER_SECONDS)
+        return ScoringSequences.coordinatedSubwooferShot(shooter, intakePivot, intakeRoller)
                 .andThen(factory.floorTrajectoryPhase(0, 1, true))
                 .andThen(factory.shootTrajectoryPhase(1, false))
                 .andThen(factory.floorTrajectoryPhase(2, 0, false))

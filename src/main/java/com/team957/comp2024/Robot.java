@@ -7,6 +7,7 @@ import com.team957.comp2024.commands.Autos;
 import com.team957.comp2024.commands.ChoreoFollowingFactory;
 import com.team957.comp2024.commands.NoteTargeting;
 import com.team957.comp2024.commands.OnTheFlyPathing;
+import com.team957.comp2024.commands.ScoringSequences;
 import com.team957.comp2024.input.DefaultDriver;
 import com.team957.comp2024.input.DriverInput;
 import com.team957.comp2024.input.SimKeyboardDriver;
@@ -151,33 +152,16 @@ public class Robot extends TimedRobot implements Logged {
                         }));
 
         speaker.toggleOnTrue(
-                shooter.subwooferShot()
-                        .raceWith(
-                                intakePivot
-                                        .toHandoff()
-                                        .andThen(
-                                                intakeRoller
-                                                        .shooterHandoffUntilNoteGone()
-                                                        .alongWith(intakePivot.holdPosition())))
-                        .andThen(intakePivot.holdStow()));
+                ScoringSequences.coordinatedSubwooferShot(shooter, intakePivot, intakeRoller)
+                        .andThen(intakePivot.holdPosition()));
 
         amp.toggleOnTrue(
-                intakePivot
-                        .toAmp()
-                        .andThen(
-                                intakeRoller
-                                        .ampShotUntilNoteGone()
-                                        .alongWith(intakePivot.holdPosition()))
-                        .andThen(intakePivot.holdStow()));
+                ScoringSequences.coordinatedAmpShot(intakePivot, intakeRoller)
+                        .andThen(intakePivot.holdPosition()));
 
         floorIntake.toggleOnTrue(
-                intakePivot
-                        .toFloor()
-                        .andThen(
-                                intakeRoller
-                                        .floorIntakeUntilNote()
-                                        .alongWith(intakePivot.holdPosition()))
-                        .andThen(intakePivot.holdStow()));
+                ScoringSequences.coordinatedFloorIntake(intakePivot, intakeRoller)
+                        .andThen(intakePivot.holdPosition()));
 
         noteTracking.onTrue(
                 noteTargeting.getNoteTrackCommand(
@@ -209,6 +193,6 @@ public class Robot extends TimedRobot implements Logged {
 
     @Override
     public void autonomousInit() {
-        // ui.getAuto().schedule();
+        ui.getAuto().schedule();
     }
 }

@@ -2,6 +2,7 @@ package com.team957.comp2024.commands;
 
 import com.choreo.lib.ChoreoControlFunction;
 import com.choreo.lib.ChoreoTrajectory;
+import com.team957.comp2024.Constants;
 import com.team957.comp2024.Constants.AutoConstants;
 import com.team957.comp2024.UI;
 import com.team957.comp2024.peripherals.LLlocalization;
@@ -84,6 +85,12 @@ public class ChoreoFollowingFactory implements Logged {
 
                                                     UI.instance.setSetpointPose(pose);
                                                 })))
+                .until(
+                        () ->
+                                trajectory.getTotalTime()
+                                        < timer.get()
+                                                - Constants.AutoConstants
+                                                        .PROFILE_OVERRUN_TOLERANCE_SECONDS)
                 .withName("choreoFollowing");
     }
 }

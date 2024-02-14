@@ -4,7 +4,6 @@ import com.team957.comp2024.Constants.IntakeRollerConstants;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
-import java.util.function.Supplier;
 import monologue.Annotations.Log;
 import monologue.Logged;
 
@@ -33,7 +32,7 @@ public abstract class IntakeRoller implements Subsystem, Logged {
         return debouncedNotePresent;
     }
 
-    public abstract void setSimulationNoteIsPresentMock(Supplier<Boolean> mock);
+    public abstract void setSimulationNoteIsPresentMock(boolean mock);
 
     protected IntakeRoller() {
         register();

@@ -107,8 +107,6 @@ public abstract class IntakePivot implements Subsystem, Logged {
     }
 
     public Command holdPosition() {
-        double setpoint = getPositionRadians();
-
         ArmFeedforward feedforward =
                 new ArmFeedforward(
                         IntakePivotConstants.PLANT_KS,
@@ -116,8 +114,12 @@ public abstract class IntakePivot implements Subsystem, Logged {
                         IntakePivotConstants.PLANT_KV,
                         IntakePivotConstants.PLANT_KA);
 
-        return run(() -> setFeedforwardAndSetpoint(feedforward.calculate(setpoint, 0), setpoint))
+        return run(() ->
+                        setFeedforwardAndSetpoint(
+                                feedforward.calculate(getPositionRadians(), 0),
+                                getPositionRadians()))
                 .withName("holdPosition");
+        // technically allows for some drift but fairly minor
     }
 
     public Command goToSetpoint(Supplier<Double> setpointRadians) {

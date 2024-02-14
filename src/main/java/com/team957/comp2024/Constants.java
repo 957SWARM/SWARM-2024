@@ -115,10 +115,9 @@ public class Constants {
         public static final PIDConstants LINEAR_PATHFINDING_GAINS = new PIDConstants(10, 0, 0);
         public static final PIDConstants ROTATIONAL_PATHFINDING_GAINS = new PIDConstants(10, 0, 0);
 
-        public static final double SHOOT_BUFFER_SECONDS = 0.75;
-        public static final double INTAKE_BUFFER_SECONDS = 0.5;
-
         public static final double DEFAULT_PIVOT_DELAY_SECONDS = 0.5;
+
+        public static final double PROFILE_OVERRUN_TOLERANCE_SECONDS = 0.4;
     }
 
     public static final class IMUConstants {
@@ -205,6 +204,9 @@ public class Constants {
         public static final double TOF_NOTE_PRESENT_THRESHOLD_METERS = .5; // TODO
 
         public static final double TOF_NOTE_PRESENT_DEBOUNCE_SECONDS = 0.1;
+
+        public static final double SIM_MOCK_OUTTAKE_DELAY_SECONDS = 0.5;
+        public static final double SIM_MOCK_INTAKE_DELAY_SECONDS = 0.5;
     }
 
     public static final class AlertConstants {

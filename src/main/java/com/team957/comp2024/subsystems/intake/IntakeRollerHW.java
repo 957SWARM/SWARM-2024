@@ -5,7 +5,6 @@ import com.playingwithfusion.TimeOfFlight.RangingMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.team957.comp2024.Constants.IntakeRollerConstants;
-import java.util.function.Supplier;
 
 public class IntakeRollerHW extends IntakeRoller {
     double tofReadingMeters = 0;
@@ -47,7 +46,7 @@ public class IntakeRollerHW extends IntakeRoller {
     }
 
     @Override
-    public void setSimulationNoteIsPresentMock(Supplier<Boolean> mock) {}
+    public void setSimulationNoteIsPresentMock(boolean mock) {}
 
     @Override
     public void periodic() {

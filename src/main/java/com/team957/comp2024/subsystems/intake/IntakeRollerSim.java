@@ -1,9 +1,7 @@
 package com.team957.comp2024.subsystems.intake;
 
-import java.util.function.Supplier;
-
 public class IntakeRollerSim extends IntakeRoller {
-    private Supplier<Boolean> noteIsPresentMock = null;
+    private boolean noteIsPresentMock = false;
 
     private double setVolts = 0;
 
@@ -19,7 +17,7 @@ public class IntakeRollerSim extends IntakeRoller {
 
     @Override
     public boolean noteIsPresent() {
-        return (noteIsPresentMock == null) ? false : noteIsPresentMock.get();
+        return noteIsPresentMock;
     }
 
     @Override
@@ -28,7 +26,7 @@ public class IntakeRollerSim extends IntakeRoller {
     }
 
     @Override
-    public void setSimulationNoteIsPresentMock(Supplier<Boolean> mock) {
+    public void setSimulationNoteIsPresentMock(boolean mock) {
         this.noteIsPresentMock = mock;
     }
 
