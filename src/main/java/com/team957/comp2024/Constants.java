@@ -135,9 +135,6 @@ public class Constants {
         public static final PIDConstants LINEAR_PATHFINDING_GAINS = new PIDConstants(10, 0, 0);
         public static final PIDConstants ROTATIONAL_PATHFINDING_GAINS = new PIDConstants(10, 0, 0);
 
-        public static final double SHOOT_BUFFER_SECONDS = 0.75;
-        public static final double INTAKE_BUFFER_SECONDS = 0.5;
-
         public static final double DEFAULT_PIVOT_DELAY_SECONDS = 0.5;
 
         public static final double PROFILE_OVERRUN_TOLERANCE_SECONDS = 0.4;
