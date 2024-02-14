@@ -129,7 +129,9 @@ public class Robot extends TimedRobot implements Logged {
     private Trigger lowerHook;
     private Trigger climb;
 
-    private Trigger noteTrack;
+    private Trigger noteTracking;
+    private Trigger otfAmp;
+    private Trigger otfSpeaker;
 
     private double fieldRelRotationOffset = 0;
 
@@ -235,9 +237,6 @@ public class Robot extends TimedRobot implements Logged {
         // intakeSlowActive = new Trigger(() -> input.slowIntake());
         // intakeSlowActive.whileTrue(intakeRoller.)
         // intakeSlowEject = new Trigger(() -> input.slowEject());
-
-        noteTrack = new Trigger(() -> input.otfSpeaker());
-        noteTrack.whileTrue(noteTrackCommand);
 
         /*
         boxClimber.setDefaultCommand(boxClimber.idleCommand());
