@@ -126,7 +126,7 @@ public abstract class IntakePivot implements Subsystem, Logged {
         ExponentialProfile profile =
                 new ExponentialProfile(
                         Constraints.fromCharacteristics(
-                                Constants.MiscConstants.saturationVoltage,
+                                Constants.MiscConstants.SATURATION_VOLTAGE,
                                 IntakePivotConstants.PLANT_KV,
                                 IntakePivotConstants.PLANT_KA));
 

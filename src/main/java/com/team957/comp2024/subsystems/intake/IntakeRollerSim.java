@@ -1,7 +1,7 @@
 package com.team957.comp2024.subsystems.intake;
 
 public class IntakeRollerSim extends IntakeRoller {
-    private boolean noteIsPresentMock = false;
+    private boolean noteIsPresentMock = true; // start match with note
 
     private double setVolts = 0;
 

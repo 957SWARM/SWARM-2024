@@ -87,7 +87,7 @@ public class SwerveHW extends Swerve {
         public void setSteerVoltage(double volts) {
             steerOnboardControl = false;
 
-            steer.setVoltage(-UtilityMath.clamp(Constants.MiscConstants.saturationVoltage, volts));
+            steer.setVoltage(-UtilityMath.clamp(Constants.MiscConstants.SATURATION_VOLTAGE, volts));
             // I honestly have no idea what this code does but it was in the bunnybots
             // swerve and
             // that worked fine???
@@ -151,7 +151,7 @@ public class SwerveHW extends Swerve {
             driveOnboardControl = false;
 
             drive.setVoltage(
-                    UtilityMath.clamp(Constants.MiscConstants.saturationVoltage, volts)
+                    UtilityMath.clamp(Constants.MiscConstants.SATURATION_VOLTAGE, volts)
                             * (invertDrive ? -1 : 1));
         }
 
