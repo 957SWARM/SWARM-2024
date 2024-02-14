@@ -78,11 +78,12 @@ public class ChoreoFollowingFactory implements Logged {
                 // .andThen(Commands.runOnce((this.log("trajectory",trajectory))))
                 // choreotrajectory not supported in monologue :(
                 .andThen(
-                        swerve.getChassisRelativeControlCommand(
+                        swerve.getFieldRelativeControlCommand(
                                         () ->
                                                 controlFunction.apply(
                                                         localization.getPoseEstimate(),
-                                                        getMirroredPath.get().sample(timer.get())))
+                                                        getMirroredPath.get().sample(timer.get())),
+                                        localization::getRotationEstimate)
                                 .alongWith(
                                         Commands.run(
                                                 () -> {
