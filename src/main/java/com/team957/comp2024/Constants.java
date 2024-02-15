@@ -21,6 +21,12 @@ public class Constants {
         public static final double SATURATION_VOLTAGE = 12;
 
         public static final Alliance DEFAULT_ALLIANCE = Alliance.Blue;
+
+        public static final double NOMINAL_LOOP_TIME_SECONDS = 0.01; // 10 ms
+
+        public static final double LOOP_WATCHDOG_TRIGGER_SECONDS = 0.030; // 30 ms
+
+        public static final double HIGH_CAN_UTIL_THRESHOLD = .8;
     }
 
     public static final class SwerveConstants {

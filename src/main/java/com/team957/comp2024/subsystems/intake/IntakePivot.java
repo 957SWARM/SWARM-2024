@@ -2,7 +2,7 @@ package com.team957.comp2024.subsystems.intake;
 
 import com.team957.comp2024.Constants;
 import com.team957.comp2024.Constants.IntakePivotConstants;
-import com.team957.comp2024.Robot;
+import com.team957.comp2024.Constants.MiscConstants;
 import com.team957.comp2024.UI;
 import com.team957.lib.math.UtilityMath;
 import edu.wpi.first.math.controller.ArmFeedforward;
@@ -148,9 +148,13 @@ public abstract class IntakePivot implements Subsystem, Logged {
                     goal.position = setpointRadians.get();
                     goal.velocity = 0;
 
-                    var profiled = profile.calculate(Robot.kDefaultPeriod, current, goal);
+                    var profiled =
+                            profile.calculate(
+                                    MiscConstants.NOMINAL_LOOP_TIME_SECONDS, current, goal);
 
-                    double accel = (profiled.velocity - current.velocity) / Robot.kDefaultPeriod;
+                    double accel =
+                            (profiled.velocity - current.velocity)
+                                    / MiscConstants.NOMINAL_LOOP_TIME_SECONDS;
 
                     log("profiled", profiled.position);
                     log("profiledV", profiled.velocity);

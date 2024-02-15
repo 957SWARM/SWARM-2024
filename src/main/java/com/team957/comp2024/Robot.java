@@ -28,12 +28,16 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.Notifier;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import monologue.Logged;
 import monologue.Monologue;
+import org.littletonrobotics.Alert;
+import org.littletonrobotics.Alert.AlertType;
 import org.littletonrobotics.urcl.URCL;
 
 public class Robot extends TimedRobot implements Logged {
@@ -98,8 +102,16 @@ public class Robot extends TimedRobot implements Logged {
 
     private double fieldRelRotationOffset = 0;
 
+    private final Notifier fastLoop = new Notifier(this::loop);
+
+    private final Alert loopOverrun = new Alert("Loop overrun!", AlertType.WARNING);
+    private final Alert canUtil = new Alert("High CAN utilization", AlertType.WARNING);
+
     @Override
     public void robotInit() {
+        CommandScheduler.getInstance()
+                .setPeriod(Constants.MiscConstants.LOOP_WATCHDOG_TRIGGER_SECONDS);
+
         SignalLogger.enableAutoLogging(true);
         SignalLogger.start();
 
@@ -197,13 +209,23 @@ public class Robot extends TimedRobot implements Logged {
                                     : OtfPathingConstants.OTF_SPEAKER_POSE_RED;
                         },
                         poseEstimation::getPoseEstimate));
+
+        fastLoop.startPeriodic(MiscConstants.NOMINAL_LOOP_TIME_SECONDS);
     }
 
-    @Override
-    public void robotPeriodic() {
+    public void loop() {
         CommandScheduler.getInstance().run();
 
-        log("loopTimeSeconds", dt.getTimeSecondsSinceLastCall());
+        double dtSeconds = dt.getTimeSecondsSinceLastCall();
+
+        log("loopTimeSeconds", dtSeconds);
+
+        double canUtilization = RobotController.getCANStatus().percentBusUtilization;
+
+        log("canUtilization", canUtilization);
+
+        loopOverrun.set(dtSeconds > MiscConstants.LOOP_WATCHDOG_TRIGGER_SECONDS);
+        canUtil.set(canUtilization > MiscConstants.HIGH_CAN_UTIL_THRESHOLD);
 
         Monologue.setFileOnly(DriverStation.isFMSAttached());
         Monologue.updateAll();

@@ -1,7 +1,7 @@
 package com.team957.comp2024.subsystems.intake;
 
 import com.team957.comp2024.Constants;
-import com.team957.comp2024.Robot;
+import com.team957.comp2024.Constants.MiscConstants;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 
@@ -52,7 +52,7 @@ public class IntakePivotSim extends IntakePivot {
     public void periodic() {
         super.periodic();
 
-        model.update(Robot.kDefaultPeriod);
+        model.update(MiscConstants.NOMINAL_LOOP_TIME_SECONDS);
     }
 
     @Override

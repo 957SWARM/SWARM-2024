@@ -1,8 +1,8 @@
 package com.team957.comp2024.subsystems.swerve;
 
 import com.team957.comp2024.Constants;
+import com.team957.comp2024.Constants.MiscConstants;
 import com.team957.comp2024.Constants.SwerveConstants;
-import com.team957.comp2024.Robot;
 import com.team957.comp2024.UI;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -264,7 +264,8 @@ public abstract class Swerve implements Subsystem, Logged {
                             SwerveModuleState[] states =
                                     SwerveConstants.KINEMATICS.toSwerveModuleStates(
                                             ChassisSpeeds.discretize(
-                                                    setpoint, Robot.kDefaultPeriod));
+                                                    setpoint,
+                                                    MiscConstants.NOMINAL_LOOP_TIME_SECONDS));
 
                             SwerveDriveKinematics.desaturateWheelSpeeds(
                                     states, SwerveConstants.MAX_WHEEL_SPEED_METERS_PER_SECOND);
