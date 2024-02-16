@@ -51,9 +51,9 @@ public class NoteTargeting extends Command {
         double kp = VisionConstants.TRACKING_KP;
         double minCommand = VisionConstants.TRACKING_MIN_COMMAND;
         if (Math.abs(targetAngle) > VisionConstants.TRACKING_STOP_THRESHOLD) {
-            if (targetAngle > 0 && targetAngle < VisionConstants.MIN_COMMAND_TRESHOLD) {
+            if (targetAngle > 0 && targetAngle < VisionConstants.TRACKING_MIN_COMMAND_TRESHOLD) {
                 return -minCommand;
-            } else if (targetAngle < 0 && targetAngle > -VisionConstants.MIN_COMMAND_TRESHOLD) {
+            } else if (targetAngle < 0 && targetAngle > -VisionConstants.TRACKING_MIN_COMMAND_TRESHOLD) {
                 return minCommand;
             } else {
                 return kp * targetAngle;
