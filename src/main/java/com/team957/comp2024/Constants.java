@@ -85,22 +85,22 @@ public class Constants {
 
         public static final int FRONT_LEFT_DRIVE_CANID = 7;
         public static final int FRONT_LEFT_STEER_CANID = 8;
-        public static final double FRONT_LEFT_STEER_OFFSET_RADIANS = -0.3613 + (Math.PI / 2);
+        public static final double FRONT_LEFT_STEER_OFFSET_RADIANS = 2.555 + (Math.PI / 2);
         public static final boolean FRONT_LEFT_DRIVE_INVERTED = false;
 
         public static final int FRONT_RIGHT_DRIVE_CANID = 1;
         public static final int FRONT_RIGHT_STEER_CANID = 2;
-        public static final double FRONT_RIGHT_STEER_OFFSET_RADIANS = -1.5327;
+        public static final double FRONT_RIGHT_STEER_OFFSET_RADIANS = 3.169;
         public static final boolean FRONT_RIGHT_DRIVE_INVERTED = true;
 
         public static final int BACK_LEFT_DRIVE_CANID = 5;
         public static final int BACK_LEFT_STEER_CANID = 6;
-        public static final double BACK_LEFT_STEER_OFFSET_RADIANS = -0.0124;
+        public static final double BACK_LEFT_STEER_OFFSET_RADIANS = 0.527;
         public static final boolean BACK_LEFT_DRIVE_INVERTED = false;
 
         public static final int BACK_RIGHT_DRIVE_CANID = 3;
         public static final int BACK_RIGHT_STEER_CANID = 4;
-        public static final double BACK_RIGHT_STEER_OFFSET_RADIANS = -5.6515 + (Math.PI / 2);
+        public static final double BACK_RIGHT_STEER_OFFSET_RADIANS = 0.091 + (Math.PI / 2);
         public static final boolean BACK_RIGHT_DRIVE_INVERTED = true;
     }
 
