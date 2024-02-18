@@ -209,19 +209,18 @@ public class Robot extends TimedRobot implements Logged {
         noteTrack = new Trigger(() -> input.otfSpeaker());
         noteTrack.whileTrue(noteTrackCommand);
 
-        /*
+        // climber
         boxClimber.setDefaultCommand(boxClimber.idleCommand());
 
-        raiseHook = new Trigger(input::raiseHook);
-        raiseHook.onTrue(boxClimber.raiseCommand());
+        raiseHook = new Trigger(input::actualRaiseHook);
+        raiseHook.whileTrue(boxClimber.raiseCommand());
 
-        lowerHook = new Trigger(input::lowerHook);
-        lowerHook.onTrue(boxClimber.lowerCommand());
+        lowerHook = new Trigger(input::actualLowerHook);
+        lowerHook.whileTrue(boxClimber.lowerCommand());
 
         winch.setDefaultCommand(winch.idleCommand());
-        climb = new Trigger(input::climb);
-        climb.onTrue(winch.raiseCommand());
-        */
+        climb = new Trigger(input::actualClimb);
+        climb.whileTrue(winch.raiseCommand());
 
         resetFieldRelZero = new Trigger(input::zeroGyro);
         /*

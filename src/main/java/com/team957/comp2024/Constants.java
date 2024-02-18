@@ -183,7 +183,7 @@ public class Constants {
     }
 
     public static final class BoxClimberConstants {
-        public static final double STANDARD_VOLTAGE = 6;
+        public static final double STANDARD_VOLTAGE = 3;
         // CAN ID not set
         public static final int MOTOR_CANID = 13;
         public static final int CURRENT_LIMIT = 40;
@@ -194,7 +194,7 @@ public class Constants {
     public static final class WinchConstants {
         // CAN ID not set
         public static final int MOTOR_CANID = 14;
-        public static final double STANDARD_VOLTAGE = 6;
+        public static final double STANDARD_VOLTAGE = 3;
         public static final int CURRENT_LIMIT = 40;
         // positive = going up. negative = going down.
         public static final boolean MOTOR_INVERTED = false;
@@ -209,7 +209,7 @@ public class Constants {
         public static final double SHOOTER_HANDOFF_VOLTAGE = -.2;
         public static final double SLOW_INTAKE_VOLTAGE = -.2;
         public static final double SLOW_EJECT_VOLTAGE = .2;
-        public static final double AMP_SHOT_VOLTAGE = -.5;
+        public static final double AMP_SHOT_VOLTAGE = -.75;
 
         public static final int TOF_CANID = 63; // TODO
 

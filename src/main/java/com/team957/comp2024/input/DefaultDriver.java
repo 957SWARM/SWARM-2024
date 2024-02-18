@@ -88,8 +88,14 @@ public class DefaultDriver implements DriverInput {
     }
 
     @Override
-    public boolean slowIntake() {
-        return (xboxController.getPOV() == 0);
+    public boolean actualRaiseHook() {
+        System.out.println("raising hook");
+        return (xboxController.getRawButton(7));
+    }
+
+    @Override
+    public boolean actualLowerHook() {
+        return (xboxController.getPOV() == 180);
     }
 
     @Override
@@ -101,5 +107,16 @@ public class DefaultDriver implements DriverInput {
     public boolean slowEject() {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'slowEject'");
+    }
+
+    @Override
+    public boolean slowIntake() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'slowIntake'");
+    }
+
+    @Override
+    public boolean actualClimb() {
+        return (xboxController.getPOV() == 90);
     }
 }

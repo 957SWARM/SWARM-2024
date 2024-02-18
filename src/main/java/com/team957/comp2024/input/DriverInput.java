@@ -47,4 +47,10 @@ public interface DriverInput {
 
     // brings intake to floor
     public boolean intakeFloor();
+
+    public boolean actualRaiseHook();
+
+    public boolean actualLowerHook();
+
+    public boolean actualClimb();
 }

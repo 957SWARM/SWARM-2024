@@ -22,6 +22,7 @@ public class MotionProfiletoSetpoint extends Command implements Logged {
         this.targetSetpoint = targetSetpoint;
         this.intakePivot = intakePivot;
         motionProfile = new TrapezoidProfile(new TrapezoidProfile.Constraints(0.6, 0.8));
+        // this +.15 may cause the stuttering effect because robot thinks its
         start = new TrapezoidProfile.State(this.intakePivot.getOffsetRev() + .15, 0);
         end = new TrapezoidProfile.State(targetSetpoint, 0);
     }

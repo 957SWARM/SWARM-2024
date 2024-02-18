@@ -94,4 +94,22 @@ public class SimKeyboardDriver implements DriverInput {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'slowEject'");
     }
+
+    @Override
+    public boolean actualRaiseHook() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'actualRaiseHook'");
+    }
+
+    @Override
+    public boolean actualLowerHook() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'actualLowerHook'");
+    }
+
+    @Override
+    public boolean actualClimb() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'actualClimb'");
+    }
 }
