@@ -149,8 +149,9 @@ public class NoteTargeting {
                                 - ((VisionConstants.NOTE_WIDTH / 2)
                                         * (VisionConstants.NOTE_WIDTH / 2)));
 
-        // super secret krabby patty distance formula 3
-        double distanceCorrected = (distance - ((1.15 * (distance - 5)) - distance)) * .95;
+        // super secret krabby patty distance formula 4
+        double distanceCorrected =
+                distance - 10; // (distance - ((1.15 * (distance - 5)) - distance)) * .95;
 
         if (checkTarget()) {
             return distanceCorrected;
@@ -170,7 +171,7 @@ public class NoteTargeting {
 
     private boolean checkTarget() { // CHECKS IF NOTE IS TRACKABLE
         boolean trackable = true;
-        if (!LimelightLib.getTV(limelightName)) {
+        /*if (!LimelightLib.getTV(limelightName)) {
             trackable = false;
         } else if ((Math.abs(LimelightLib.getTX(limelightName))
                 > VisionConstants.TARGET_TX_CUTOFF)) {
@@ -178,7 +179,7 @@ public class NoteTargeting {
         } else if ((Math.abs(LimelightLib.getTHOR(limelightName))
                 < VisionConstants.TARGET_THOR_CUTOFF)) {
             trackable = false;
-        }
+        }*/
         return trackable;
     }
 }

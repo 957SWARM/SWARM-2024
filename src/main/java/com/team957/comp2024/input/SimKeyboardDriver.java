@@ -73,8 +73,25 @@ public class SimKeyboardDriver implements DriverInput {
         return controller.getBButton();
     }
 
+    // @Override
+    // public boolean amp() {
+    // return false;
+    // }
+
     @Override
-    public boolean amp() {
+    public boolean intakeFloor() {
         return false;
+    }
+
+    @Override
+    public boolean slowIntake() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'slowIntake'");
+    }
+
+    @Override
+    public boolean slowEject() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'slowEject'");
     }
 }

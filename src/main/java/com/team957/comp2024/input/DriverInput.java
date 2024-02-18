@@ -39,6 +39,12 @@ public interface DriverInput {
     // take the note in
     public boolean floorIntake();
 
-    // brings pivot to amp position
-    public boolean amp();
+    // slowly intakes
+    public boolean slowIntake();
+
+    // slowly ejects
+    public boolean slowEject();
+
+    // brings intake to floor
+    public boolean intakeFloor();
 }

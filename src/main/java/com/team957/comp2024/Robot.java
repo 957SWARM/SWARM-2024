@@ -2,14 +2,12 @@ package com.team957.comp2024;
 
 import com.ctre.phoenix6.SignalLogger;
 import com.team957.comp2024.Constants.MiscConstants;
-import com.team957.comp2024.Constants.OtfPathingConstants;
 import com.team957.comp2024.Constants.PDHConstants;
 import com.team957.comp2024.Constants.SwerveConstants;
-import com.team957.comp2024.commands.Autos;
 import com.team957.comp2024.commands.ChoreoFollowingFactory;
+import com.team957.comp2024.commands.MotionProfiletoSetpoint;
 import com.team957.comp2024.commands.NoteTargeting;
 import com.team957.comp2024.commands.OnTheFlyPathing;
-import com.team957.comp2024.commands.ScoringSequences;
 import com.team957.comp2024.input.DefaultDriver;
 import com.team957.comp2024.input.DriverInput;
 import com.team957.comp2024.input.SimKeyboardDriver;
@@ -18,10 +16,11 @@ import com.team957.comp2024.peripherals.LLlocalization;
 import com.team957.comp2024.peripherals.PDH;
 import com.team957.comp2024.subsystems.climbing.BoxClimber;
 import com.team957.comp2024.subsystems.climbing.Winch;
-import com.team957.comp2024.subsystems.intake.IntakePivot;
 import com.team957.comp2024.subsystems.intake.IntakeRoller;
+import com.team957.comp2024.subsystems.intake.Pivot;
 import com.team957.comp2024.subsystems.shooter.Shooter;
 import com.team957.comp2024.subsystems.swerve.Swerve;
+import com.team957.comp2024.util.LimelightLib;
 import com.team957.lib.util.DeltaTimeUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -31,6 +30,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -56,7 +56,7 @@ public class Robot extends TimedRobot implements Logged {
 
     private final Shooter shooter = Shooter.getShooter(isReal());
 
-    private final IntakePivot intakePivot = IntakePivot.getIntakePivot(isReal());
+    private final Pivot intakePivot = new Pivot();
 
     private final IntakeRoller intakeRoller = IntakeRoller.getIntakeRoller(isReal());
 
@@ -76,29 +76,47 @@ public class Robot extends TimedRobot implements Logged {
 
     private final OnTheFlyPathing otf = OnTheFlyPathing.instance;
 
-    private final Autos autos =
-            new Autos(
-                    swerve, intakePivot, intakeRoller, shooter, poseEstimation, this::getAlliance);
-
     private DriverInput input;
 
     private final NoteTargeting noteTargeting =
             new NoteTargeting(swerve, poseEstimation, "limelight");
 
+    private final Command noteTrackCommand =
+            noteTargeting.getNoteTrackCommand(
+                    () -> input.swerveX(), () -> input.swerveY(), () -> input.swerveRot());
+
     // triggers
-    private Trigger resetFieldRelZero;
+    /*
 
     private Trigger speaker;
     private Trigger amp;
     private Trigger floorIntake;
 
+    private Trigger noteTracking;
+    private Trigger otfAmp;
+    private Trigger otfSpeaker;
+    */
+    // temporary trigger for testing:
+    private Trigger resetFieldRelZero;
+    private Trigger shoot;
+
+    private Trigger intakeBack;
+    private Trigger intakeAmp;
+    private Trigger intakeOut;
+    private Trigger intakeFloor;
+
+    private Trigger intakeActive;
+    private Trigger intakeEject;
+
+    private Trigger intakeSlowActive;
+    private Trigger intakeSlowEject;
+
+    private Trigger grab;
     private Trigger raiseHook;
     private Trigger lowerHook;
     private Trigger climb;
 
-    private Trigger noteTracking;
-    private Trigger otfAmp;
-    private Trigger otfSpeaker;
+    private Trigger noteTrack;
 
     private double fieldRelRotationOffset = 0;
 
@@ -123,16 +141,19 @@ public class Robot extends TimedRobot implements Logged {
             input = new SimKeyboardDriver();
         }
 
+        LimelightLib.setPipelineIndex("limelight", 4);
+
         Monologue.setupMonologue(this, "Robot", false, true);
 
         DriverStation.startDataLog(DataLogManager.getLog()); // same log used by monologue
-
+        /*
         ui.addAuto("Shoot Preload", autos.shootPreloadBumperAuto());
         ui.addAuto("Middle Two Piece", autos.middleTwoPiece());
         ui.addAuto("Top Near Three Piece", autos.topNearThreePiece());
         ui.addAuto("Top Center Four Piece", autos.topCenterFourPiece());
         ui.addAuto("Near Four Piece", autos.nearFourPiece());
         ui.addAuto("Top Five Piece", autos.topFivePiece());
+        */
 
         ui.setDriverInputChangeCallback((driverInput) -> this.input = driverInput);
         ui.setOperatorInputChangeCallback((operatorInput) -> {});
@@ -147,13 +168,63 @@ public class Robot extends TimedRobot implements Logged {
                                         .getRotationEstimate()
                                         .minus(new Rotation2d(fieldRelRotationOffset))));
 
+        /*
         intakePivot.setDefaultCommand(intakePivot.holdStow());
         intakeRoller.setDefaultCommand(intakeRoller.idle());
+        */
+        // Testing shooter with no voltage
+        shooter.setDefaultCommand(shooter.noVoltage());
+        intakeRoller.setDefaultCommand(intakeRoller.idle());
+        shoot = new Trigger(() -> input.noteTracking());
+        shoot.whileTrue(shooter.halfCourtShot()).onFalse(shooter.noVoltage());
 
-        shooter.setDefaultCommand(shooter.idle());
+        intakeOut = new Trigger(() -> input.intake());
+        intakeOut.toggleOnTrue(
+                new MotionProfiletoSetpoint(
+                        0 + Constants.PivotConstants.OFFSET_TO_STRAIGHT, intakePivot));
+
+        intakeAmp = new Trigger(() -> input.speaker());
+        intakeAmp.toggleOnTrue(
+                new MotionProfiletoSetpoint(
+                        0.16 + Constants.PivotConstants.OFFSET_TO_STRAIGHT, intakePivot));
+
+        intakeBack = new Trigger(() -> input.climb());
+        intakeBack.toggleOnTrue(
+                new MotionProfiletoSetpoint(
+                        .42 + Constants.PivotConstants.OFFSET_TO_STRAIGHT, intakePivot));
+
+        intakeFloor = new Trigger(() -> input.intakeFloor());
+        intakeFloor.toggleOnTrue(new MotionProfiletoSetpoint(0, intakePivot));
+
+        intakeActive = new Trigger(() -> input.lowerHook());
+        intakeActive.whileTrue(intakeRoller.floorIntake());
+
+        intakeEject = new Trigger(() -> input.raiseHook());
+        intakeEject.whileTrue(intakeRoller.ampShot());
+
+        // intakeSlowActive = new Trigger(() -> input.slowIntake());
+        // intakeSlowActive.whileTrue(intakeRoller.)
+        // intakeSlowEject = new Trigger(() -> input.slowEject());
+
+        noteTrack = new Trigger(() -> input.otfSpeaker());
+        noteTrack.whileTrue(noteTrackCommand);
+
+        /*
+        boxClimber.setDefaultCommand(boxClimber.idleCommand());
+
+        raiseHook = new Trigger(input::raiseHook);
+        raiseHook.onTrue(boxClimber.raiseCommand());
+
+        lowerHook = new Trigger(input::lowerHook);
+        lowerHook.onTrue(boxClimber.lowerCommand());
+
+        winch.setDefaultCommand(winch.idleCommand());
+        climb = new Trigger(input::climb);
+        climb.onTrue(winch.raiseCommand());
+        */
 
         resetFieldRelZero = new Trigger(input::zeroGyro);
-
+        /*
         speaker = new Trigger(input::speaker);
         amp = new Trigger(input::amp);
         floorIntake = new Trigger(input::floorIntake);
@@ -161,14 +232,14 @@ public class Robot extends TimedRobot implements Logged {
         noteTracking = new Trigger(input::noteTracking);
         otfAmp = new Trigger(input::otfAmp);
         otfSpeaker = new Trigger(input::otfSpeaker);
-
+        */
         resetFieldRelZero.onTrue(
                 Commands.runOnce(
                         () -> {
                             fieldRelRotationOffset =
                                     poseEstimation.getRotationEstimate().getRadians();
                         }));
-
+        /*
         speaker.toggleOnTrue(
                 ScoringSequences.coordinatedSubwooferShot(shooter, intakePivot, intakeRoller)
                         .andThen(intakePivot.holdPosition()));
@@ -209,7 +280,7 @@ public class Robot extends TimedRobot implements Logged {
                                     : OtfPathingConstants.OTF_SPEAKER_POSE_RED;
                         },
                         poseEstimation::getPoseEstimate));
-
+        */
         fastLoop.startPeriodic(MiscConstants.NOMINAL_LOOP_TIME_SECONDS);
     }
 

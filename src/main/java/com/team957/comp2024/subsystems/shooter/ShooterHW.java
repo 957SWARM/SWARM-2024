@@ -19,14 +19,14 @@ public class ShooterHW extends Shooter {
         rightMotor.restoreFactoryDefaults();
 
         // set inversions
-        leftMotor.setInverted(ShooterConstants.leftMotorInverted);
-        rightMotor.setInverted(ShooterConstants.rightMotorInverted);
+        leftMotor.setInverted(true);
+        // rightMotor.setInverted(true);
 
         leftMotor.setSmartCurrentLimit(ShooterConstants.CURRENT_LIMIT);
         rightMotor.setSmartCurrentLimit(ShooterConstants.CURRENT_LIMIT);
 
         // sets the leftMotor as the master and the rightMotor as follower
-        rightMotor.follow(leftMotor);
+        rightMotor.follow(leftMotor, true);
     }
 
     @Override

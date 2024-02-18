@@ -88,7 +88,18 @@ public class DefaultDriver implements DriverInput {
     }
 
     @Override
-    public boolean amp() {
+    public boolean slowIntake() {
         return (xboxController.getPOV() == 0);
+    }
+
+    @Override
+    public boolean intakeFloor() {
+        return xboxController.getAButton();
+    }
+
+    @Override
+    public boolean slowEject() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'slowEject'");
     }
 }

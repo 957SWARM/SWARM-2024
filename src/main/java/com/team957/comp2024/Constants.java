@@ -57,12 +57,13 @@ public class Constants {
 
         public static final double MAX_WHEEL_SPEED_METERS_PER_SECOND = 8;
 
-        public static final Translation2d FRONT_LEFT_TRANSLATION = new Translation2d(0.3302, 0.254);
-        public static final Translation2d FRONT_RIGHT_TRANSLATION =
-                new Translation2d(0.3302, -0.254);
-        public static final Translation2d BACK_RIGHT_TRANSLATION =
-                new Translation2d(-0.3302, -0.254);
-        public static final Translation2d BACK_LEFT_TRANSLATION = new Translation2d(-0.3302, 0.254);
+        public static final double a = .3302;
+        public static final double b = .254;
+
+        public static final Translation2d FRONT_LEFT_TRANSLATION = new Translation2d(a, b);
+        public static final Translation2d FRONT_RIGHT_TRANSLATION = new Translation2d(a, -b);
+        public static final Translation2d BACK_RIGHT_TRANSLATION = new Translation2d(-a, -b);
+        public static final Translation2d BACK_LEFT_TRANSLATION = new Translation2d(-a, b);
 
         public static final SwerveDriveKinematics KINEMATICS =
                 new SwerveDriveKinematics(
@@ -71,12 +72,12 @@ public class Constants {
                         BACK_RIGHT_TRANSLATION,
                         BACK_LEFT_TRANSLATION);
 
-        public static final double ONBOARD_DRIVE_CONTROLLER_KP = 0.00003;
+        public static final double ONBOARD_DRIVE_CONTROLLER_KP = 0.00004;
         public static final double ONBOARD_DRIVE_CONTROLLER_KI = 0;
         public static final double ONBOARD_DRIVE_CONTROLLER_KD = 0;
-        public static final double ONBOARD_DRIVE_CONTROLLER_KFF = 0.000125;
+        public static final double ONBOARD_DRIVE_CONTROLLER_KFF = 0.000175;
 
-        public static final double ONBOARD_STEER_CONTROLLER_KP = 2;
+        public static final double ONBOARD_STEER_CONTROLLER_KP = 2.5;
         public static final double ONBOARD_STEER_CONTROLLER_KI = 0;
         public static final double ONBOARD_STEER_CONTROLLER_KD = 0;
 
@@ -112,12 +113,12 @@ public class Constants {
         public static final DCMotor SHOOTER_MOTOR = DCMotor.getNEO(1);
         public static final double SHOOTER_REDUCTION = 1;
 
-        public static final double IDLE_CONTROL_EFFORT_VOLTS = 2;
+        public static final double IDLE_CONTROL_EFFORT_VOLTS = -2;
         public static final double SUBWOOFER_CONTROL_EFFORT_VOLTS = 9;
-        public static final double HALF_COURT_CONTROL_EFFORT_VOLTS = 12;
+        public static final double HALF_COURT_CONTROL_EFFORT_VOLTS = -12;
 
-        public static final boolean leftMotorInverted = false;
-        public static final boolean rightMotorInverted = true;
+        public static final boolean leftMotorInverted = true;
+        public static final boolean rightMotorInverted = false;
         public static final boolean leftEncoderInverted = false;
         public static final boolean rightEncoderInverted = true;
     }
@@ -174,7 +175,7 @@ public class Constants {
         // reported angle when the pivot is at "zero" (straight ahead)
         public static final double INTAKE_PIVOT_OFFSET_RADIANS = 11;
 
-        public static final double ONBOARD_CONTROLLER_KP = 1;
+        public static final double ONBOARD_CONTROLLER_KP = 0;
         public static final double ONBOARD_CONTROLLER_KI = 0;
         public static final double ONBOARD_CONTROLLER_KD = 0;
 
@@ -204,9 +205,11 @@ public class Constants {
         public static final int CURRENT_LIMIT = 30;
         public static final boolean ROLLER_INVERTED = false;
 
-        public static final double FLOOR_INTAKE_VOLTAGE = 6;
-        public static final double SHOOTER_HANDOFF_VOLTAGE = -9;
-        public static final double AMP_SHOT_VOLTAGE = -12;
+        public static final double FLOOR_INTAKE_VOLTAGE = .5;
+        public static final double SHOOTER_HANDOFF_VOLTAGE = -.2;
+        public static final double SLOW_INTAKE_VOLTAGE = -.2;
+        public static final double SLOW_EJECT_VOLTAGE = .2;
+        public static final double AMP_SHOT_VOLTAGE = -.5;
 
         public static final int TOF_CANID = 63; // TODO
 
@@ -233,6 +236,20 @@ public class Constants {
         public static final int DRIVER_PORT = 0;
     }
 
+    public static final class PivotConstants {
+        // KP = 3
+        // OFFSET_REV = .51
+        public static final double OFFSET_REV = 0.49;
+        public static final double OFFSET_TO_STRAIGHT = .63 - OFFSET_REV;
+        public static final double KG = .3;
+        public static final double PID_WRAP_MAX = 1;
+        public static final double PID_WRAP_MIN = 0;
+        public static final double ONBOARD_KP = 2;
+        public static final double ONBOARD_KI = 0;
+        public static final double ONBOARD_KD = 0;
+        public static final double ONBOARD_KFF = .1;
+    }
+
     public static final class VisionConstants {
 
         public static final boolean VISION_POSE_ESTIMATION_ENABLED = false;
@@ -248,11 +265,13 @@ public class Constants {
                 VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(30));
 
         public static final Transform3d LL1_TO_CENTER =
-                new Transform3d(new Translation3d(.2159, -.2032, 0.381), new Rotation3d(0, 0, 0));
+                new Transform3d(
+                        new Translation3d(-Units.inchesToMeters(3), 0, Units.inchesToMeters(24)),
+                        new Rotation3d(0, 0, 0));
         public static final Transform3d LL2_TO_CENTER =
                 new Transform3d(new Translation3d(0, 0, 0), new Rotation3d(0, 0, 0));
 
-        public static final double TARGET_AREA_CUTOFF = 0.2; // PERCENT OF SCREEN
+        public static final double TARGET_AREA_CUTOFF = 0.5; // PERCENT OF SCREEN //TODO: FIND VAL
         public static final double TARGET_TX_CUTOFF = 24; // DEGREES
         public static final double TARGET_THOR_CUTOFF = 70; // PIXELS
 
