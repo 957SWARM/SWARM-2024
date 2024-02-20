@@ -29,6 +29,8 @@ public class Constants {
         public static final double HIGH_CAN_UTIL_THRESHOLD = .8;
 
         public static final int PRACTICE_BOT_JUMPER_CHANNEL = 0;
+
+        public static final int TOTAL_PIXELS = 60;
     }
 
     public static final class SwerveConstants {
