@@ -307,7 +307,9 @@ public class Robot extends TimedRobot implements Logged {
     }
 
     @Override
-    public void teleopInit() {}
+    public void teleopInit() {
+        LimelightLib.setPipelineIndex("limelight", 4);
+    }
 
     @Override
     public void disabledInit() {

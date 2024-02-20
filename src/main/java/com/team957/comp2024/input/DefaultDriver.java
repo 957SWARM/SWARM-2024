@@ -89,7 +89,7 @@ public class DefaultDriver implements DriverInput {
 
     @Override
     public boolean actualRaiseHook() {
-        System.out.println("raising hook");
+        // System.out.println("raising hook");
         return (xboxController.getRawButton(7));
     }
 
