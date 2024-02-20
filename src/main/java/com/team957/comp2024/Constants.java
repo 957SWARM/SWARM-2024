@@ -16,6 +16,7 @@ import edu.wpi.first.math.util.Units;
 public class Constants {
     public static final class MiscConstants {
         public static final double saturationVoltage = 12;
+        public static final int TOTAL_PIXELS = 60;
     }
 
     public static final class SwerveConstants {

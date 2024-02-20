@@ -4,19 +4,19 @@ import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 
-public class LED implements Subsystem{
-    
+public class LED implements Subsystem {
+
     private AddressableLED led;
     private AddressableLEDBuffer ledBuffer;
 
     int totalPixels;
-    
-    public LED(int totalPixels){
+
+    public LED(int totalPixels) {
         register();
 
         this.totalPixels = totalPixels;
 
-        led = new AddressableLED(0); 
+        led = new AddressableLED(0);
 
         ledBuffer = new AddressableLEDBuffer(totalPixels);
         led.setLength(totalPixels);
@@ -26,13 +26,13 @@ public class LED implements Subsystem{
         led.start();
     }
 
-    public void setPixel(int selectedPixel, int r, int g, int b){
+    public void setPixel(int selectedPixel, int r, int g, int b) {
         if (selectedPixel < 0 || selectedPixel > totalPixels - 1) return;
         ledBuffer.setRGB(selectedPixel, r, g, b);
     }
-    
+
     @Override
-    public void periodic(){
+    public void periodic() {
         led.setData(ledBuffer);
     }
 }
