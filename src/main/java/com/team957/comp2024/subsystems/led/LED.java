@@ -6,36 +6,33 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
 
 public class LED implements Subsystem {
 
-    private AddressableLED m_led;
-    private AddressableLEDBuffer m_ledBuffer;
-    // private AddressableLEDBuffer m_ledSegment;
+    private AddressableLED led;
+    private AddressableLEDBuffer ledBuffer;
 
-    int Pixel;
-    int startPixel;
-    int endPixel;
     int totalPixels;
 
-    public LED() {
+    public LED(int totalPixels) {
         register();
 
-        m_led = new AddressableLED(0);
+        this.totalPixels = totalPixels;
 
-        m_ledBuffer = new AddressableLEDBuffer(0);
-        m_led.setLength(m_ledBuffer.getLength());
+        led = new AddressableLED(0);
 
-        int totalPixels = m_ledBuffer.getLength();
+        ledBuffer = new AddressableLEDBuffer(totalPixels);
+        led.setLength(totalPixels);
 
         // Set the data
-        m_led.setData(m_ledBuffer);
-        m_led.start();
+        led.setData(ledBuffer);
+        led.start();
     }
 
-    /*public int startPixel(int totalPixels){
-        return totalPixels;
-    }*/
+    public void setPixel(int selectedPixel, int r, int g, int b) {
+        if (selectedPixel < 0 || selectedPixel > totalPixels - 1) return;
+        ledBuffer.setRGB(selectedPixel, r, g, b);
+    }
 
-    public void setStartAndEndPixel() {
-        // For Loop to first define Start and End Pixels
-        for (int i = 0; i <= totalPixels; i++) {}
+    @Override
+    public void periodic() {
+        led.setData(ledBuffer);
     }
 }
