@@ -35,7 +35,7 @@ public class SimKeyboardDriver implements DriverInput {
 
     @Override
     public boolean speaker() {
-        return false;
+        return controller.getBButton();
     }
 
     @Override
@@ -65,12 +65,12 @@ public class SimKeyboardDriver implements DriverInput {
 
     @Override
     public boolean otfAmp() {
-        return controller.getAButton();
+        return false;
     }
 
     @Override
     public boolean otfSpeaker() {
-        return controller.getBButton();
+        return false;
     }
 
     // @Override
@@ -80,7 +80,7 @@ public class SimKeyboardDriver implements DriverInput {
 
     @Override
     public boolean intakeFloor() {
-        return false;
+        return controller.getAButton();
     }
 
     @Override

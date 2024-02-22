@@ -5,7 +5,6 @@ import com.team957.comp2024.Constants.MiscConstants;
 import com.team957.comp2024.Constants.PDHConstants;
 import com.team957.comp2024.Constants.SwerveConstants;
 import com.team957.comp2024.commands.ChoreoFollowingFactory;
-import com.team957.comp2024.commands.MotionProfiletoSetpoint;
 import com.team957.comp2024.commands.NoteTargeting;
 import com.team957.comp2024.commands.OnTheFlyPathing;
 import com.team957.comp2024.input.DefaultDriver;
@@ -16,8 +15,8 @@ import com.team957.comp2024.peripherals.LLlocalization;
 import com.team957.comp2024.peripherals.PDH;
 import com.team957.comp2024.subsystems.climbing.BoxClimber;
 import com.team957.comp2024.subsystems.climbing.Winch;
+import com.team957.comp2024.subsystems.intake.IntakePivot;
 import com.team957.comp2024.subsystems.intake.IntakeRoller;
-import com.team957.comp2024.subsystems.intake.Pivot;
 import com.team957.comp2024.subsystems.shooter.Shooter;
 import com.team957.comp2024.subsystems.swerve.Swerve;
 import com.team957.comp2024.util.LimelightLib;
@@ -56,7 +55,9 @@ public class Robot extends TimedRobot implements Logged {
 
     private final Shooter shooter = Shooter.getShooter(isReal());
 
-    private final Pivot intakePivot = new Pivot();
+    // private final Pivot intakePivot = new Pivot();
+
+    private final IntakePivot pivot = IntakePivot.getIntakePivot(isReal());
 
     private final IntakeRoller intakeRoller = IntakeRoller.getIntakeRoller(isReal());
 
@@ -179,22 +180,29 @@ public class Robot extends TimedRobot implements Logged {
         shoot.whileTrue(shooter.halfCourtShot()).onFalse(shooter.noVoltage());
 
         intakeOut = new Trigger(() -> input.intake());
-        intakeOut.toggleOnTrue(
-                new MotionProfiletoSetpoint(
-                        0 + Constants.PivotConstants.OFFSET_TO_STRAIGHT, intakePivot));
+        // intakeOut.toggleOnTrue(
+        //         new MotionProfiletoSetpoint(
+        //                 0 + Constants.PivotConstants.OFFSET_TO_STRAIGHT, intakePivot));
+
+        // intakeOut.toggleOnTrue(pivot.toStow());
 
         intakeAmp = new Trigger(() -> input.speaker());
-        intakeAmp.toggleOnTrue(
-                new MotionProfiletoSetpoint(
-                        0.16 + Constants.PivotConstants.OFFSET_TO_STRAIGHT, intakePivot));
+
+        intakeAmp.toggleOnTrue(pivot.toAmp());
+
+        // intakeAmp.toggleOnTrue(
+        //         new MotionProfiletoSetpoint(
+        //                 0.16 + Constants.PivotConstants.OFFSET_TO_STRAIGHT, intakePivot));
 
         intakeBack = new Trigger(() -> input.climb());
-        intakeBack.toggleOnTrue(
-                new MotionProfiletoSetpoint(
-                        .42 + Constants.PivotConstants.OFFSET_TO_STRAIGHT, intakePivot));
+        // intakeBack.toggleOnTrue(
+        //         new MotionProfiletoSetpoint(
+        //                 .42 + Constants.PivotConstants.OFFSET_TO_STRAIGHT, intakePivot));
 
         intakeFloor = new Trigger(() -> input.intakeFloor());
-        intakeFloor.toggleOnTrue(new MotionProfiletoSetpoint(0, intakePivot));
+        // intakeFloor.toggleOnTrue(new MotionProfiletoSetpoint(0, intakePivot));
+
+        intakeFloor.onTrue(pivot.toFloor());
 
         intakeActive = new Trigger(() -> input.lowerHook());
         intakeActive.whileTrue(intakeRoller.floorIntake());

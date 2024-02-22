@@ -172,6 +172,8 @@ public class Constants {
 
         public static final boolean INTAKE_PIVOT_MOTOR_INVERTED = false;
 
+        public static final double INTAKE_PIVOT_PROFILE_CONTROL_EFFORT = 4;
+
         // reported angle when the pivot is at "zero" (straight ahead)
         public static final double INTAKE_PIVOT_OFFSET_RADIANS = 11;
 
