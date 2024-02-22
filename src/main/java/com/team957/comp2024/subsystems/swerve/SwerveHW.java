@@ -32,8 +32,23 @@ public class SwerveHW extends Swerve {
         private boolean brakeModeIsActive = false;
 
         HWModuleIO(int steerCANID, int driveCANID, double steerOffsetRadians, boolean invertDrive) {
-            steer = new CANSparkMax(steerCANID, MotorType.kBrushless);
-            drive = new CANSparkMax(driveCANID, MotorType.kBrushless);
+            steer =
+                    SparkMaxUtils.slowUnusedPeriodics(
+                            new CANSparkMax(steerCANID, MotorType.kBrushless),
+                            true, // needs to change to false if we start seeding
+                            true,
+                            true,
+                            false,
+                            false);
+
+            drive =
+                    SparkMaxUtils.slowUnusedPeriodics(
+                            new CANSparkMax(driveCANID, MotorType.kBrushless),
+                            false,
+                            true,
+                            true,
+                            true,
+                            true);
 
             steer.restoreFactoryDefaults();
             drive.restoreFactoryDefaults();

@@ -4,13 +4,22 @@ import com.playingwithfusion.TimeOfFlight;
 import com.playingwithfusion.TimeOfFlight.RangingMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
+import com.team957.comp2024.Constants;
 import com.team957.comp2024.Constants.IntakeRollerConstants;
+import com.team957.comp2024.util.SparkMaxUtils;
 
 public class IntakeRollerHW extends IntakeRoller {
     double tofReadingMeters = 0;
 
     private final CANSparkMax roller =
-            new CANSparkMax(IntakeRollerConstants.ROLLER_CANID, MotorType.kBrushless);
+            SparkMaxUtils.slowUnusedPeriodics(
+                    new CANSparkMax(
+                            Constants.IntakeRollerConstants.ROLLER_CANID, MotorType.kBrushless),
+                    false,
+                    true,
+                    true,
+                    true,
+                    true);
 
     private final TimeOfFlight tof = new TimeOfFlight(IntakeRollerConstants.TOF_CANID);
 

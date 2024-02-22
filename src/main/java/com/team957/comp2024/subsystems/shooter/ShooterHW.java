@@ -4,13 +4,28 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.team957.comp2024.Constants.ShooterConstants;
+import com.team957.comp2024.util.SparkMaxUtils;
 
 public class ShooterHW extends Shooter {
 
     private final CANSparkMax leftMotor =
-            new CANSparkMax(ShooterConstants.LEFT_CANID, MotorType.kBrushless);
+            SparkMaxUtils.slowUnusedPeriodics(
+                    new CANSparkMax(ShooterConstants.LEFT_CANID, MotorType.kBrushless),
+                    true,
+                    true,
+                    true,
+                    true,
+                    true);
+
     private final CANSparkMax rightMotor =
-            new CANSparkMax(ShooterConstants.RIGHT_CANID, MotorType.kBrushless);
+            SparkMaxUtils.slowUnusedPeriodics(
+                    new CANSparkMax(ShooterConstants.RIGHT_CANID, MotorType.kBrushless),
+                    true,
+                    true,
+                    true,
+                    true,
+                    true);
+
     private final RelativeEncoder leftEncoder = leftMotor.getEncoder();
     private final RelativeEncoder rightEncoder = rightMotor.getEncoder();
 

@@ -7,13 +7,21 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
 import com.revrobotics.SparkPIDController;
 import com.team957.comp2024.Constants;
+import com.team957.comp2024.util.SparkMaxUtils;
 import com.team957.lib.math.UtilityMath;
 import monologue.Annotations.Log;
 
 public class IntakePivotHW extends IntakePivot {
     private final CANSparkMax motor =
-            new CANSparkMax(
-                    Constants.IntakePivotConstants.INTAKE_PIVOT_MOTOR_CANID, MotorType.kBrushless);
+            SparkMaxUtils.slowUnusedPeriodics(
+                    new CANSparkMax(
+                            Constants.IntakePivotConstants.INTAKE_PIVOT_MOTOR_CANID,
+                            MotorType.kBrushless),
+                    true,
+                    true,
+                    true,
+                    false,
+                    false);
 
     private final AbsoluteEncoder encoder = motor.getAbsoluteEncoder(Type.kDutyCycle);
 
