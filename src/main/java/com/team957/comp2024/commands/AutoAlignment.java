@@ -1,12 +1,10 @@
 package com.team957.comp2024.commands;
 
-import com.team957.comp2024.LLlocalization;
 import com.team957.comp2024.Constants.VisionConstants;
+import com.team957.comp2024.LLlocalization;
 import com.team957.comp2024.subsystems.swerve.Swerve;
 
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 
@@ -31,41 +29,60 @@ public class AutoAlignment extends Command {
         return swerve.getFieldRelativeControlCommand(
                 () -> {
                     return new ChassisSpeeds(
-                            null, null, null);
+                            calculateAlignment(
+                                    poseEstimation.getPoseEstimate().getX(), getNearestTarget().getX()),
+                            calculateAlignment(
+                                    poseEstimation.getPoseEstimate().getY(), getNearestTarget().getY()),
+                            calculateRot(poseEstimation.getRotationEstimate().getRadians(),
+                                    getNearestTarget().getRotation().getRadians()));
                 },
                 poseEstimation::getRotationEstimate);
     }
 
-    public double calculateX(double currentX, double targetX) {
-        double xDiff = currentX - targetX;
-        double kp = VisionConstants.ALIGNING_KP;
-        double minCommand = VisionConstants.ALIGNING_MIN_COMMAND;
-        if (Math.abs(xDiff) > VisionConstants.ALIGNING_STOP_THRESHOLD) {
-            if (xDiff > 0 && xDiff < VisionConstants.ALINGING_MIN_COMMAND_TRESHOLD) {
-                return -minCommand;
-            } else if (xDiff < 0 && xDiff > -VisionConstants.ALINGING_MIN_COMMAND_TRESHOLD) {
-                return minCommand;
-            } else {
-                return kp * xDiff;
-            }
-        }
-        return 0;
+    public Pose2d getNearestTarget() {
+        return blueAmp; // TODO: ACTUALLY MAKE THIS
     }
 
-    public double calculateY(double currentY, double targetY) {
-        double xDiff = currentY - targetY;
-        double kp = VisionConstants.ALIGNING_KP;
-        double minCommand = VisionConstants.ALIGNING_MIN_COMMAND;
-        if (Math.abs(xDiff) > VisionConstants.ALIGNING_STOP_THRESHOLD) {
-            if (xDiff > 0 && xDiff < VisionConstants.ALINGING_MIN_COMMAND_TRESHOLD) {
+    public double calculatePLoop(
+            double current,
+            double target,
+            double kp,
+            double minCommand,
+            double stopThreshold,
+            double minCommandThreshold) {
+        double diff = current - target;
+        if (Math.abs(diff) > stopThreshold) {
+            if (diff > 0 && diff < minCommandThreshold) {
                 return -minCommand;
-            } else if (xDiff < 0 && xDiff > -VisionConstants.ALINGING_MIN_COMMAND_TRESHOLD) {
+            } else if (diff < 0 && diff > -minCommandThreshold) {
                 return minCommand;
             } else {
-                return kp * xDiff;
+                return kp * diff;
             }
         }
         return 0;
+
+    }
+
+    public double calculateAlignment(double currentX, double targetX) {
+        return calculatePLoop(
+                currentX,
+                targetX,
+                VisionConstants.ALIGNING_KP,
+                VisionConstants.ALIGNING_MIN_COMMAND,
+                VisionConstants.ALIGNING_STOP_THRESHOLD,
+                VisionConstants.ALINGING_MIN_COMMAND_TRESHOLD);
+    }
+
+    public double calculateRot(double currentRot, double targetRot) {
+        return calculatePLoop(
+                currentRot,
+                targetRot,
+                // MIGHT HAVE TO CHANGE TO CUSTOM VALUES INSTEAD OF TRACKING ONES
+                VisionConstants.TRACKING_KP,
+                VisionConstants.TRACKING_MIN_COMMAND,
+                VisionConstants.TRACKING_STOP_THRESHOLD,
+                VisionConstants.TRACKING_MIN_COMMAND_TRESHOLD);
     }
 
 }
