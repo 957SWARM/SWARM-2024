@@ -5,6 +5,8 @@
 // license that can be found in the LICENSE file at
 // the root directory of this project.
 
+// modified slightly to eliminate console spam by FRC 957
+
 package org.littletonrobotics;
 
 import edu.wpi.first.util.sendable.Sendable;
@@ -67,13 +69,13 @@ public class Alert {
             activeStartTime = Timer.getFPGATimestamp();
             switch (type) {
                 case ERROR:
-                    DriverStation.reportError(text, false);
+                    // DriverStation.reportError(text, false);
                     break;
                 case WARNING:
-                    DriverStation.reportWarning(text, false);
+                    // DriverStation.reportWarning(text, false);
                     break;
                 case INFO:
-                    System.out.println(text);
+                    // System.out.println(text);
                     break;
             }
         }

@@ -151,10 +151,10 @@ public class Constants {
         public static final double MIN_ANGLE_RADIANS = Units.degreesToRadians(-10);
         public static final double MAX_ANGLE_RADIANS = Units.degreesToRadians(135);
 
-        public static final double PLANT_KS = 1;
-        public static final double PLANT_KV = 0.88;
-        public static final double PLANT_KA = 0.001;
-        public static final double PLANT_KG = 0.22;
+        public static final double PLANT_KS = 0.00000001;
+        public static final double PLANT_KV = 0.000000001;
+        public static final double PLANT_KA = 0.00000001;
+        public static final double PLANT_KG = 0.000000001;
 
         public static final DCMotor DRIVE_MOTOR = DCMotor.getNEO(1);
 
@@ -162,9 +162,9 @@ public class Constants {
 
         public static final double PIVOT_TO_TIP_METERS = Units.inchesToMeters(14);
 
-        public static final double FLOOR_INTAKE_ANGLE_RADIANS = Units.degreesToRadians(-7.5);
+        public static final double FLOOR_INTAKE_ANGLE_RADIANS = Units.degreesToRadians(-20);
         public static final double STOW_INTAKE_ANGLE_RADIANS = Units.degreesToRadians(100);
-        public static final double HANDOFF_INTAKE_ANGLE_RADIANS = Units.degreesToRadians(132.5);
+        public static final double HANDOFF_INTAKE_ANGLE_RADIANS = Units.degreesToRadians(160);
         public static final double AMP_INTAKE_ANGLE_RADIANS = Units.degreesToRadians(75);
         public static final int INTAKE_PIVOT_MOTOR_CANID = 11;
 
@@ -175,9 +175,9 @@ public class Constants {
         public static final double INTAKE_PIVOT_PROFILE_CONTROL_EFFORT = 4;
 
         // reported angle when the pivot is at "zero" (straight ahead)
-        public static final double INTAKE_PIVOT_OFFSET_RADIANS = 11;
+        public static final double INTAKE_PIVOT_OFFSET_RADIANS = 3.83;
 
-        public static final double ONBOARD_CONTROLLER_KP = 0;
+        public static final double ONBOARD_CONTROLLER_KP = 1;
         public static final double ONBOARD_CONTROLLER_KI = 0;
         public static final double ONBOARD_CONTROLLER_KD = 0;
 

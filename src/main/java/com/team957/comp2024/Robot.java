@@ -188,7 +188,7 @@ public class Robot extends TimedRobot implements Logged {
 
         intakeAmp = new Trigger(() -> input.speaker());
 
-        intakeAmp.toggleOnTrue(pivot.toAmp());
+        intakeAmp.toggleOnTrue(pivot.toHandoff());
 
         // intakeAmp.toggleOnTrue(
         //         new MotionProfiletoSetpoint(
@@ -202,7 +202,7 @@ public class Robot extends TimedRobot implements Logged {
         intakeFloor = new Trigger(() -> input.intakeFloor());
         // intakeFloor.toggleOnTrue(new MotionProfiletoSetpoint(0, intakePivot));
 
-        intakeFloor.onTrue(pivot.toFloor());
+        intakeFloor.toggleOnTrue(pivot.toFloor());
 
         intakeActive = new Trigger(() -> input.lowerHook());
         intakeActive.whileTrue(intakeRoller.floorIntake());

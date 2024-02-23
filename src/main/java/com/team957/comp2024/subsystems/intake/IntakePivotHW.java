@@ -36,6 +36,10 @@ public class IntakePivotHW extends IntakePivot {
 
         controller.setFeedbackDevice(encoder);
 
+        controller.setPositionPIDWrappingEnabled(true);
+        controller.setPositionPIDWrappingMinInput(0);
+        controller.setPositionPIDWrappingMaxInput(1);
+
         controller.setP(Constants.IntakePivotConstants.ONBOARD_CONTROLLER_KP);
         controller.setI(Constants.IntakePivotConstants.ONBOARD_CONTROLLER_KI);
         controller.setD(Constants.IntakePivotConstants.ONBOARD_CONTROLLER_KD);
