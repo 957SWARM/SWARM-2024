@@ -32,7 +32,7 @@ public abstract class IntakePivot implements Subsystem, Logged {
                     new SysIdRoutine.Config(),
                     new SysIdRoutine.Mechanism(
                             (Measure<Voltage> volts) -> {
-                                setVoltage(volts.magnitude());
+                                setVoltageUnsafe(volts.magnitude());
                             },
                             null,
                             this));
@@ -159,9 +159,13 @@ public abstract class IntakePivot implements Subsystem, Logged {
                     log("profiled", profiled.position);
                     log("profiledV", profiled.velocity);
 
+                    // first parameter should be set back to feedforward.calculate(profiled.position, profiled.velocity, accel)
                     setFeedforwardAndSetpoint(
-                            feedforward.calculate(profiled.position, profiled.velocity, accel),
+                            0,
                             profiled.position);
+                    
+                    System.out.println(current.position + ", " + goal.position);
+                    System.out.println(feedforward.calculate(profiled.position, profiled.velocity, accel));
                 })
                 .until(
                         () ->
