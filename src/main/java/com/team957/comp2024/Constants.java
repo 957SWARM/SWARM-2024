@@ -153,13 +153,21 @@ public class Constants {
         public static final double TRACKING_MIN_COMMAND = 0.05;
         public static final double TRACKING_STOP_THRESHOLD = 0.01; // RADIANS
         public static final double TRACKING_MIN_COMMAND_TRESHOLD = 0.02; // RADIANS
-
-        public static final Pose2d BLUE_AMP = new Pose2d();
-        public static final Pose2d RED_AMP = new Pose2d();
+        public static final double TRACKING_MAX_SPEED = 100; // TODO: TUNE VALUE
 
         public static final double ALIGNING_KP = 0;
         public static final double ALIGNING_MIN_COMMAND = 0;
         public static final double ALIGNING_STOP_THRESHOLD = 0;
         public static final double ALINGING_MIN_COMMAND_TRESHOLD = 0;
+        public static final double ALIGNING_MAX_SPEED = 4; // TODO: TUNE VALUE
+
+        public static final Pose2d BLUE_AMP = new Pose2d();
+        public static final Pose2d BLUE_SPEAKER_CENTER = null;
+        public static final Pose2d BLUE_SPEAKER_LEFT = null;
+        public static final Pose2d BLUE_SPEAKER_RIGHT = null;
+        public static final Pose2d RED_AMP = new Pose2d();
+        public static final Pose2d RED_SPEAKER_CENTER = null;
+        public static final Pose2d RED_SPEAKER_LEFT = null;
+        public static final Pose2d RED_SPEAKER_RIGHT = null;
     }
 }

@@ -1,5 +1,7 @@
 package com.team957.comp2024.commands;
 
+import java.util.*;
+
 import com.team957.comp2024.Constants.VisionConstants;
 import com.team957.comp2024.LLlocalization;
 import com.team957.comp2024.subsystems.swerve.Swerve;
@@ -12,15 +14,25 @@ public class AutoAlignment extends Command {
 
     private final Swerve swerve;
     private final LLlocalization poseEstimation;
-    private final String limelightName;
 
-    private final Pose2d blueAmp = VisionConstants.BLUE_AMP;
-    private final Pose2d redAmp = VisionConstants.BLUE_AMP;
+    private final Pose2d[] targetPoses = {
+            VisionConstants.BLUE_AMP,
+            VisionConstants.BLUE_SPEAKER_CENTER,
+            VisionConstants.BLUE_SPEAKER_LEFT,
+            VisionConstants.BLUE_SPEAKER_RIGHT,
+            VisionConstants.RED_AMP,
+            VisionConstants.RED_SPEAKER_CENTER,
+            VisionConstants.RED_SPEAKER_LEFT,
+            VisionConstants.RED_SPEAKER_RIGHT
+    };
+
+    public static double clamp(double val, double min, double max) {
+        return Math.max(min, Math.min(max, val));
+    }
 
     public AutoAlignment(Swerve swerve, LLlocalization poseEstimation, String limelightName) {
         this.swerve = swerve;
         this.poseEstimation = poseEstimation;
-        this.limelightName = limelightName;
         addRequirements(swerve);
     }
 
@@ -40,7 +52,7 @@ public class AutoAlignment extends Command {
     }
 
     public Pose2d getNearestTarget() {
-        return blueAmp; // TODO: ACTUALLY MAKE THIS
+        return poseEstimation.getPoseEstimate().nearest(Arrays.asList(targetPoses));
     }
 
     public double calculatePLoop(
@@ -49,15 +61,16 @@ public class AutoAlignment extends Command {
             double kp,
             double minCommand,
             double stopThreshold,
-            double minCommandThreshold) {
+            double minCommandThreshold,
+            double maxSpeed) {
         double diff = current - target;
         if (Math.abs(diff) > stopThreshold) {
             if (diff > 0 && diff < minCommandThreshold) {
-                return -minCommand;
+                return clamp(-minCommand, -maxSpeed, maxSpeed);
             } else if (diff < 0 && diff > -minCommandThreshold) {
-                return minCommand;
+                return clamp(minCommand, -maxSpeed, maxSpeed);
             } else {
-                return kp * diff;
+                return clamp(kp * diff, -maxSpeed, maxSpeed);
             }
         }
         return 0;
@@ -71,7 +84,8 @@ public class AutoAlignment extends Command {
                 VisionConstants.ALIGNING_KP,
                 VisionConstants.ALIGNING_MIN_COMMAND,
                 VisionConstants.ALIGNING_STOP_THRESHOLD,
-                VisionConstants.ALINGING_MIN_COMMAND_TRESHOLD);
+                VisionConstants.ALINGING_MIN_COMMAND_TRESHOLD,
+                VisionConstants.ALIGNING_MAX_SPEED);
     }
 
     public double calculateRot(double currentRot, double targetRot) {
@@ -82,7 +96,8 @@ public class AutoAlignment extends Command {
                 VisionConstants.TRACKING_KP,
                 VisionConstants.TRACKING_MIN_COMMAND,
                 VisionConstants.TRACKING_STOP_THRESHOLD,
-                VisionConstants.TRACKING_MIN_COMMAND_TRESHOLD);
+                VisionConstants.TRACKING_MIN_COMMAND_TRESHOLD,
+                VisionConstants.TRACKING_MAX_SPEED);
     }
 
 }
