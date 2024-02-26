@@ -24,6 +24,7 @@ import com.team957.lib.util.DeltaTimeUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
@@ -51,7 +52,7 @@ public class Robot extends TimedRobot implements Logged {
 
     private final PDH pdh = new PDH(PDHConstants.STARTING_SWITCHABLE_CHANNEL_STATE);
 
-    private final Swerve swerve = Swerve.getSwerve(isReal());
+    private final Swerve swerve = Swerve.getSwerve(isReal(), isCompetitionRobot());
 
     private final Shooter shooter = Shooter.getShooter(isReal());
 
@@ -124,7 +125,15 @@ public class Robot extends TimedRobot implements Logged {
     private final Notifier fastLoop = new Notifier(this::loop);
 
     private final Alert loopOverrun = new Alert("Loop overrun!", AlertType.WARNING);
-    private final Alert canUtil = new Alert("High CAN utilization", AlertType.WARNING);
+    private final Alert canUtil = new Alert("High CAN utilization!", AlertType.WARNING);
+    private final Alert practiceBot = new Alert("Using practice robot constants!", AlertType.INFO);
+
+    private final DigitalInput practiceBotJumper =
+            new DigitalInput(MiscConstants.PRACTICE_BOT_JUMPER_CHANNEL);
+
+    public boolean isCompetitionRobot() {
+        return !practiceBotJumper.get();
+    }
 
     @Override
     public void robotInit() {
@@ -305,6 +314,7 @@ public class Robot extends TimedRobot implements Logged {
 
         loopOverrun.set(dtSeconds > MiscConstants.LOOP_WATCHDOG_TRIGGER_SECONDS);
         canUtil.set(canUtilization > MiscConstants.HIGH_CAN_UTIL_THRESHOLD);
+        practiceBot.set(!isCompetitionRobot());
 
         Monologue.setFileOnly(DriverStation.isFMSAttached());
         Monologue.updateAll();

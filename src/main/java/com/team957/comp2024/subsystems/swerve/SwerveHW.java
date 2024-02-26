@@ -9,6 +9,7 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
 import com.revrobotics.SparkPIDController;
 import com.team957.comp2024.Constants;
+import com.team957.comp2024.Constants.SwerveConstants;
 import com.team957.comp2024.util.SparkMaxUtils;
 import com.team957.lib.math.UtilityMath;
 import edu.wpi.first.math.util.Units;
@@ -246,28 +247,36 @@ public class SwerveHW extends Swerve {
         protected void update(double dt) {}
     }
 
-    public SwerveHW() {
+    public SwerveHW(boolean isCompetitionRobot) {
         super(
                 new HWModuleIO(
-                        Constants.SwerveConstants.FRONT_LEFT_STEER_CANID,
-                        Constants.SwerveConstants.FRONT_LEFT_DRIVE_CANID,
-                        Constants.SwerveConstants.FRONT_LEFT_STEER_OFFSET_RADIANS,
-                        Constants.SwerveConstants.FRONT_LEFT_DRIVE_INVERTED),
+                        SwerveConstants.FRONT_LEFT_STEER_CANID,
+                        SwerveConstants.FRONT_LEFT_DRIVE_CANID,
+                        isCompetitionRobot
+                                ? Constants.SwerveConstants.FRONT_LEFT_STEER_OFFSET_RADIANS
+                                : SwerveConstants.PRACTICE_FRONT_LEFT_STEER_OFFSET_RADIANS,
+                        SwerveConstants.FRONT_LEFT_DRIVE_INVERTED),
                 new HWModuleIO(
-                        Constants.SwerveConstants.FRONT_RIGHT_STEER_CANID,
-                        Constants.SwerveConstants.FRONT_RIGHT_DRIVE_CANID,
-                        Constants.SwerveConstants.FRONT_RIGHT_STEER_OFFSET_RADIANS,
-                        Constants.SwerveConstants.FRONT_RIGHT_DRIVE_INVERTED),
+                        SwerveConstants.FRONT_RIGHT_STEER_CANID,
+                        SwerveConstants.FRONT_RIGHT_DRIVE_CANID,
+                        isCompetitionRobot
+                                ? SwerveConstants.FRONT_RIGHT_STEER_OFFSET_RADIANS
+                                : SwerveConstants.PRACTICE_FRONT_RIGHT_STEER_OFFSET_RADIANS,
+                        SwerveConstants.FRONT_RIGHT_DRIVE_INVERTED),
                 new HWModuleIO(
-                        Constants.SwerveConstants.BACK_RIGHT_STEER_CANID,
-                        Constants.SwerveConstants.BACK_RIGHT_DRIVE_CANID,
-                        Constants.SwerveConstants.BACK_RIGHT_STEER_OFFSET_RADIANS,
-                        Constants.SwerveConstants.BACK_RIGHT_DRIVE_INVERTED),
+                        SwerveConstants.BACK_RIGHT_STEER_CANID,
+                        SwerveConstants.BACK_RIGHT_DRIVE_CANID,
+                        isCompetitionRobot
+                                ? SwerveConstants.BACK_RIGHT_STEER_OFFSET_RADIANS
+                                : SwerveConstants.PRACTICE_BACK_RIGHT_STEER_OFFSET_RADIANS,
+                        SwerveConstants.BACK_RIGHT_DRIVE_INVERTED),
                 new HWModuleIO(
-                        Constants.SwerveConstants.BACK_LEFT_STEER_CANID,
-                        Constants.SwerveConstants.BACK_LEFT_DRIVE_CANID,
-                        Constants.SwerveConstants.BACK_LEFT_STEER_OFFSET_RADIANS,
-                        Constants.SwerveConstants.BACK_LEFT_DRIVE_INVERTED));
+                        SwerveConstants.BACK_LEFT_STEER_CANID,
+                        SwerveConstants.BACK_LEFT_DRIVE_CANID,
+                        isCompetitionRobot
+                                ? SwerveConstants.BACK_LEFT_STEER_OFFSET_RADIANS
+                                : SwerveConstants.PRACTICE_BACK_LEFT_STEER_OFFSET_RADIANS,
+                        SwerveConstants.BACK_LEFT_DRIVE_INVERTED));
     }
 
     @Override

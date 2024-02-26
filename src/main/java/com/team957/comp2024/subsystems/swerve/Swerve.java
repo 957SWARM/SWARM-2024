@@ -158,8 +158,8 @@ public abstract class Swerve implements Subsystem, Logged {
         protected abstract void update(double dt);
     }
 
-    public static Swerve getSwerve(boolean isReal) {
-        return (isReal) ? new SwerveHW() : new SwerveSim();
+    public static Swerve getSwerve(boolean isReal, boolean isCompetitionRobot) {
+        return (isReal) ? new SwerveHW(isCompetitionRobot) : new SwerveSim();
     }
 
     public final ModuleIO frontLeft;
