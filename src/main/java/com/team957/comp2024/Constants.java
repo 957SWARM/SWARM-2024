@@ -130,8 +130,8 @@ public class Constants {
     }
 
     public static final class AutoConstants {
-        public static final PIDConstants LINEAR_PATHFINDING_GAINS = new PIDConstants(10, 0, 0);
-        public static final PIDConstants ROTATIONAL_PATHFINDING_GAINS = new PIDConstants(10, 0, 0);
+        public static final PIDConstants LINEAR_PATHFINDING_GAINS = new PIDConstants(5, 0, 0);
+        public static final PIDConstants ROTATIONAL_PATHFINDING_GAINS = new PIDConstants(1.5, 0, 0);
 
         public static final double DEFAULT_PIVOT_DELAY_SECONDS = 0.5;
 

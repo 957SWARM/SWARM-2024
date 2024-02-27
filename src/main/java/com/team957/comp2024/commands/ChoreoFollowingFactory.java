@@ -43,7 +43,8 @@ public class ChoreoFollowingFactory implements Logged {
             theta.setSetpoint(referenceState.heading);
             double tFB = theta.calculate(pose.getRotation().getRadians());
 
-            return new ChassisSpeeds(xFF + xFB, yFF + yFB, tFF + tFB);
+            // negating angular is janky
+            return new ChassisSpeeds(xFF + xFB, yFF + yFB, -(tFF + tFB));
         };
     }
 

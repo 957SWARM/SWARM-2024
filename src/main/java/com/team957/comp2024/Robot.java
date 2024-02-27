@@ -1,5 +1,6 @@
 package com.team957.comp2024;
 
+import com.choreo.lib.Choreo;
 import com.ctre.phoenix6.SignalLogger;
 import com.team957.comp2024.Constants.MiscConstants;
 import com.team957.comp2024.Constants.PDHConstants;
@@ -338,9 +339,20 @@ public class Robot extends TimedRobot implements Logged {
 
     @Override
     public void autonomousInit() {
-        ui.getAuto().schedule();
+        // ui.getAuto().schedule();
+
+        Command auto =
+                ChoreoFollowingFactory.instance.getPathFollowingCommand(
+                        swerve,
+                        Choreo.getTrajectory("complexTestPath"),
+                        poseEstimation,
+                        true,
+                        this::getAlliance);
+
+        auto.schedule();
     }
 
+    @Log
     public Alliance getAlliance() {
         return DriverStation.getAlliance().isPresent()
                 ? DriverStation.getAlliance().get()
