@@ -34,6 +34,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import monologue.Annotations.Log;
 import monologue.Logged;
 import monologue.Monologue;
 import org.littletonrobotics.Alert;
@@ -41,6 +42,10 @@ import org.littletonrobotics.Alert.AlertType;
 import org.littletonrobotics.urcl.URCL;
 
 public class Robot extends TimedRobot implements Logged {
+
+    private final DigitalInput practiceBotJumper =
+            new DigitalInput(MiscConstants.PRACTICE_BOT_JUMPER_CHANNEL);
+
     // these need to be constructed/declared so that
     // monologue can work its reflection magic
     private final IMU imu = new IMU();
@@ -128,11 +133,9 @@ public class Robot extends TimedRobot implements Logged {
     private final Alert canUtil = new Alert("High CAN utilization!", AlertType.WARNING);
     private final Alert practiceBot = new Alert("Using practice robot constants!", AlertType.INFO);
 
-    private final DigitalInput practiceBotJumper =
-            new DigitalInput(MiscConstants.PRACTICE_BOT_JUMPER_CHANNEL);
-
+    @Log
     public boolean isCompetitionRobot() {
-        return !practiceBotJumper.get();
+        return practiceBotJumper.get();
     }
 
     @Override

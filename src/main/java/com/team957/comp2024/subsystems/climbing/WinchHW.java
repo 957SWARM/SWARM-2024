@@ -1,14 +1,11 @@
 package com.team957.comp2024.subsystems.climbing;
 
-import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import com.revrobotics.CANSparkMax;
 import com.team957.comp2024.Constants.WinchConstants;
 
 public class WinchHW extends Winch {
-    private final TalonSRX winch =
-            new TalonSRX(WinchConstants.MOTOR_CANID);
+    private final TalonSRX winch = new TalonSRX(WinchConstants.MOTOR_CANID);
 
     public WinchHW() {
         winch.configFactoryDefault();
