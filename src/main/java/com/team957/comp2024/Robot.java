@@ -344,7 +344,7 @@ public class Robot extends TimedRobot implements Logged {
         Command auto =
                 ChoreoFollowingFactory.instance.getPathFollowingCommand(
                         swerve,
-                        Choreo.getTrajectory("complexTestPath"),
+                        Choreo.getTrajectory("threePieceMockup"),
                         poseEstimation,
                         true,
                         this::getAlliance);
