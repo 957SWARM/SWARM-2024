@@ -22,6 +22,7 @@ import com.team957.comp2024.subsystems.shooter.Shooter;
 import com.team957.comp2024.subsystems.swerve.Swerve;
 import com.team957.comp2024.util.LimelightLib;
 import com.team957.lib.util.DeltaTimeUtil;
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DataLogManager;
@@ -141,6 +142,8 @@ public class Robot extends TimedRobot implements Logged {
 
     @Override
     public void robotInit() {
+        CameraServer.startAutomaticCapture().setResolution(480, 360);
+
         CommandScheduler.getInstance()
                 .setPeriod(Constants.MiscConstants.LOOP_WATCHDOG_TRIGGER_SECONDS);
 
