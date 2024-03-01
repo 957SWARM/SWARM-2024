@@ -6,6 +6,7 @@ import com.team957.comp2024.Constants.PDHConstants;
 import com.team957.comp2024.Constants.SwerveConstants;
 import com.team957.comp2024.commands.Autos;
 import com.team957.comp2024.commands.ChoreoFollowingFactory;
+import com.team957.comp2024.commands.LEDStripPatterns;
 import com.team957.comp2024.commands.NoteTargeting;
 import com.team957.comp2024.commands.OnTheFlyPathing;
 import com.team957.comp2024.input.DefaultDriver;
@@ -72,6 +73,8 @@ public class Robot extends TimedRobot implements Logged {
     private final BoxClimber boxClimber = BoxClimber.getBoxClimber(isReal());
 
     private final Winch winch = Winch.getWinch(isReal());
+
+    private final LEDStripPatterns led = new LEDStripPatterns();
 
     private final DeltaTimeUtil dt = new DeltaTimeUtil();
 
@@ -322,6 +325,11 @@ public class Robot extends TimedRobot implements Logged {
         // boxClimber.setDefaultCommand(boxClimber.idleCommand());
         // winch.setDefaultCommand(winch.idleCommand());
         // intakeRoller.setDefaultCommand(intakeRoller.idleCommand());
+        // autoLoadFail.set(false);
+
+        // 31 Pixels on the top of comp bot!!!
+        // led.endGameCommand(0, 957, .100, false).schedule();
+        led.endGameCommand(0, 50, .100, false).schedule();
     }
 
     @Override
