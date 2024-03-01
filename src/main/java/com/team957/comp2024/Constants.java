@@ -158,8 +158,8 @@ public class Constants {
         public static final double MAX_ANGLE_RADIANS = Units.degreesToRadians(140);
 
         public static final double PLANT_KS = 0;
-        public static final double PLANT_KV = 0; // .97
-        public static final double PLANT_KA = 0; // 0.01
+        public static final double PLANT_KV = 0.00001; // .97
+        public static final double PLANT_KA = 0.00001; // 0.01
         public static final double PLANT_KG = 0.3;
 
         public static final DCMotor DRIVE_MOTOR = DCMotor.getNEO(1);

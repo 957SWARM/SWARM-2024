@@ -133,7 +133,8 @@ public class Robot extends TimedRobot implements Logged {
 
     private final Alert loopOverrun = new Alert("Loop overrun!", AlertType.WARNING);
     private final Alert canUtil = new Alert("High CAN utilization!", AlertType.WARNING);
-    private final Alert practiceBot = new Alert("Using practice robot constants!", AlertType.INFO);
+    private final Alert practiceBot =
+            new Alert("Using practice robot constants!", AlertType.WARNING);
 
     @Log
     public boolean isCompetitionRobot() {
@@ -142,7 +143,6 @@ public class Robot extends TimedRobot implements Logged {
 
     @Override
     public void robotInit() {
-        CameraServer.startAutomaticCapture().setResolution(480, 360);
 
         CommandScheduler.getInstance()
                 .setPeriod(Constants.MiscConstants.LOOP_WATCHDOG_TRIGGER_SECONDS);
@@ -154,6 +154,8 @@ public class Robot extends TimedRobot implements Logged {
             URCL.start(); // URCL segfaults in sim
 
             input = new DefaultDriver();
+
+            CameraServer.startAutomaticCapture().setResolution(480, 360);
         } else {
             input = new SimKeyboardDriver();
         }
