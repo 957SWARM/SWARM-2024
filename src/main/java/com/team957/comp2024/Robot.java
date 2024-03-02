@@ -1,6 +1,7 @@
 package com.team957.comp2024;
 
 import com.ctre.phoenix6.SignalLogger;
+import com.team957.comp2024.Constants.LEDConstants;
 import com.team957.comp2024.Constants.MiscConstants;
 import com.team957.comp2024.Constants.PDHConstants;
 import com.team957.comp2024.Constants.SwerveConstants;
@@ -19,6 +20,7 @@ import com.team957.comp2024.subsystems.climbing.BoxClimber;
 import com.team957.comp2024.subsystems.climbing.Winch;
 import com.team957.comp2024.subsystems.intake.IntakePivot;
 import com.team957.comp2024.subsystems.intake.IntakeRoller;
+import com.team957.comp2024.subsystems.led.LED;
 import com.team957.comp2024.subsystems.shooter.Shooter;
 import com.team957.comp2024.subsystems.swerve.Swerve;
 import com.team957.comp2024.util.LimelightLib;
@@ -74,7 +76,7 @@ public class Robot extends TimedRobot implements Logged {
 
     private final Winch winch = Winch.getWinch(isReal());
 
-    private final LEDStripPatterns led = new LEDStripPatterns();
+    private final LED led = new LED(LEDConstants.TOTAL_PIXELS);
 
     private final DeltaTimeUtil dt = new DeltaTimeUtil();
 
@@ -329,7 +331,7 @@ public class Robot extends TimedRobot implements Logged {
 
         // 31 Pixels on the top of comp bot!!!
         // led.endGameCommand(0, 957, .100, false).schedule();
-        led.endGameCommand(0, 50, .100, false).schedule();
+        LEDStripPatterns.instance.endGameCommand(led, 0, 50, .100, false).schedule();
     }
 
     @Override
