@@ -300,11 +300,4 @@ public class Constants {
         public static final Pose2d OTF_AMP_POSE_RED = new Pose2d(14.75, 7.6, new Rotation2d(-Math.PI / 2));
     }
 
-    public static final class OtfPathingConstants {
-        public static final Pose2d OTF_SPEAKER_POSE_BLUE = new Pose2d(1.6, 5.5, new Rotation2d());
-        public static final Pose2d OTF_SPEAKER_POSE_RED = new Pose2d(15, 5.5, new Rotation2d(Math.PI));
-
-        public static final Pose2d OTF_AMP_POSE_BLUE = new Pose2d(1.9, 7.6, new Rotation2d(Math.PI / 2));
-        public static final Pose2d OTF_AMP_POSE_RED = new Pose2d(14.75, 7.6, new Rotation2d(-Math.PI / 2));
-    }
 }
