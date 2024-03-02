@@ -174,6 +174,7 @@ public class Constants {
         public static final double STOW_INTAKE_ANGLE_RADIANS = Units.degreesToRadians(100);
         public static final double HANDOFF_INTAKE_ANGLE_RADIANS = 2.8;
         public static final double AMP_INTAKE_ANGLE_RADIANS = Units.degreesToRadians(75);
+
         public static final int INTAKE_PIVOT_MOTOR_CANID = 11;
 
         public static final int INTAKE_PIVOT_CURRENT_LIMIT_AMPS = 40;
@@ -185,11 +186,7 @@ public class Constants {
         // reported angle when the pivot is at "zero" (straight ahead)
         public static final double INTAKE_PIVOT_OFFSET_RADIANS = -.1;
 
-        // public static final double ONBOARD_CONTROLLER_KP = .85;
-        // .25
         public static final PIDConstants PID_CONSTANTS = new PIDConstants(2.5, 0, 0);
-
-        public static final double AT_SETPOINT_MARGIN_RADIANS = Units.degreesToRadians(2);
     }
 
     public static final class BoxClimberConstants {

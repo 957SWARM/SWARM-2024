@@ -2,7 +2,6 @@ package com.team957.comp2024.commands;
 
 import com.choreo.lib.Choreo;
 import com.choreo.lib.ChoreoTrajectory;
-import com.team957.comp2024.Constants;
 import com.team957.comp2024.peripherals.LLlocalization;
 import com.team957.comp2024.subsystems.intake.IntakePivot;
 import com.team957.comp2024.subsystems.intake.IntakeRoller;
@@ -11,7 +10,6 @@ import com.team957.comp2024.subsystems.swerve.Swerve;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -39,47 +37,27 @@ public class Autos {
             this.alliance = alliance;
         }
 
-        Command shootTrajectoryPhase(int phaseIndex, double pivotDelaySeconds, boolean resetPose) {
+        Command shootTrajectoryPhase(int phaseIndex, boolean resetPose) {
             return ChoreoFollowingFactory.instance
                     .getPathFollowingCommand(
                             swerve, traj.get(phaseIndex), localization, resetPose, alliance)
-                    .alongWith(new WaitCommand(pivotDelaySeconds).andThen(pivot.toHandoff()))
                     .andThen(
                             ScoringSequences.coordinatedSubwooferShot(
                                     shooter, intakePivot, intakeRoller));
         }
 
-        Command shootTrajectoryPhase(int phaseIndex, boolean resetPose) {
-            return shootTrajectoryPhase(
-                    phaseIndex, Constants.AutoConstants.DEFAULT_PIVOT_DELAY_SECONDS, resetPose);
-        }
-
-        Command floorTrajectoryPhase(int phaseIndex, double pivotDelaySeconds, boolean resetPose) {
-            return ChoreoFollowingFactory.instance
-                    .getPathFollowingCommand(
-                            swerve, traj.get(phaseIndex), localization, resetPose, alliance)
-                    .alongWith(
-                            new WaitCommand(pivotDelaySeconds)
-                                    .andThen(
-                                            ScoringSequences.coordinatedFloorIntake(
-                                                    intakePivot, intakeRoller)));
-        }
-
         Command floorTrajectoryPhase(int phaseIndex, boolean resetPose) {
-            return floorTrajectoryPhase(
-                    phaseIndex, Constants.AutoConstants.DEFAULT_PIVOT_DELAY_SECONDS, resetPose);
-        }
-
-        Command stowTrajectoryPhase(int phaseIndex, double pivotDelaySeconds, boolean resetPose) {
             return ChoreoFollowingFactory.instance
                     .getPathFollowingCommand(
                             swerve, traj.get(phaseIndex), localization, resetPose, alliance)
-                    .raceWith(new WaitCommand(pivotDelaySeconds).andThen(pivot.toStow()));
+                    .alongWith(ScoringSequences.coordinatedFloorIntake(intakePivot, intakeRoller));
         }
 
         Command stowTrajectoryPhase(int phaseIndex, boolean resetPose) {
-            return stowTrajectoryPhase(
-                    phaseIndex, Constants.AutoConstants.DEFAULT_PIVOT_DELAY_SECONDS, resetPose);
+            return ChoreoFollowingFactory.instance
+                    .getPathFollowingCommand(
+                            swerve, traj.get(phaseIndex), localization, resetPose, alliance)
+                    .alongWith(pivot.toStow());
         }
 
         Command lock() {
@@ -128,95 +106,28 @@ public class Autos {
         return new InstantCommand();
     }
 
-    public Command shootPreloadBumperAuto() {
-        return ScoringSequences.coordinatedSubwooferShot(shooter, intakePivot, intakeRoller);
+    private Command singleTrajectoryOnlyAuto(String trajName, boolean resetPoseToInitial) {
+        var traj = safeLoadTrajectory(trajName);
+
+        if (!traj.isPresent()) return new InstantCommand();
+
+        return ChoreoFollowingFactory.instance.getPathFollowingCommand(
+                swerve, traj.get().get(0), localization, resetPoseToInitial, alliance);
     }
 
-    public Command middleTwoPiece() {
-        var phases = safeLoadTrajectory("middleTwoPiece");
-
-        if (!phases.isPresent()) return new InstantCommand();
-
-        AutoPhaseFactory factory =
-                new AutoPhaseFactory(swerve, intakePivot, phases.get(), localization, alliance);
-
-        return ScoringSequences.coordinatedSubwooferShot(shooter, intakePivot, intakeRoller)
-                .andThen(factory.floorTrajectoryPhase(0, true))
-                .andThen(factory.shootTrajectoryPhase(1, false))
-                .andThen(factory.lock());
+    public Command testPath() {
+        return singleTrajectoryOnlyAuto("testPath", true);
     }
 
-    public Command topNearThreePiece() {
-        var phases = safeLoadTrajectory("topNearThreePiece");
-
-        if (!phases.isPresent()) return new InstantCommand();
-
-        AutoPhaseFactory factory =
-                new AutoPhaseFactory(swerve, intakePivot, phases.get(), localization, alliance);
-
-        return ScoringSequences.coordinatedSubwooferShot(shooter, intakePivot, intakeRoller)
-                .andThen(factory.floorTrajectoryPhase(0, true))
-                .andThen(factory.shootTrajectoryPhase(1, false))
-                .andThen(factory.floorTrajectoryPhase(2, false))
-                .andThen(factory.shootTrajectoryPhase(3, false))
-                .andThen(factory.lock());
+    public Command fivePieceMockup() {
+        return singleTrajectoryOnlyAuto("fivePieceMockup", true);
     }
 
-    public Command topCenterFourPiece() {
-        var phases = safeLoadTrajectory("topCenterFourPiece");
-
-        if (!phases.isPresent()) return new InstantCommand();
-
-        AutoPhaseFactory factory =
-                new AutoPhaseFactory(swerve, intakePivot, phases.get(), localization, alliance);
-
-        return ScoringSequences.coordinatedSubwooferShot(shooter, intakePivot, intakeRoller)
-                .andThen(factory.floorTrajectoryPhase(0, true))
-                .andThen(factory.shootTrajectoryPhase(1, false))
-                .andThen(factory.floorTrajectoryPhase(2, false))
-                .andThen(factory.shootTrajectoryPhase(3, false))
-                .andThen(factory.floorTrajectoryPhase(4, false))
-                .andThen(factory.shootTrajectoryPhase(5, false))
-                .andThen(factory.lock());
+    public Command fourPieceMockup() {
+        return singleTrajectoryOnlyAuto("fourPieceMockup", true);
     }
 
-    public Command nearFourPiece() {
-        var phases = safeLoadTrajectory("nearFourPiece");
-
-        if (!phases.isPresent()) return new InstantCommand();
-
-        AutoPhaseFactory factory =
-                new AutoPhaseFactory(swerve, intakePivot, phases.get(), localization, alliance);
-
-        return ScoringSequences.coordinatedSubwooferShot(shooter, intakePivot, intakeRoller)
-                .andThen(factory.floorTrajectoryPhase(0, 0, true))
-                .andThen(factory.shootTrajectoryPhase(1, false))
-                .andThen(factory.floorTrajectoryPhase(2, 0, false))
-                .andThen(factory.shootTrajectoryPhase(3, false))
-                .andThen(factory.floorTrajectoryPhase(4, 0, false))
-                .andThen(factory.shootTrajectoryPhase(5, false))
-                .andThen(factory.stowTrajectoryPhase(6, false))
-                .andThen(factory.lock());
-    }
-
-    public Command topFivePiece() {
-        var phases = safeLoadTrajectory("topFivePiece");
-
-        if (!phases.isPresent()) return new InstantCommand();
-
-        AutoPhaseFactory factory =
-                new AutoPhaseFactory(swerve, intakePivot, phases.get(), localization, alliance);
-
-        return ScoringSequences.coordinatedSubwooferShot(shooter, intakePivot, intakeRoller)
-                .andThen(factory.floorTrajectoryPhase(0, 1.5, true))
-                .andThen(factory.shootTrajectoryPhase(1, false))
-                .andThen(factory.floorTrajectoryPhase(2, 0, false))
-                .andThen(factory.shootTrajectoryPhase(3, false))
-                .andThen(factory.floorTrajectoryPhase(4, 0, false))
-                .andThen(factory.shootTrajectoryPhase(5, false))
-                .andThen(factory.floorTrajectoryPhase(6, 0, false))
-                .andThen(factory.shootTrajectoryPhase(7, false))
-                .andThen(factory.stowTrajectoryPhase(8, false))
-                .andThen(factory.lock());
+    public Command threePieceMockup() {
+        return singleTrajectoryOnlyAuto("threePieceMockup", true);
     }
 }

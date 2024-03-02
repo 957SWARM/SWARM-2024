@@ -1,6 +1,5 @@
 package com.team957.comp2024;
 
-import com.choreo.lib.Choreo;
 import com.ctre.phoenix6.SignalLogger;
 import com.team957.comp2024.Constants.MiscConstants;
 import com.team957.comp2024.Constants.PDHConstants;
@@ -171,17 +170,14 @@ public class Robot extends TimedRobot implements Logged {
         Monologue.setupMonologue(this, "Robot", false, true);
 
         DriverStation.startDataLog(DataLogManager.getLog()); // same log used by monologue
-        /*
-        ui.addAuto("Shoot Preload", autos.shootPreloadBumperAuto());
-        ui.addAuto("Middle Two Piece", autos.middleTwoPiece());
-        ui.addAuto("Top Near Three Piece", autos.topNearThreePiece());
-        ui.addAuto("Top Center Four Piece", autos.topCenterFourPiece());
-        ui.addAuto("Near Four Piece", autos.nearFourPiece());
-        ui.addAuto("Top Five Piece", autos.topFivePiece());
-        */
 
         ui.setDriverInputChangeCallback((driverInput) -> this.input = driverInput);
         ui.setOperatorInputChangeCallback((operatorInput) -> {});
+
+        ui.addAuto("testPath", autos.testPath());
+        ui.addAuto("fivePieceMockup", autos.fivePieceMockup());
+        ui.addAuto("fourPieceMockup", autos.fourPieceMockup());
+        ui.addAuto("threePieceMockup", autos.threePieceMockup());
 
         swerve.setDefaultCommand(
                 swerve.getFieldRelativeControlCommand(
@@ -354,17 +350,7 @@ public class Robot extends TimedRobot implements Logged {
 
     @Override
     public void autonomousInit() {
-        // ui.getAuto().schedule();
-
-        Command auto =
-                ChoreoFollowingFactory.instance.getPathFollowingCommand(
-                        swerve,
-                        Choreo.getTrajectory("threePieceMockup"),
-                        poseEstimation,
-                        true,
-                        this::getAlliance);
-
-        auto.schedule();
+        ui.getAuto().schedule();
     }
 
     @Log
