@@ -29,11 +29,6 @@ public class SimKeyboardDriver implements DriverInput {
     }
 
     @Override
-    public boolean enableNoteTracking() {
-        return controller.getRightBumper();
-    }
-
-    @Override
     public boolean noteTracking() {
         return controller.getRightBumper();
     }
@@ -70,7 +65,6 @@ public class SimKeyboardDriver implements DriverInput {
 
     @Override
     public boolean otfAmp() {
-    public boolean eject() {
         return false;
     }
 
@@ -99,5 +93,4 @@ public class SimKeyboardDriver implements DriverInput {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'slowEject'");
     }
-
 }

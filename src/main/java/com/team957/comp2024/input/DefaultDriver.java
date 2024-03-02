@@ -24,11 +24,15 @@ public class DefaultDriver implements DriverInput {
     @Override
     public double swerveX() {
         // consistent polling rate so this is fine??
+        // double output =
+        //         Math.signum(xboxController.getLeftY()) * Math.pow(xboxController.getLeftY(), 2);
         return xLimiter.calculate(LIN_MAX_SPEED * xboxController.getLeftY());
     }
 
     @Override
     public double swerveY() {
+        // double output = Math.signum(xboxController.getLeftX()) *
+        // Math.pow(xboxController.getLeftX(), 2);
         return yLimiter.calculate(LIN_MAX_SPEED * xboxController.getLeftX());
     }
 
@@ -63,7 +67,7 @@ public class DefaultDriver implements DriverInput {
     }
 
     @Override
-    public boolean climb(){
+    public boolean climb() {
         return xboxController.getBButton();
     }
 
@@ -79,7 +83,10 @@ public class DefaultDriver implements DriverInput {
 
     @Override
     public boolean otfSpeaker() {
-    public boolean enableAprilTagTracking(){
+        return (xboxController.getLeftTriggerAxis() > .5);
+    }
+
+    public boolean enableAprilTagTracking() {
         return (xboxController.getLeftTriggerAxis() > .5);
     }
 
@@ -89,7 +96,6 @@ public class DefaultDriver implements DriverInput {
     }
 
     @Override
-    public boolean pivotAmp(){
     public boolean slowIntake() {
         return (xboxController.getPOV() == 0);
     }
@@ -104,5 +110,4 @@ public class DefaultDriver implements DriverInput {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'slowEject'");
     }
-    
 }

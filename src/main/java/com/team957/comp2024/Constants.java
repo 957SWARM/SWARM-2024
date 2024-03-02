@@ -108,14 +108,14 @@ public class Constants {
 
         public static final int BACK_RIGHT_DRIVE_CANID = 3;
         public static final int BACK_RIGHT_STEER_CANID = 4;
-        public static final double BACK_RIGHT_STEER_OFFSET_RADIANS = 0.091 + (Math.PI / 2);
+        public static final double BACK_RIGHT_STEER_OFFSET_RADIANS = 0.73 + (Math.PI / 2);
         public static final boolean BACK_RIGHT_DRIVE_INVERTED = true;
         public static final double PRACTICE_BACK_RIGHT_STEER_OFFSET_RADIANS = .63 + (Math.PI / 2);
     }
 
     public static final class ShooterConstants {
-        public static final int LEFT_CANID = 9;
-        public static final int RIGHT_CANID = 10;
+        public static final int LEFT_CANID = 10; // swapped can ids so shooter works (unideal)
+        public static final int RIGHT_CANID = 9;
 
         public static final int CURRENT_LIMIT = 30;
         public static final DCMotor SHOOTER_MOTOR = DCMotor.getNEO(1);
@@ -160,8 +160,8 @@ public class Constants {
         public static final double MAX_ANGLE_RADIANS = Units.degreesToRadians(160);
 
         public static final double PLANT_KS = 0;
-        public static final double PLANT_KV = 0.00001; // .97
-        public static final double PLANT_KA = 0.00001; // 0.01
+        public static final double PLANT_KV = 0.00001; // .92
+        public static final double PLANT_KA = 0.000001; // 0.01
         public static final double PLANT_KG = 0.3;
 
         public static final DCMotor DRIVE_MOTOR = DCMotor.getNEO(1);
@@ -198,6 +198,10 @@ public class Constants {
         public static final boolean MOTOR_INVERTED = false;
     }
 
+    public static final class OIConstants {
+        public static final int DRIVER_PORT = 0;
+    }
+
     public static final class WinchConstants {
         // CAN ID not set
         public static final int MOTOR_CANID = 14;
@@ -216,13 +220,13 @@ public class Constants {
         public static final double SHOOTER_HANDOFF_VOLTAGE = -9;
         public static final double AMP_SHOT_VOLTAGE = -12;
 
-        public static final int TOF_CANID = 63; // TODO
+        public static final int TOF_CANID = 0;
 
-        public static final double TOF_TIMING_BUDGET_MS = 24;
+        public static final double TOF_TIMING_BUDGET_MS = 30;
 
-        public static final double TOF_NOTE_PRESENT_THRESHOLD_METERS = .5; // TODO
+        public static final double TOF_NOTE_PRESENT_THRESHOLD_METERS = .45;
 
-        public static final double TOF_NOTE_PRESENT_DEBOUNCE_SECONDS = 0.1;
+        public static final double TOF_NOTE_PRESENT_DEBOUNCE_SECONDS = 0.05;
 
         public static final double SIM_MOCK_OUTTAKE_DELAY_SECONDS = 0.5;
         public static final double SIM_MOCK_INTAKE_DELAY_SECONDS = 0.5;

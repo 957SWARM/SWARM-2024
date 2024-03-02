@@ -8,7 +8,6 @@ import com.team957.comp2024.commands.Autos;
 import com.team957.comp2024.commands.ChoreoFollowingFactory;
 import com.team957.comp2024.commands.NoteTargeting;
 import com.team957.comp2024.commands.OnTheFlyPathing;
-import com.team957.comp2024.commands.OnTheFlyPathing;
 import com.team957.comp2024.input.DefaultDriver;
 import com.team957.comp2024.input.DriverInput;
 import com.team957.comp2024.input.SimKeyboardDriver;
@@ -23,8 +22,6 @@ import com.team957.comp2024.subsystems.shooter.Shooter;
 import com.team957.comp2024.subsystems.swerve.Swerve;
 import com.team957.comp2024.util.LimelightLib;
 import com.team957.lib.util.DeltaTimeUtil;
-import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -163,7 +160,7 @@ public class Robot extends TimedRobot implements Logged {
 
             input = new DefaultDriver();
 
-            CameraServer.startAutomaticCapture().setResolution(480, 360);
+            // CameraServer.startAutomaticCapture().setResolution(480, 360);
         } else {
             input = new SimKeyboardDriver();
         }
@@ -202,29 +199,10 @@ public class Robot extends TimedRobot implements Logged {
         shoot = new Trigger(() -> input.noteTracking());
         shoot.whileTrue(shooter.halfCourtShot()).onFalse(shooter.noVoltage());
 
-        intakeOut = new Trigger(() -> input.intake());
-        // intakeOut.toggleOnTrue(
-        //         new MotionProfiletoSetpoint(
-        //                 0 + Constants.PivotConstants.OFFSET_TO_STRAIGHT, intakePivot));
-
-        // intakeOut.toggleOnTrue(pivot.toStow());
-
         intakeAmp = new Trigger(() -> input.speaker());
-
         intakeAmp.toggleOnTrue(pivot.toHandoff());
 
-        // intakeAmp.toggleOnTrue(
-        //         new MotionProfiletoSetpoint(
-        //                 0.16 + Constants.PivotConstants.OFFSET_TO_STRAIGHT, intakePivot));
-
-        intakeBack = new Trigger(() -> input.climb());
-        // intakeBack.toggleOnTrue(
-        //         new MotionProfiletoSetpoint(
-        //                 .42 + Constants.PivotConstants.OFFSET_TO_STRAIGHT, intakePivot));
-
         intakeFloor = new Trigger(() -> input.intakeFloor());
-        // intakeFloor.toggleOnTrue(new MotionProfiletoSetpoint(0, intakePivot));
-
         intakeFloor.toggleOnTrue(pivot.toFloor());
 
         intakeActive = new Trigger(() -> input.lowerHook());
@@ -359,13 +337,6 @@ public class Robot extends TimedRobot implements Logged {
                         () -> new Pose2d(1.35, 5.5, new Rotation2d()),
                         poseEstimation::getPoseEstimate)
                 .schedule();
-    }
-
-    @Log
-    public Alliance getAlliance() {
-        return DriverStation.getAlliance().isPresent()
-                ? DriverStation.getAlliance().get()
-                : MiscConstants.DEFAULT_ALLIANCE;
     }
 
     @Log
