@@ -29,8 +29,14 @@ public class Constants {
         public static final double HIGH_CAN_UTIL_THRESHOLD = .8;
 
         public static final int PRACTICE_BOT_JUMPER_CHANNEL = 0;
+    }
 
+    public static final class LEDConstants {
         public static final int TOTAL_PIXELS = 60;
+
+        public static final int FULL_RED_RGB = 0;
+        public static final int FULL_GREEN_RGB = 0;
+        public static final int FULL_BLUE_RGB = 0;
     }
 
     public static final class SwerveConstants {
