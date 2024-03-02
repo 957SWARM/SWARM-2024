@@ -4,8 +4,9 @@ import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import monologue.Logged;
 
-public class LED implements Subsystem {
+public class LED implements Subsystem, Logged {
 
     private AddressableLED led;
     private AddressableLEDBuffer ledBuffer;
@@ -26,5 +27,12 @@ public class LED implements Subsystem {
         // what is this supposed to do?
         // return this.runOnce(() -> m_ledSegment = ledSegment.get(ledBuffer));
         return null;
+    }
+
+    @Override
+    public void periodic() {
+        Command activeCommand = getCurrentCommand();
+
+        if (activeCommand != null) log("activeCommand", activeCommand.getName());
     }
 }

@@ -34,7 +34,12 @@ public class SimKeyboardDriver implements DriverInput {
     }
 
     @Override
-    public boolean shoot() {
+    public boolean noteTracking() {
+        return controller.getRightBumper();
+    }
+
+    @Override
+    public boolean speaker() {
         return false;
     }
 
@@ -59,23 +64,40 @@ public class SimKeyboardDriver implements DriverInput {
     }
 
     @Override
-    public boolean intakeNote() {
+    public boolean floorIntake() {
         return false;
     }
 
     @Override
+    public boolean otfAmp() {
     public boolean eject() {
         return false;
     }
 
     @Override
-    public boolean enableAprilTagTracking() {
+    public boolean otfSpeaker() {
         return false;
     }
 
+    // @Override
+    // public boolean amp() {
+    // return false;
+    // }
+
+    public boolean intakeFloor() {
+        return controller.getAButton();
+    }
+
     @Override
-    public boolean pivotAmp() {
-        return false;
+    public boolean slowIntake() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'slowIntake'");
+    }
+
+    @Override
+    public boolean slowEject() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'slowEject'");
     }
 
 }

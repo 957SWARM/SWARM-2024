@@ -1,7 +1,7 @@
 package com.team957.comp2024.subsystems.shooter;
 
+import com.team957.comp2024.Constants.MiscConstants;
 import com.team957.comp2024.Constants.ShooterConstants;
-import com.team957.comp2024.Robot;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.simulation.FlywheelSim;
 
@@ -47,6 +47,8 @@ public class ShooterSim extends Shooter {
 
     @Override
     public void periodic() {
-        sim.update(Robot.kDefaultPeriod);
+        super.periodic();
+
+        sim.update(MiscConstants.NOMINAL_LOOP_TIME_SECONDS);
     }
 }

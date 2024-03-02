@@ -32,4 +32,12 @@ public class BoxClimberHW extends BoxClimber {
     public double getMotorAmps() {
         return climbMotor.getSupplyCurrent();
     }
+
+    @Override
+    public void periodic() {
+        super.periodic();
+
+        // not required to override this, but want to prevent accidentially overriding the code in
+        // superclass
+    }
 }

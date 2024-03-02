@@ -1,7 +1,7 @@
 package com.team957.comp2024.commands;
 
 import com.team957.comp2024.Constants.VisionConstants;
-import com.team957.comp2024.LLlocalization;
+import com.team957.comp2024.peripherals.LLlocalization;
 import com.team957.comp2024.subsystems.swerve.Swerve;
 import com.team957.comp2024.util.LimelightLib;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -12,13 +12,13 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import java.util.function.Supplier;
 
-public class NoteTargeting extends Command {
+public class NoteTargeting {
 
     private final Swerve swerve;
     private final LLlocalization poseEstimation;
     private final String limelightName;
 
-    public double map(
+    private double map(
             double input,
             double inputStart,
             double inputEnd,
@@ -32,7 +32,6 @@ public class NoteTargeting extends Command {
         this.swerve = swerve;
         this.poseEstimation = poseEstimation;
         this.limelightName = limelightName;
-        addRequirements(swerve);
     }
 
     // AUTO AIMS TO NOTE IF NOTE IS TRACKABLE
@@ -40,14 +39,18 @@ public class NoteTargeting extends Command {
             Supplier<Double> swerveX, Supplier<Double> swerveY, Supplier<Double> swerveRot) {
 
         return swerve.getFieldRelativeControlCommand(
-                () -> {
-                    return new ChassisSpeeds(
-                            swerveX.get(), swerveY.get(), -getTrackingAngle(getTargetAngle()));
-                },
-                poseEstimation::getRotationEstimate);
+                        () -> {
+                            return new ChassisSpeeds(
+                                    swerveX.get(),
+                                    swerveY.get(),
+                                    -getTrackingAngle(getTargetAngle()));
+                        },
+                        poseEstimation::getRotationEstimate)
+                .unless(() -> !checkTarget())
+                .withName("noteTargeting");
     }
 
-    public double getTrackingAngle(double targetAngle) {
+    private double getTrackingAngle(double targetAngle) {
         double kp = VisionConstants.TRACKING_KP;
         double minCommand = VisionConstants.TRACKING_MIN_COMMAND;
         if (Math.abs(targetAngle) > VisionConstants.TRACKING_STOP_THRESHOLD) {
@@ -62,7 +65,7 @@ public class NoteTargeting extends Command {
         return 0;
     }
 
-    public double getTargetAngle() {
+    private double getTargetAngle() {
         double x = getNotePose2dRobot().getX();
         double y = getNotePose2dRobot().getY();
         double c = Math.sqrt((Math.abs(x) * Math.abs(x)) + (y * y));
@@ -75,7 +78,8 @@ public class NoteTargeting extends Command {
         }
     }
 
-    public Pose2d getNotePose2dField() { // QUESTIONABLE... ALSO HAVENT ADDED ROBOT POSE
+    @SuppressWarnings("unused")
+    private Pose2d getNotePose2dField() { // QUESTIONABLE... ALSO HAVENT ADDED ROBOT POSE
         double c =
                 Math.sqrt(
                         (Math.abs(getNotePose2dRobot().getX())
@@ -90,7 +94,7 @@ public class NoteTargeting extends Command {
                 targetXF, targetYF, new Rotation2d(targetAngle)); // ROTATION SHOULDNT MATTER?
     }
 
-    public Pose2d getNotePose2dRobot() {
+    private Pose2d getNotePose2dRobot() {
 
         double groundDistance = getNoteGroundDistance();
         double tx = LimelightLib.getTX(limelightName);
@@ -117,7 +121,7 @@ public class NoteTargeting extends Command {
         return targetPose;
     }
 
-    public double getNoteDistance() {
+    private double getNoteDistance() {
         double tx = LimelightLib.getTX(limelightName);
         double thor = LimelightLib.getTHOR(limelightName);
         double txp =
@@ -145,8 +149,9 @@ public class NoteTargeting extends Command {
                                 - ((VisionConstants.NOTE_WIDTH / 2)
                                         * (VisionConstants.NOTE_WIDTH / 2)));
 
-        // super secret krabby patty distance formula 3
-        double distanceCorrected = (distance - ((1.15 * (distance - 5)) - distance)) * .95;
+        // super secret krabby patty distance formula 4
+        double distanceCorrected =
+                distance - 10; // (distance - ((1.15 * (distance - 5)) - distance)) * .95;
 
         if (checkTarget()) {
             return distanceCorrected;
@@ -154,7 +159,7 @@ public class NoteTargeting extends Command {
         return 0;
     }
 
-    public double getNoteGroundDistance() {
+    private double getNoteGroundDistance() {
         double distance = getNoteDistance();
         double groundDistance =
                 Math.sqrt(
@@ -164,9 +169,9 @@ public class NoteTargeting extends Command {
         return groundDistance;
     }
 
-    public boolean checkTarget() { // CHECKS IF NOTE IS TRACKABLE
+    private boolean checkTarget() { // CHECKS IF NOTE IS TRACKABLE
         boolean trackable = true;
-        if (!LimelightLib.getTV(limelightName)) {
+        /*if (!LimelightLib.getTV(limelightName)) {
             trackable = false;
         } else if ((Math.abs(LimelightLib.getTX(limelightName))
                 > VisionConstants.TARGET_TX_CUTOFF)) {
@@ -174,7 +179,7 @@ public class NoteTargeting extends Command {
         } else if ((Math.abs(LimelightLib.getTHOR(limelightName))
                 < VisionConstants.TARGET_THOR_CUTOFF)) {
             trackable = false;
-        }
+        }*/
         return trackable;
     }
 }

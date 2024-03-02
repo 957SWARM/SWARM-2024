@@ -15,12 +15,14 @@ public interface DriverInput {
     public double swerveRot();
 
     // in true or false
-    public boolean enableNoteTracking();
+    public boolean noteTracking();
 
-    public boolean enableAprilTagTracking();
+    public boolean otfAmp();
+
+    public boolean otfSpeaker();
 
     // shoot
-    public boolean shoot();
+    public boolean speaker();
 
     // pivots intake
     public boolean intake();
@@ -35,11 +37,14 @@ public interface DriverInput {
     public boolean climb();
 
     // take the note in
-    public boolean intakeNote();
+    public boolean floorIntake();
 
-    // eject the note out
-    public boolean eject();
+    // slowly intakes
+    public boolean slowIntake();
 
-    // brings pivot to amp position
-    public boolean pivotAmp();
+    // slowly ejects
+    public boolean slowEject();
+
+    // brings intake to floor
+    public boolean intakeFloor();
 }

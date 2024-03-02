@@ -1,14 +1,13 @@
-package com.team957.comp2024.subsystems;
+package com.team957.comp2024.peripherals;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.team957.lib.math.UtilityMath;
 import com.team957.lib.util.DeltaTimeUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj2.command.Subsystem;
 import monologue.Annotations.Log;
 import monologue.Logged;
 
-public class IMU implements Subsystem, Logged {
+public class IMU implements Logged {
     private final Pigeon2 pigeon = new Pigeon2(0);
 
     private final DeltaTimeUtil dtUtil;
@@ -24,8 +23,6 @@ public class IMU implements Subsystem, Logged {
 
     public IMU() {
         dtUtil = new DeltaTimeUtil();
-
-        register();
     }
 
     public void setAngleOffset(Rotation2d angleOffset) {
@@ -61,7 +58,6 @@ public class IMU implements Subsystem, Logged {
         return yawVelocity;
     }
 
-    @Override
     public void periodic() {
         double currentRotation =
                 UtilityMath.normalizeAngleRadians(getCorrectedAngle().getRadians());

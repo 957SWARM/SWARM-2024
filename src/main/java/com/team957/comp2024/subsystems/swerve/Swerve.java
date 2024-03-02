@@ -1,8 +1,9 @@
 package com.team957.comp2024.subsystems.swerve;
 
 import com.team957.comp2024.Constants;
+import com.team957.comp2024.Constants;
+import com.team957.comp2024.Constants.MiscConstants;
 import com.team957.comp2024.Constants.SwerveConstants;
-import com.team957.comp2024.Robot;
 import com.team957.comp2024.UI;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -158,8 +159,8 @@ public abstract class Swerve implements Subsystem, Logged {
         protected abstract void update(double dt);
     }
 
-    public static Swerve getSwerve(boolean isReal) {
-        return (isReal) ? new SwerveHW() : new SwerveSim();
+    public static Swerve getSwerve(boolean isReal, boolean isCompetitionRobot) {
+        return (isReal) ? new SwerveHW(isCompetitionRobot) : new SwerveSim();
     }
 
     public final ModuleIO frontLeft;
@@ -234,8 +235,7 @@ public abstract class Swerve implements Subsystem, Logged {
     }
 
     public Command getModuleControllerCommand(Supplier<SwerveModuleState[]> setpoints) {
-        return run(
-                () -> {
+        return run(() -> {
                     SwerveModuleState[] setpointz = setpoints.get();
 
                     this.log("moduleSetpoints", setpointz);
@@ -251,58 +251,75 @@ public abstract class Swerve implements Subsystem, Logged {
 
                     backLeft.setSteerSetpoint(setpointz[3].angle.getRadians());
                     backLeft.setDriveSetpointMPS(setpointz[3].speedMetersPerSecond);
-                });
+                })
+                .withName("moduleControl");
     }
 
     public Command getChassisRelativeControlCommand(Supplier<ChassisSpeeds> chassisSpeeds) {
         return getModuleControllerCommand(
-                () -> {
-                    ChassisSpeeds setpoint = chassisSpeeds.get();
+                        () -> {
+                            ChassisSpeeds setpoint = chassisSpeeds.get();
 
-                    this.log("chassisSpeedsSetpoint", setpoint);
+                            this.log("chassisSpeedsSetpoint", setpoint);
 
-                    SwerveModuleState[] states =
-                            SwerveConstants.KINEMATICS.toSwerveModuleStates(
-                                    ChassisSpeeds.discretize(setpoint, Robot.kDefaultPeriod));
+                            SwerveModuleState[] states =
+                                    SwerveConstants.KINEMATICS.toSwerveModuleStates(
+                                            ChassisSpeeds.discretize(
+                                                    setpoint,
+                                                    MiscConstants.NOMINAL_LOOP_TIME_SECONDS));
 
-                    SwerveDriveKinematics.desaturateWheelSpeeds(
-                            states, SwerveConstants.MAX_WHEEL_SPEED_METERS_PER_SECOND);
+                            SwerveDriveKinematics.desaturateWheelSpeeds(
+                                    states, SwerveConstants.MAX_WHEEL_SPEED_METERS_PER_SECOND);
 
-                    return new SwerveModuleState[] {
-                        SwerveModuleState.optimize(
-                                states[0], new Rotation2d(frontLeft.getSteerPositionRadians())),
-                        SwerveModuleState.optimize(
-                                states[1], new Rotation2d(frontRight.getSteerPositionRadians())),
-                        SwerveModuleState.optimize(
-                                states[2], new Rotation2d(backRight.getSteerPositionRadians())),
-                        SwerveModuleState.optimize(
-                                states[3], new Rotation2d(backLeft.getSteerPositionRadians()))
-                    };
-                });
+                            return new SwerveModuleState[] {
+                                SwerveModuleState.optimize(
+                                        states[0],
+                                        new Rotation2d(frontLeft.getSteerPositionRadians())),
+                                SwerveModuleState.optimize(
+                                        states[1],
+                                        new Rotation2d(frontRight.getSteerPositionRadians())),
+                                SwerveModuleState.optimize(
+                                        states[2],
+                                        new Rotation2d(backRight.getSteerPositionRadians())),
+                                SwerveModuleState.optimize(
+                                        states[3],
+                                        new Rotation2d(backLeft.getSteerPositionRadians()))
+                            };
+                        })
+                .withName("chassisRelativeControl");
     }
 
     public Command getFieldRelativeControlCommand(
             Supplier<ChassisSpeeds> fieldRelativeChassisSpeeds, Supplier<Rotation2d> robotHeading) {
         return getChassisRelativeControlCommand(
-                () ->
-                        ChassisSpeeds.fromFieldRelativeSpeeds(
-                                fieldRelativeChassisSpeeds.get(), robotHeading.get()));
+                        () ->
+                                ChassisSpeeds.fromFieldRelativeSpeeds(
+                                        fieldRelativeChassisSpeeds.get(), robotHeading.get()))
+                .withName("fieldRelativeControl");
     }
 
     public Command getSysIdSteerQuasistatic(boolean forward) {
-        return steerRoutine.quasistatic(forward ? Direction.kForward : Direction.kReverse);
+        return steerRoutine
+                .quasistatic(forward ? Direction.kForward : Direction.kReverse)
+                .withName("steerQuasistatic" + (forward ? "Forward" : "Reverse"));
     }
 
     public Command getSysIdSteerDynamic(boolean forward) {
-        return steerRoutine.dynamic(forward ? Direction.kForward : Direction.kReverse);
+        return steerRoutine
+                .dynamic(forward ? Direction.kForward : Direction.kReverse)
+                .withName("steerDynamic" + (forward ? "Forward" : "Reverse"));
     }
 
     public Command getSysIdDriveQuasistatic(boolean forward) {
-        return driveRoutine.quasistatic(forward ? Direction.kForward : Direction.kReverse);
+        return driveRoutine
+                .quasistatic(forward ? Direction.kForward : Direction.kReverse)
+                .withName("driveQuasistatic" + (forward ? "Forward" : "Reverse"));
     }
 
     public Command getSysIdDriveDynamic(boolean forward) {
-        return driveRoutine.dynamic(forward ? Direction.kForward : Direction.kReverse);
+        return driveRoutine
+                .dynamic(forward ? Direction.kForward : Direction.kReverse)
+                .withName("driveDynamic" + (forward ? "Forward" : "Reverse"));
     }
 
     public Command lockDrivetrain() {
@@ -320,11 +337,16 @@ public abstract class Swerve implements Subsystem, Logged {
                                             new SwerveModuleState(0, new Rotation2d(-Math.PI / 4)),
                                             new SwerveModuleState(0, new Rotation2d(Math.PI / 4)),
                                             new SwerveModuleState(0, new Rotation2d(-Math.PI / 4))
-                                        }));
+                                        }))
+                .withName("lockDrivetrain");
     }
 
     @Override
     public void periodic() {
         UI.instance.setSwerveStates(getStates());
+
+        Command activeCommand = getCurrentCommand();
+
+        if (activeCommand != null) log("activeCommand", activeCommand.getName());
     }
 }

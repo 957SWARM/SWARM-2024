@@ -188,7 +188,5 @@ public class UI implements Logged {
     public void setOperatorInputChangeCallback(Consumer<OperatorInput> callback) {
         operatorChooser.onChange(callback);
     }
-    // TODO: can utilization
     // TODO: push automation indicators to dashboard
-    // TODO: push note state to dashboard
 }

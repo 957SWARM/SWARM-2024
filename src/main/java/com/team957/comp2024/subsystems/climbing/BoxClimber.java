@@ -2,7 +2,6 @@ package com.team957.comp2024.subsystems.climbing;
 
 import com.team957.comp2024.Constants.BoxClimberConstants;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import monologue.Logged;
 
@@ -17,6 +16,13 @@ public abstract class BoxClimber implements Subsystem, Logged {
         register();
     }
 
+    @Override
+    public void periodic() {
+        Command activeCommand = getCurrentCommand();
+
+        if (activeCommand != null) log("activeCommand", activeCommand.getName());
+    }
+
     public static BoxClimber getBoxClimber(boolean isReal) {
         // change second BoxClimberHW() to BoxClimberSim() when sim class is created
         return (isReal) ? new BoxClimberHW() : new BoxClimberHW();
@@ -24,10 +30,10 @@ public abstract class BoxClimber implements Subsystem, Logged {
 
     // puts the climber in rest
     public Command idleCommand() {
-        return run(
-                () -> {
+        return run(() -> {
                     setMotorVoltage(0);
-                });
+                })
+                .withName("idle");
     }
 
     // raises the climber
@@ -35,15 +41,15 @@ public abstract class BoxClimber implements Subsystem, Logged {
         return run(() -> {
                     setMotorVoltage(BoxClimberConstants.STANDARD_VOLTAGE);
                 })
-                .withInterruptBehavior(InterruptionBehavior.kCancelIncoming);
+                .withName("raise");
     }
 
     // lowers the climber
     public Command lowerCommand() {
-        return run(
-                () -> {
+        return run(() -> {
                     setMotorVoltage(-BoxClimberConstants.STANDARD_VOLTAGE);
-                });
+                })
+                .withName("lower");
     }
 }
 // miles was here

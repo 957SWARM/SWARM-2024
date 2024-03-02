@@ -1,16 +1,15 @@
-package com.team957.comp2024.subsystems;
+package com.team957.comp2024.peripherals;
 
 import com.team957.comp2024.Constants;
 import com.team957.comp2024.UI;
 import edu.wpi.first.hal.PowerDistributionFaults;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
-import edu.wpi.first.wpilibj2.command.Subsystem;
 import java.util.HashMap;
 import monologue.Annotations.Log;
 import monologue.Logged;
 
-public class PDH implements Subsystem, Logged {
+public class PDH implements Logged {
     // only create log identifier strings once
     // since Java string concatenation is absurdly slow and we actually care about loop times
     private final HashMap<Integer, String> channelNumToCurrentLogName = new HashMap<>();
@@ -32,8 +31,6 @@ public class PDH implements Subsystem, Logged {
 
         this.switchableChannelState = switchableChannelState;
         setSwitchableChannel(switchableChannelState);
-
-        register();
     }
 
     public double getCurrentAmps(int channel) {
@@ -76,7 +73,6 @@ public class PDH implements Subsystem, Logged {
         return switchableChannelState;
     }
 
-    @Override
     public void periodic() {
         UI.instance.setTotalCurrentDraw(getTotalCurrentAmps());
         UI.instance.setBatteryVoltage(getVoltage());

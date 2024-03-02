@@ -1,7 +1,6 @@
 package com.team957.comp2024.input;
 
 import com.team957.comp2024.Constants.OIConstants;
-
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.XboxController;
 
@@ -44,7 +43,7 @@ public class DefaultDriver implements DriverInput {
     }
 
     @Override
-    public boolean shoot() {
+    public boolean speaker() {
         return xboxController.getYButton();
     }
 
@@ -69,31 +68,41 @@ public class DefaultDriver implements DriverInput {
     }
 
     @Override
-    public boolean intakeNote() {
+    public boolean floorIntake() {
         return xboxController.getXButton();
     }
 
-    // bind this!
     @Override
-    public boolean eject() {
-        return (xboxController.getPOV() == 180);
-    }
-
-    @Override
-    public boolean enableNoteTracking() {
+    public boolean noteTracking() {
         return (xboxController.getRightTriggerAxis() > .5);
     }
 
     @Override
+    public boolean otfSpeaker() {
     public boolean enableAprilTagTracking(){
         return (xboxController.getLeftTriggerAxis() > .5);
     }
 
-    // pivots intake to intake position
-    // if down pad is down
+    @Override
+    public boolean otfAmp() {
+        return false; // TODO
+    }
+
     @Override
     public boolean pivotAmp(){
+    public boolean slowIntake() {
         return (xboxController.getPOV() == 0);
+    }
+
+    @Override
+    public boolean intakeFloor() {
+        return xboxController.getAButton();
+    }
+
+    @Override
+    public boolean slowEject() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'slowEject'");
     }
     
 }

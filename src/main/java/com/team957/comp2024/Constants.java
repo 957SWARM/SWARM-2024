@@ -4,6 +4,8 @@ import com.team957.lib.controllers.feedback.PID.PIDConstants;
 import com.team957.lib.util.GearRatioHelper;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.Vector;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -12,10 +14,23 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 public class Constants {
     public static final class MiscConstants {
-        public static final double saturationVoltage = 12;
+        public static final double SATURATION_VOLTAGE = 12;
+
+        public static final Alliance DEFAULT_ALLIANCE = Alliance.Blue;
+
+        public static final double NOMINAL_LOOP_TIME_SECONDS = 0.01; // 10 ms
+
+        public static final double LOOP_WATCHDOG_TRIGGER_SECONDS = 0.030; // 30 ms
+
+        public static final double HIGH_CAN_UTIL_THRESHOLD = .8;
+
+        public static final int PRACTICE_BOT_JUMPER_CHANNEL = 0;
+
+        public static final int TOTAL_PIXELS = 60;
     }
 
     public static final class SwerveConstants {
@@ -46,12 +61,13 @@ public class Constants {
 
         public static final double MAX_WHEEL_SPEED_METERS_PER_SECOND = 8;
 
-        public static final Translation2d FRONT_LEFT_TRANSLATION = new Translation2d(0.3302, 0.254);
-        public static final Translation2d FRONT_RIGHT_TRANSLATION =
-                new Translation2d(0.3302, -0.254);
-        public static final Translation2d BACK_RIGHT_TRANSLATION =
-                new Translation2d(-0.3302, -0.254);
-        public static final Translation2d BACK_LEFT_TRANSLATION = new Translation2d(-0.3302, 0.254);
+        public static final double a = .3302;
+        public static final double b = .254;
+
+        public static final Translation2d FRONT_LEFT_TRANSLATION = new Translation2d(a, b);
+        public static final Translation2d FRONT_RIGHT_TRANSLATION = new Translation2d(a, -b);
+        public static final Translation2d BACK_RIGHT_TRANSLATION = new Translation2d(-a, -b);
+        public static final Translation2d BACK_LEFT_TRANSLATION = new Translation2d(-a, b);
 
         public static final SwerveDriveKinematics KINEMATICS =
                 new SwerveDriveKinematics(
@@ -60,12 +76,12 @@ public class Constants {
                         BACK_RIGHT_TRANSLATION,
                         BACK_LEFT_TRANSLATION);
 
-        public static final double ONBOARD_DRIVE_CONTROLLER_KP = 0.00003;
+        public static final double ONBOARD_DRIVE_CONTROLLER_KP = 0.00004;
         public static final double ONBOARD_DRIVE_CONTROLLER_KI = 0;
         public static final double ONBOARD_DRIVE_CONTROLLER_KD = 0;
-        public static final double ONBOARD_DRIVE_CONTROLLER_KFF = 0.000125;
+        public static final double ONBOARD_DRIVE_CONTROLLER_KFF = 0.000175;
 
-        public static final double ONBOARD_STEER_CONTROLLER_KP = 2;
+        public static final double ONBOARD_STEER_CONTROLLER_KP = 2.5;
         public static final double ONBOARD_STEER_CONTROLLER_KI = 0;
         public static final double ONBOARD_STEER_CONTROLLER_KD = 0;
 
@@ -74,27 +90,30 @@ public class Constants {
 
         public static final int FRONT_LEFT_DRIVE_CANID = 7;
         public static final int FRONT_LEFT_STEER_CANID = 8;
-        public static final double FRONT_LEFT_STEER_OFFSET_RADIANS = -0.3613 + (Math.PI / 2);
+        public static final double FRONT_LEFT_STEER_OFFSET_RADIANS = 2.555 + (Math.PI / 2);
         public static final boolean FRONT_LEFT_DRIVE_INVERTED = false;
+        public static final double PRACTICE_FRONT_LEFT_STEER_OFFSET_RADIANS = -5.9 + (Math.PI / 4);
 
         public static final int FRONT_RIGHT_DRIVE_CANID = 1;
         public static final int FRONT_RIGHT_STEER_CANID = 2;
-        public static final double FRONT_RIGHT_STEER_OFFSET_RADIANS = -1.5327;
+        public static final double FRONT_RIGHT_STEER_OFFSET_RADIANS = 3.169;
         public static final boolean FRONT_RIGHT_DRIVE_INVERTED = true;
+        public static final double PRACTICE_FRONT_RIGHT_STEER_OFFSET_RADIANS = 1.58;
 
         public static final int BACK_LEFT_DRIVE_CANID = 5;
         public static final int BACK_LEFT_STEER_CANID = 6;
-        public static final double BACK_LEFT_STEER_OFFSET_RADIANS = -0.0124;
+        public static final double BACK_LEFT_STEER_OFFSET_RADIANS = 0.527;
         public static final boolean BACK_LEFT_DRIVE_INVERTED = false;
+        public static final double PRACTICE_BACK_LEFT_STEER_OFFSET_RADIANS = 6.27;
 
         public static final int BACK_RIGHT_DRIVE_CANID = 3;
         public static final int BACK_RIGHT_STEER_CANID = 4;
-        public static final double BACK_RIGHT_STEER_OFFSET_RADIANS = -5.6515 + (Math.PI / 2);
+        public static final double BACK_RIGHT_STEER_OFFSET_RADIANS = 0.091 + (Math.PI / 2);
         public static final boolean BACK_RIGHT_DRIVE_INVERTED = true;
+        public static final double PRACTICE_BACK_RIGHT_STEER_OFFSET_RADIANS = .63 + (Math.PI / 2);
     }
 
     public static final class ShooterConstants {
-        // CANIDs not set yet as of 1/25/2024
         public static final int LEFT_CANID = 9;
         public static final int RIGHT_CANID = 10;
 
@@ -102,12 +121,12 @@ public class Constants {
         public static final DCMotor SHOOTER_MOTOR = DCMotor.getNEO(1);
         public static final double SHOOTER_REDUCTION = 1;
 
-        public static final double IDLE_CONTROL_EFFORT_VOLTS = 4;
+        public static final double IDLE_CONTROL_EFFORT_VOLTS = 2;
         public static final double SUBWOOFER_CONTROL_EFFORT_VOLTS = 9;
-        public static final double HALF_COURT_CONTROL_EFFORT_VOLTS = 12;
+        public static final double HALF_COURT_CONTROL_EFFORT_VOLTS = -12;
 
-        public static final boolean leftMotorInverted = false;
-        public static final boolean rightMotorInverted = true;
+        public static final boolean leftMotorInverted = true;
+        public static final boolean rightMotorInverted = false;
         public static final boolean leftEncoderInverted = false;
         public static final boolean rightEncoderInverted = true;
     }
@@ -116,10 +135,9 @@ public class Constants {
         public static final PIDConstants LINEAR_PATHFINDING_GAINS = new PIDConstants(10, 0, 0);
         public static final PIDConstants ROTATIONAL_PATHFINDING_GAINS = new PIDConstants(10, 0, 0);
 
-        public static final double SHOOT_BUFFER_SECONDS = 0.75;
-        public static final double INTAKE_BUFFER_SECONDS = 0.5;
-
         public static final double DEFAULT_PIVOT_DELAY_SECONDS = 0.5;
+
+        public static final double PROFILE_OVERRUN_TOLERANCE_SECONDS = 0.4;
     }
 
     public static final class IMUConstants {
@@ -138,13 +156,13 @@ public class Constants {
     }
 
     public static final class IntakePivotConstants {
-        public static final double MIN_ANGLE_RADIANS = Units.degreesToRadians(-10);
-        public static final double MAX_ANGLE_RADIANS = Units.degreesToRadians(135);
+        public static final double MIN_ANGLE_RADIANS = Units.degreesToRadians(-20);
+        public static final double MAX_ANGLE_RADIANS = Units.degreesToRadians(160);
 
-        public static final double PLANT_KS = 1;
-        public static final double PLANT_KV = 0.88;
-        public static final double PLANT_KA = 0.001;
-        public static final double PLANT_KG = 0.22;
+        public static final double PLANT_KS = 0;
+        public static final double PLANT_KV = 0.00001; // .97
+        public static final double PLANT_KA = 0.00001; // 0.01
+        public static final double PLANT_KG = 0.3;
 
         public static final DCMotor DRIVE_MOTOR = DCMotor.getNEO(1);
 
@@ -152,22 +170,23 @@ public class Constants {
 
         public static final double PIVOT_TO_TIP_METERS = Units.inchesToMeters(14);
 
-        public static final double FLOOR_INTAKE_ANGLE_RADIANS = Units.degreesToRadians(-7.5);
+        public static final double FLOOR_INTAKE_ANGLE_RADIANS = 5.7;
         public static final double STOW_INTAKE_ANGLE_RADIANS = Units.degreesToRadians(100);
-        public static final double HANDOFF_INTAKE_ANGLE_RADIANS = Units.degreesToRadians(132.5);
+        public static final double HANDOFF_INTAKE_ANGLE_RADIANS = 2.8;
         public static final double AMP_INTAKE_ANGLE_RADIANS = Units.degreesToRadians(75);
+
         public static final int INTAKE_PIVOT_MOTOR_CANID = 11;
 
         public static final int INTAKE_PIVOT_CURRENT_LIMIT_AMPS = 40;
 
         public static final boolean INTAKE_PIVOT_MOTOR_INVERTED = false;
 
-        // reported angle when the pivot is at "zero" (straight ahead)
-        public static final double INTAKE_PIVOT_OFFSET_RADIANS = 11;
+        public static final double INTAKE_PIVOT_PROFILE_CONTROL_EFFORT = 3;
 
-        public static final double ONBOARD_CONTROLLER_KP = 1;
-        public static final double ONBOARD_CONTROLLER_KI = 0;
-        public static final double ONBOARD_CONTROLLER_KD = 0;
+        // reported angle when the pivot is at "zero" (straight ahead)
+        public static final double INTAKE_PIVOT_OFFSET_RADIANS = -.1;
+
+        public static final PIDConstants PID_CONSTANTS = new PIDConstants(2.5, 0, 0);
     }
 
     public static final class BoxClimberConstants {
@@ -193,8 +212,20 @@ public class Constants {
         public static final int CURRENT_LIMIT = 30;
         public static final boolean ROLLER_INVERTED = false;
 
-        public static final double INTAKE_VOLTAGE = 6;
-        public static final double EJECT_VOLTAGE = -INTAKE_VOLTAGE;
+        public static final double FLOOR_INTAKE_VOLTAGE = 6;
+        public static final double SHOOTER_HANDOFF_VOLTAGE = -9;
+        public static final double AMP_SHOT_VOLTAGE = -12;
+
+        public static final int TOF_CANID = 63; // TODO
+
+        public static final double TOF_TIMING_BUDGET_MS = 24;
+
+        public static final double TOF_NOTE_PRESENT_THRESHOLD_METERS = .5; // TODO
+
+        public static final double TOF_NOTE_PRESENT_DEBOUNCE_SECONDS = 0.1;
+
+        public static final double SIM_MOCK_OUTTAKE_DELAY_SECONDS = 0.5;
+        public static final double SIM_MOCK_INTAKE_DELAY_SECONDS = 0.5;
     }
 
     public static final class AlertConstants {
@@ -204,10 +235,6 @@ public class Constants {
         // 20 mOhms
 
         public static final double LOW_VOLTAGE_THRESHOLD = 10.5;
-    }
-
-    public static final class OIConstants {
-        public static final int DRIVER_PORT = 0;
     }
 
     public static final class VisionConstants {
@@ -225,11 +252,13 @@ public class Constants {
                 VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(30));
 
         public static final Transform3d LL1_TO_CENTER =
-                new Transform3d(new Translation3d(.2159, -.2032, 0.381), new Rotation3d(0, 0, 0));
+                new Transform3d(
+                        new Translation3d(-Units.inchesToMeters(3), 0, Units.inchesToMeters(24)),
+                        new Rotation3d(0, 0, 0));
         public static final Transform3d LL2_TO_CENTER =
                 new Transform3d(new Translation3d(0, 0, 0), new Rotation3d(0, 0, 0));
 
-        public static final double TARGET_AREA_CUTOFF = 0.2; // PERCENT OF SCREEN
+        public static final double TARGET_AREA_CUTOFF = 0.5; // PERCENT OF SCREEN //TODO: FIND VAL
         public static final double TARGET_TX_CUTOFF = 24; // DEGREES
         public static final double TARGET_THOR_CUTOFF = 70; // PIXELS
 
@@ -237,5 +266,16 @@ public class Constants {
         public static final double TRACKING_MIN_COMMAND = 0.05;
         public static final double TRACKING_STOP_THRESHOLD = 0.01; // RADIANS
         public static final double MIN_COMMAND_TRESHOLD = 0.02; // RADIANS
+    }
+
+    public static final class OtfPathingConstants {
+        public static final Pose2d OTF_SPEAKER_POSE_BLUE = new Pose2d(1.6, 5.5, new Rotation2d());
+        public static final Pose2d OTF_SPEAKER_POSE_RED =
+                new Pose2d(15, 5.5, new Rotation2d(Math.PI));
+
+        public static final Pose2d OTF_AMP_POSE_BLUE =
+                new Pose2d(1.9, 7.6, new Rotation2d(Math.PI / 2));
+        public static final Pose2d OTF_AMP_POSE_RED =
+                new Pose2d(14.75, 7.6, new Rotation2d(-Math.PI / 2));
     }
 }

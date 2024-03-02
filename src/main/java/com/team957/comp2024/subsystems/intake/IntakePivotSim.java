@@ -1,7 +1,7 @@
 package com.team957.comp2024.subsystems.intake;
 
 import com.team957.comp2024.Constants;
-import com.team957.comp2024.Robot;
+import com.team957.comp2024.Constants.MiscConstants;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
 
@@ -42,7 +42,7 @@ public class IntakePivotSim extends IntakePivot {
     }
 
     @Override
-    protected void setVoltageUnsafe(double volts) {
+    public void setVoltage(double volts) {
         this.inputVolts = volts;
 
         model.setInput(volts);
@@ -52,11 +52,6 @@ public class IntakePivotSim extends IntakePivot {
     public void periodic() {
         super.periodic();
 
-        model.update(Robot.kDefaultPeriod);
-    }
-
-    @Override
-    protected void setFeedforwardAndSetpointUnsafe(double volts, double setpointRadians) {
-        model.setState(setpointRadians, 0); // revlib bad >:(
+        model.update(MiscConstants.NOMINAL_LOOP_TIME_SECONDS);
     }
 }

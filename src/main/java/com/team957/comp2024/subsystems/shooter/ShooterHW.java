@@ -4,13 +4,28 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.team957.comp2024.Constants.ShooterConstants;
+import com.team957.comp2024.util.SparkMaxUtils;
 
 public class ShooterHW extends Shooter {
 
     private final CANSparkMax leftMotor =
-            new CANSparkMax(ShooterConstants.LEFT_CANID, MotorType.kBrushless);
+            SparkMaxUtils.slowUnusedPeriodics(
+                    new CANSparkMax(ShooterConstants.LEFT_CANID, MotorType.kBrushless),
+                    true,
+                    true,
+                    true,
+                    true,
+                    true);
+
     private final CANSparkMax rightMotor =
-            new CANSparkMax(ShooterConstants.RIGHT_CANID, MotorType.kBrushless);
+            SparkMaxUtils.slowUnusedPeriodics(
+                    new CANSparkMax(ShooterConstants.RIGHT_CANID, MotorType.kBrushless),
+                    true,
+                    true,
+                    true,
+                    true,
+                    true);
+
     private final RelativeEncoder leftEncoder = leftMotor.getEncoder();
     private final RelativeEncoder rightEncoder = rightMotor.getEncoder();
 
@@ -19,14 +34,14 @@ public class ShooterHW extends Shooter {
         rightMotor.restoreFactoryDefaults();
 
         // set inversions
-        leftMotor.setInverted(ShooterConstants.leftMotorInverted);
-        rightMotor.setInverted(ShooterConstants.rightMotorInverted);
+        leftMotor.setInverted(true);
+        // rightMotor.setInverted(true);
 
         leftMotor.setSmartCurrentLimit(ShooterConstants.CURRENT_LIMIT);
         rightMotor.setSmartCurrentLimit(ShooterConstants.CURRENT_LIMIT);
 
         // sets the leftMotor as the master and the rightMotor as follower
-        rightMotor.follow(leftMotor);
+        rightMotor.follow(leftMotor, true);
     }
 
     @Override
@@ -57,5 +72,13 @@ public class ShooterHW extends Shooter {
     @Override
     public double getVelocity() {
         return (leftEncoder.getVelocity() + rightEncoder.getVelocity()) / 2.0;
+    }
+
+    @Override
+    public void periodic() {
+        super.periodic();
+
+        // not required to override this, but want to prevent accidentially overriding the code in
+        // superclass
     }
 }

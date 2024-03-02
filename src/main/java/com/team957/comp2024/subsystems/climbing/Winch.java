@@ -16,6 +16,13 @@ public abstract class Winch implements Subsystem, Logged {
         register();
     }
 
+    @Override
+    public void periodic() {
+        Command activeCommand = getCurrentCommand();
+
+        if (activeCommand != null) log("activeCommand", activeCommand.getName());
+    }
+
     public static Winch getWinch(boolean isReal) {
         // change second WinchHW() to WinchSim() when sim class is created
         return (isReal) ? new WinchHW() : new WinchHW();
@@ -23,17 +30,17 @@ public abstract class Winch implements Subsystem, Logged {
 
     // puts the climber in rest
     public Command idleCommand() {
-        return run(
-                () -> {
+        return run(() -> {
                     setWinchVoltage(0);
-                });
+                })
+                .withName("idle");
     }
 
     // raises the winch
     public Command raiseCommand() {
-        return run(
-                () -> {
+        return run(() -> {
                     setWinchVoltage(WinchConstants.STANDARD_VOLTAGE);
-                });
+                })
+                .withName("raise");
     }
 }
