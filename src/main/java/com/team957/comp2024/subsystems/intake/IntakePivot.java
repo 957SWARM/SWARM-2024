@@ -4,7 +4,8 @@ import com.team957.comp2024.Constants;
 import com.team957.comp2024.Constants.IntakePivotConstants;
 import com.team957.comp2024.Constants.MiscConstants;
 import com.team957.comp2024.UI;
-import com.team957.lib.math.UtilityMath;
+import com.team957.lib.controllers.feedback.PID;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.trajectory.ExponentialProfile;
 import edu.wpi.first.math.trajectory.ExponentialProfile.Constraints;
@@ -32,7 +33,7 @@ public abstract class IntakePivot implements Subsystem, Logged {
                     new SysIdRoutine.Config(),
                     new SysIdRoutine.Mechanism(
                             (Measure<Voltage> volts) -> {
-                                setVoltageUnsafe(volts.magnitude());
+                                setVoltage(volts.magnitude());
                             },
                             null,
                             this));
@@ -41,17 +42,7 @@ public abstract class IntakePivot implements Subsystem, Logged {
         register();
     }
 
-    public void setVoltage(double volts) {
-        // spotless:off
-        setVoltageUnsafe(
-                (volts < 0 && (getPositionRadians() < IntakePivotConstants.MIN_ANGLE_RADIANS))
-            || 
-                (volts > 0 && (getPositionRadians() > IntakePivotConstants.MAX_ANGLE_RADIANS))
-            ? 0 : volts);
-        // spotless:on
-    }
-
-    protected abstract void setVoltageUnsafe(double volts);
+    public abstract void setVoltage(double volts);
 
     @Log.NT
     public abstract double getPositionRadians();
@@ -65,13 +56,6 @@ public abstract class IntakePivot implements Subsystem, Logged {
     @Log.NT
     public abstract double getControlEffortVolts();
 
-    protected boolean pivotOnboardClosedLoop = false;
-
-    @Log.NT
-    public boolean isOnboardClosedLoop() {
-        return pivotOnboardClosedLoop;
-    }
-
     @Override
     public void periodic() {
         UI.instance.setIntakeAngle(getPositionRadians());
@@ -80,23 +64,6 @@ public abstract class IntakePivot implements Subsystem, Logged {
 
         if (activeCommand != null) log("activeCommand", activeCommand.getName());
     }
-
-    /**
-     * Sets the feedforward control effort. On hardware, this value is sent off to the remote PID
-     * controllers, and in simulation it is simply added to the model PID output.
-     *
-     * @param volts Signed feedforward voltage.
-     */
-    public void setFeedforwardAndSetpoint(double volts, double setpointRadians) {
-        setFeedforwardAndSetpointUnsafe(
-                volts,
-                UtilityMath.clamp(
-                        IntakePivotConstants.MAX_ANGLE_RADIANS,
-                        IntakePivotConstants.MIN_ANGLE_RADIANS,
-                        setpointRadians));
-    }
-
-    protected abstract void setFeedforwardAndSetpointUnsafe(double volts, double setpointRadians);
 
     public Command getSysIdQuasistatic(boolean forward) {
         return routine.quasistatic(forward ? Direction.kForward : Direction.kReverse);
@@ -114,15 +81,22 @@ public abstract class IntakePivot implements Subsystem, Logged {
                         IntakePivotConstants.PLANT_KV,
                         IntakePivotConstants.PLANT_KA);
 
-        return run(() ->
-                        setFeedforwardAndSetpoint(
-                                feedforward.calculate(getPositionRadians(), 0),
-                                getPositionRadians()))
+        return run(() -> setVoltage(feedforward.calculate(getPositionRadians(), 0)))
                 .withName("holdPosition");
         // technically allows for some drift but fairly minor
     }
 
     public Command goToSetpoint(Supplier<Double> setpointRadians) {
+        PID pid = new PID(IntakePivotConstants.PID_CONSTANTS, 0, false);
+
+        return run(
+                () -> {
+                    pid.setSetpoint(MathUtil.angleModulus(setpointRadians.get()));
+                    setVoltage(pid.calculate(MathUtil.angleModulus(getPositionRadians())));
+                });
+    }
+
+    public Command profiledGoToSetpoint(Supplier<Double> setpointRadians) {
         ExponentialProfile profile =
                 new ExponentialProfile(
                         Constraints.fromCharacteristics(
@@ -130,82 +104,60 @@ public abstract class IntakePivot implements Subsystem, Logged {
                                 IntakePivotConstants.PLANT_KV,
                                 IntakePivotConstants.PLANT_KA));
 
-        ArmFeedforward feedforward =
-                new ArmFeedforward(
-                        IntakePivotConstants.PLANT_KS,
-                        IntakePivotConstants.PLANT_KG,
-                        IntakePivotConstants.PLANT_KV,
-                        IntakePivotConstants.PLANT_KA);
+        // ArmFeedforward feedforward =
+        //         new ArmFeedforward(
+        //                 IntakePivotConstants.PLANT_KS,
+        //                 IntakePivotConstants.PLANT_KG,
+        //                 IntakePivotConstants.PLANT_KV,
+        //                 IntakePivotConstants.PLANT_KA);
 
         // mutating existing objects to avoid allocations
         State current = new State();
         State goal = new State();
 
-        return run(() -> {
-                    current.position = getPositionRadians();
-                    current.velocity = getVelocityRadiansPerSecond();
+        return goToSetpoint(
+                        () -> {
+                            current.position = getPositionRadians();
+                            current.velocity = getVelocityRadiansPerSecond();
 
-                    goal.position = setpointRadians.get();
-                    goal.velocity = 0;
+                            goal.position = setpointRadians.get();
+                            goal.velocity = 0;
 
-                    var profiled =
-                            profile.calculate(
-                                    MiscConstants.NOMINAL_LOOP_TIME_SECONDS, current, goal);
+                            var profiled =
+                                    profile.calculate(
+                                            MiscConstants.NOMINAL_LOOP_TIME_SECONDS, current, goal);
 
-                    double accel =
-                            (profiled.velocity - current.velocity)
-                                    / MiscConstants.NOMINAL_LOOP_TIME_SECONDS;
+                            // double accel =
+                            //         (profiled.velocity - current.velocity)
+                            //                 / MiscConstants.NOMINAL_LOOP_TIME_SECONDS;
 
-                    log("profiled", profiled.position);
-                    log("profiledV", profiled.velocity);
+                            // log("profiled", profiled.position);
+                            // log("profiledV", profiled.velocity);
 
-                    setFeedforwardAndSetpoint(
-                            feedforward.calculate(profiled.position, profiled.velocity, accel),
-                            profiled.position);
-                })
-                .until(
-                        () ->
-                                UtilityMath.epsilonEqualsAbsolute(
-                                        setpointRadians.get(),
-                                        getPositionRadians(),
-                                        IntakePivotConstants.AT_SETPOINT_MARGIN_RADIANS))
+                            return profiled.position;
+                        })
                 .withName("goToSetpoint");
     }
 
     public Command toFloor() {
-        return goToSetpoint(() -> Constants.IntakePivotConstants.FLOOR_INTAKE_ANGLE_RADIANS)
+        return profiledGoToSetpoint(() -> Constants.IntakePivotConstants.FLOOR_INTAKE_ANGLE_RADIANS)
                 .withName("toFloor");
     }
 
-    public Command holdFloor() {
-        return toFloor().andThen(holdPosition());
-    }
-
     public Command toStow() {
-        return goToSetpoint(() -> Constants.IntakePivotConstants.STOW_INTAKE_ANGLE_RADIANS)
+        return profiledGoToSetpoint(() -> Constants.IntakePivotConstants.STOW_INTAKE_ANGLE_RADIANS)
                 .withName("toStow");
     }
 
-    public Command holdStow() {
-        return toStow().andThen(holdPosition());
-    }
-
     public Command toHandoff() {
-        return goToSetpoint(() -> Constants.IntakePivotConstants.HANDOFF_INTAKE_ANGLE_RADIANS)
+        return profiledGoToSetpoint(
+                        () -> Constants.IntakePivotConstants.HANDOFF_INTAKE_ANGLE_RADIANS)
                 .withName("toHandoff");
     }
 
-    public Command holdHandoff() {
-        return toHandoff().andThen(holdPosition());
-    }
-
     public Command toAmp() {
-        return goToSetpoint(() -> Constants.IntakePivotConstants.AMP_INTAKE_ANGLE_RADIANS)
+        return profiledGoToSetpoint(() -> Constants.IntakePivotConstants.AMP_INTAKE_ANGLE_RADIANS)
                 .withName("toAmp");
-    }
-
-    public Command holdAmp() {
-        return toAmp().andThen(holdPosition());
     }
 
     public static IntakePivot getIntakePivot(boolean isReal) {

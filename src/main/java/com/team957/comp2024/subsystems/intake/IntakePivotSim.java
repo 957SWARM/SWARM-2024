@@ -42,7 +42,7 @@ public class IntakePivotSim extends IntakePivot {
     }
 
     @Override
-    protected void setVoltageUnsafe(double volts) {
+    public void setVoltage(double volts) {
         this.inputVolts = volts;
 
         model.setInput(volts);
@@ -53,10 +53,5 @@ public class IntakePivotSim extends IntakePivot {
         super.periodic();
 
         model.update(MiscConstants.NOMINAL_LOOP_TIME_SECONDS);
-    }
-
-    @Override
-    protected void setFeedforwardAndSetpointUnsafe(double volts, double setpointRadians) {
-        model.setState(setpointRadians, 0); // revlib bad >:(
     }
 }

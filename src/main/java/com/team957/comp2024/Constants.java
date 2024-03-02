@@ -157,7 +157,7 @@ public class Constants {
 
     public static final class IntakePivotConstants {
         public static final double MIN_ANGLE_RADIANS = Units.degreesToRadians(-20);
-        public static final double MAX_ANGLE_RADIANS = Units.degreesToRadians(140);
+        public static final double MAX_ANGLE_RADIANS = Units.degreesToRadians(160);
 
         public static final double PLANT_KS = 0;
         public static final double PLANT_KV = 0.00001; // .97
@@ -170,9 +170,9 @@ public class Constants {
 
         public static final double PIVOT_TO_TIP_METERS = Units.inchesToMeters(14);
 
-        public static final double FLOOR_INTAKE_ANGLE_RADIANS = Units.degreesToRadians(-20);
+        public static final double FLOOR_INTAKE_ANGLE_RADIANS = 5.7;
         public static final double STOW_INTAKE_ANGLE_RADIANS = Units.degreesToRadians(100);
-        public static final double HANDOFF_INTAKE_ANGLE_RADIANS = Units.degreesToRadians(140);
+        public static final double HANDOFF_INTAKE_ANGLE_RADIANS = 2.8;
         public static final double AMP_INTAKE_ANGLE_RADIANS = Units.degreesToRadians(75);
         public static final int INTAKE_PIVOT_MOTOR_CANID = 11;
 
@@ -183,13 +183,11 @@ public class Constants {
         public static final double INTAKE_PIVOT_PROFILE_CONTROL_EFFORT = 3;
 
         // reported angle when the pivot is at "zero" (straight ahead)
-        public static final double INTAKE_PIVOT_OFFSET_RADIANS = 3.6;
+        public static final double INTAKE_PIVOT_OFFSET_RADIANS = -.1;
 
         // public static final double ONBOARD_CONTROLLER_KP = .85;
         // .25
-        public static final double ONBOARD_CONTROLLER_KP = 0;
-        public static final double ONBOARD_CONTROLLER_KI = 0;
-        public static final double ONBOARD_CONTROLLER_KD = 0;
+        public static final PIDConstants PID_CONSTANTS = new PIDConstants(2.5, 0, 0);
 
         public static final double AT_SETPOINT_MARGIN_RADIANS = Units.degreesToRadians(2);
     }

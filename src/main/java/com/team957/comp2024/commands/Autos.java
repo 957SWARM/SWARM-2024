@@ -74,7 +74,7 @@ public class Autos {
             return ChoreoFollowingFactory.instance
                     .getPathFollowingCommand(
                             swerve, traj.get(phaseIndex), localization, resetPose, alliance)
-                    .raceWith(new WaitCommand(pivotDelaySeconds).andThen(pivot.holdStow()));
+                    .raceWith(new WaitCommand(pivotDelaySeconds).andThen(pivot.toStow()));
         }
 
         Command stowTrajectoryPhase(int phaseIndex, boolean resetPose) {
@@ -83,7 +83,7 @@ public class Autos {
         }
 
         Command lock() {
-            return swerve.lockDrivetrain().alongWith(pivot.holdStow());
+            return swerve.lockDrivetrain().alongWith(pivot.toStow());
         }
     }
 
