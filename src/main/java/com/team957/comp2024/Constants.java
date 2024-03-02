@@ -114,19 +114,19 @@ public class Constants {
     }
 
     public static final class ShooterConstants {
-        public static final int LEFT_CANID = 10; // swapped can ids so shooter works (unideal)
+        public static final int LEFT_CANID = 10;
         public static final int RIGHT_CANID = 9;
 
         public static final int CURRENT_LIMIT = 30;
         public static final DCMotor SHOOTER_MOTOR = DCMotor.getNEO(1);
         public static final double SHOOTER_REDUCTION = 1;
 
-        public static final double IDLE_CONTROL_EFFORT_VOLTS = 2;
-        public static final double SUBWOOFER_CONTROL_EFFORT_VOLTS = 9;
+        public static final double IDLE_CONTROL_EFFORT_VOLTS = -2;
+        public static final double SUBWOOFER_CONTROL_EFFORT_VOLTS = -9;
         public static final double HALF_COURT_CONTROL_EFFORT_VOLTS = -12;
 
-        public static final boolean leftMotorInverted = true;
-        public static final boolean rightMotorInverted = false;
+        public static final boolean leftMotorInverted = false;
+        public static final boolean rightMotorInverted = true;
         public static final boolean leftEncoderInverted = false;
         public static final boolean rightEncoderInverted = true;
     }
@@ -171,7 +171,7 @@ public class Constants {
         public static final double PIVOT_TO_TIP_METERS = Units.inchesToMeters(14);
 
         public static final double FLOOR_INTAKE_ANGLE_RADIANS = 5.7;
-        public static final double STOW_INTAKE_ANGLE_RADIANS = Units.degreesToRadians(100);
+        public static final double STOW_INTAKE_ANGLE_RADIANS = Units.degreesToRadians(120);
         public static final double HANDOFF_INTAKE_ANGLE_RADIANS = 2.8;
         public static final double AMP_INTAKE_ANGLE_RADIANS = Units.degreesToRadians(75);
 
@@ -226,7 +226,7 @@ public class Constants {
 
         public static final double TOF_NOTE_PRESENT_THRESHOLD_METERS = .45;
 
-        public static final double TOF_NOTE_PRESENT_DEBOUNCE_SECONDS = 0.05;
+        public static final double TOF_NOTE_PRESENT_DEBOUNCE_SECONDS = 0.1;
 
         public static final double SIM_MOCK_OUTTAKE_DELAY_SECONDS = 0.5;
         public static final double SIM_MOCK_INTAKE_DELAY_SECONDS = 0.5;

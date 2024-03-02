@@ -8,6 +8,7 @@ import com.team957.comp2024.commands.Autos;
 import com.team957.comp2024.commands.ChoreoFollowingFactory;
 import com.team957.comp2024.commands.NoteTargeting;
 import com.team957.comp2024.commands.OnTheFlyPathing;
+import com.team957.comp2024.commands.ScoringSequences;
 import com.team957.comp2024.input.DefaultDriver;
 import com.team957.comp2024.input.DriverInput;
 import com.team957.comp2024.input.SimKeyboardDriver;
@@ -112,9 +113,8 @@ public class Robot extends TimedRobot implements Logged {
     private Trigger resetFieldRelZero;
     private Trigger shoot;
 
-    private Trigger intakeBack;
+    private Trigger intakeStow;
     private Trigger intakeAmp;
-    private Trigger intakeOut;
     private Trigger intakeFloor;
 
     private Trigger intakeActive;
@@ -131,6 +131,8 @@ public class Robot extends TimedRobot implements Logged {
     private Trigger noteTracking;
     private Trigger otfAmp;
     private Trigger otfSpeaker;
+
+    private Trigger onGetNote;
 
     private double fieldRelRotationOffset = 0;
 
@@ -194,22 +196,41 @@ public class Robot extends TimedRobot implements Logged {
         intakeRoller.setDefaultCommand(intakeRoller.idle());
         */
         // Testing shooter with no voltage
-        shooter.setDefaultCommand(shooter.noVoltage());
+        shooter.setDefaultCommand(shooter.idle());
         intakeRoller.setDefaultCommand(intakeRoller.idle());
         shoot = new Trigger(() -> input.noteTracking());
-        shoot.whileTrue(shooter.halfCourtShot()).onFalse(shooter.noVoltage());
+        shoot.whileTrue(shooter.halfCourtShot());
 
         intakeAmp = new Trigger(() -> input.speaker());
-        intakeAmp.toggleOnTrue(pivot.toHandoff());
+        intakeAmp.toggleOnTrue(
+                ScoringSequences.coordinatedSubwooferShot(shooter, pivot, intakeRoller));
 
         intakeFloor = new Trigger(() -> input.intakeFloor());
-        intakeFloor.toggleOnTrue(pivot.toFloor());
+        intakeFloor.toggleOnTrue(ScoringSequences.coordinatedFloorIntake(pivot, intakeRoller));
+
+        intakeStow = new Trigger(() -> input.intakeStow());
+        intakeStow.toggleOnTrue(pivot.toStow());
 
         intakeActive = new Trigger(() -> input.lowerHook());
-        intakeActive.whileTrue(intakeRoller.floorIntake());
+        intakeActive.whileTrue(intakeRoller.floorIntakeUntilNote());
 
         intakeEject = new Trigger(() -> input.raiseHook());
-        intakeEject.whileTrue(intakeRoller.ampShot());
+        intakeEject.whileTrue(intakeRoller.shooterHandoffUntilNoteGone());
+
+        intakeSlowActive = new Trigger(input::slowIntake);
+        intakeSlowActive.whileTrue(intakeRoller.slowIntake());
+
+        onGetNote = new Trigger(intakeRoller::debouncedNoteIsPresent);
+        onGetNote.toggleOnTrue(
+                Commands.run(() -> input.setRumble(true))
+                        .withTimeout(.5)
+                        .andThen(Commands.run(() -> input.setRumble(false))));
+
+        onGetNote.onFalse(Commands.run(() -> input.setRumble(false)).ignoringDisable(true));
+
+        noteTracking = new Trigger(() -> input.noteTracking());
+        noteTargeting.getNoteTrackCommand(
+                () -> input.swerveX(), () -> input.swerveY(), () -> input.swerveRot());
 
         // intakeSlowActive = new Trigger(() -> input.slowIntake());
         // intakeSlowActive.whileTrue(intakeRoller.)

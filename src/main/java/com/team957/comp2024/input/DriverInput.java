@@ -47,4 +47,8 @@ public interface DriverInput {
 
     // brings intake to floor
     public boolean intakeFloor();
+
+    public void setRumble(boolean on);
+
+    public boolean intakeStow();
 }

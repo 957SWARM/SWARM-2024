@@ -2,6 +2,7 @@ package com.team957.comp2024.input;
 
 import com.team957.comp2024.Constants.OIConstants;
 import edu.wpi.first.math.filter.SlewRateLimiter;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.XboxController;
 
 public class DefaultDriver implements DriverInput {
@@ -106,8 +107,18 @@ public class DefaultDriver implements DriverInput {
     }
 
     @Override
+    public boolean intakeStow() {
+        return xboxController.getXButton();
+    }
+
+    @Override
     public boolean slowEject() {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'slowEject'");
+    }
+
+    @Override
+    public void setRumble(boolean on) {
+        xboxController.setRumble(RumbleType.kBothRumble, on ? 1 : 0);
     }
 }

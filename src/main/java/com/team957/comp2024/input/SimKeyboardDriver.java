@@ -93,4 +93,12 @@ public class SimKeyboardDriver implements DriverInput {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'slowEject'");
     }
+
+    @Override
+    public void setRumble(boolean on) {}
+
+    @Override
+    public boolean intakeStow() {
+        return false;
+    }
 }

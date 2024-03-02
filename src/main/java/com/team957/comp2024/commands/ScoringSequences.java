@@ -10,21 +10,17 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 public class ScoringSequences {
     public static Command coordinatedSubwooferShot(
             Shooter shooter, IntakePivot intakePivot, IntakeRoller intakeRoller) {
-        return shooter.subwooferShot()
-                .raceWith(
-                        intakePivot
-                                .toHandoff()
-                                .andThen(intakeRoller.shooterHandoffUntilNoteGone())
-                                .alongWith(
-                                        new WaitCommand(
-                                                        IntakeRollerConstants
-                                                                .SIM_MOCK_OUTTAKE_DELAY_SECONDS)
-                                                .andThen(
-                                                        () ->
-                                                                intakeRoller
-                                                                        .setSimulationNoteIsPresentMock(
-                                                                                false))))
-                .andThen(intakePivot.toStow());
+
+        return intakePivot
+                .toHandoff()
+                .withTimeout(1)
+                .andThen(intakeRoller.shooterHandoff().withTimeout(.5))
+                .raceWith(shooter.halfCourtShot())
+                .andThen(
+                        intakeRoller
+                                .idle()
+                                .alongWith(intakePivot.toStow())
+                                .alongWith(shooter.idle()));
     }
 
     public static Command coordinatedAmpShot(IntakePivot intakePivot, IntakeRoller intakeRoller) {
@@ -49,18 +45,7 @@ public class ScoringSequences {
             IntakePivot intakePivot, IntakeRoller intakeRoller) {
         return intakePivot
                 .toFloor()
-                .andThen(
-                        intakeRoller
-                                .floorIntakeUntilNote()
-                                .alongWith(
-                                        new WaitCommand(
-                                                        IntakeRollerConstants
-                                                                .SIM_MOCK_INTAKE_DELAY_SECONDS)
-                                                .andThen(
-                                                        () ->
-                                                                intakeRoller
-                                                                        .setSimulationNoteIsPresentMock(
-                                                                                true))))
+                .raceWith(new WaitCommand(.1).andThen(intakeRoller.floorIntakeUntilNote()))
                 .andThen(intakePivot.toStow());
     }
 }

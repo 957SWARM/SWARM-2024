@@ -37,7 +37,7 @@ public class IntakeRollerHW extends IntakeRoller {
 
     @Override
     public void setRollerVoltage(double voltage) {
-        roller.set(voltage);
+        roller.setVoltage(voltage);
     }
 
     @Override
