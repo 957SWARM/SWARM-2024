@@ -11,11 +11,11 @@ public class DefaultDriver implements DriverInput {
     private static final double LIN_MAX_SPEED = 6;
     private static final double ROT_MAX_SPEED = 10;
 
-    private final XboxController xboxController;
+    private final SlewRateLimiter xLimiter = new SlewRateLimiter(17);
+    private final SlewRateLimiter yLimiter = new SlewRateLimiter(17);
+    private final SlewRateLimiter angularLimiter = new SlewRateLimiter(30);
 
-    private final SlewRateLimiter xLimiter = new SlewRateLimiter(20);
-    private final SlewRateLimiter yLimiter = new SlewRateLimiter(20);
-    private final SlewRateLimiter angularLimiter = new SlewRateLimiter(20);
+    private final XboxController xboxController;
 
     public DefaultDriver() {
         xboxController = new XboxController(OIConstants.DRIVER_PORT);

@@ -34,7 +34,8 @@ public class LLlocalization implements Logged {
 
     private final SwerveDrivePoseEstimator poseEstimator;
 
-    // this is 100% a code smell, but something is screwy with the pose estimator unless we flip
+    // this is 100% a code smell, but something is screwy with the pose estimator
+    // unless we flip
     // these
     private SwerveModulePosition[] invertDistances(SwerveModulePosition[] positions) {
         SwerveModulePosition[] flipped = positions;
@@ -43,8 +44,7 @@ public class LLlocalization implements Logged {
             position.distanceMeters = -position.distanceMeters;
 
         return flipped;
-    }
-    ;
+    };
 
     public LLlocalization(
             SwerveDriveKinematics kinematics,
@@ -58,22 +58,20 @@ public class LLlocalization implements Logged {
         this.gyro = gyro;
         this.robotReal = robotReal;
 
-        poseEstimator =
-                new SwerveDrivePoseEstimator(
-                        kinematics,
-                        gyro.get(),
-                        invertDistances(modulePositions.get()),
-                        new Pose2d(),
-                        VisionConstants.STATE_STDS,
-                        VisionConstants.VISION_STDS);
+        poseEstimator = new SwerveDrivePoseEstimator(
+                kinematics,
+                gyro.get(),
+                invertDistances(modulePositions.get()),
+                new Pose2d(),
+                VisionConstants.STATE_STDS,
+                VisionConstants.VISION_STDS);
     }
 
     public void update() {
         double dt = dtUtil.getTimeSecondsSinceLastCall();
 
         simGyro.calculate(
-                SwerveConstants.KINEMATICS.toChassisSpeeds(moduleStates.get())
-                        .omegaRadiansPerSecond,
+                SwerveConstants.KINEMATICS.toChassisSpeeds(moduleStates.get()).omegaRadiansPerSecond,
                 dt);
 
         Rotation2d rotation;
@@ -97,22 +95,19 @@ public class LLlocalization implements Logged {
 
             double[] botpose = LimelightLib.getBotPose_wpiBlue(limelightName);
 
-            Rotation3d rot3 =
-                    new Rotation3d(
-                            Units.degreesToRadians(botpose[3]),
-                            Units.degreesToRadians(botpose[4]),
-                            Units.degreesToRadians(botpose[5]));
+            Rotation3d rot3 = new Rotation3d(
+                    Units.degreesToRadians(botpose[3]),
+                    Units.degreesToRadians(botpose[4]),
+                    Units.degreesToRadians(botpose[5]));
 
             Pose3d visionPose = new Pose3d(botpose[0], botpose[1], botpose[2], rot3);
 
             if (visionPose != null && LimelightLib.getTV(limelightName)) {
                 if (LimelightLib.getTA(limelightName) > VisionConstants.TARGET_AREA_CUTOFF) {
-                    visionPose2d =
-                            new Pose2d(visionPose.getTranslation().toTranslation2d(), gyro.get());
-                    double timeStampSeconds =
-                            Timer.getFPGATimestamp()
-                                    - (LimelightLib.getLatency_Pipeline(limelightName) / 1000.0)
-                                    - (LimelightLib.getLatency_Capture(limelightName) / 1000.0);
+                    visionPose2d = new Pose2d(visionPose.getTranslation().toTranslation2d(), gyro.get());
+                    double timeStampSeconds = Timer.getFPGATimestamp()
+                            - (LimelightLib.getLatency_Pipeline(limelightName) / 1000.0)
+                            - (LimelightLib.getLatency_Capture(limelightName) / 1000.0);
 
                     System.out.println(visionPose2d.getX() + " || " + visionPose2d.getY());
 
