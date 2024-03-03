@@ -175,9 +175,9 @@ public class Constants {
 
         public static final double PIVOT_TO_TIP_METERS = Units.inchesToMeters(14);
 
-        public static final double FLOOR_INTAKE_ANGLE_RADIANS = 5.7;
+        public static final double FLOOR_INTAKE_ANGLE_RADIANS = Units.degreesToRadians(326.6);
         public static final double STOW_INTAKE_ANGLE_RADIANS = Units.degreesToRadians(120);
-        public static final double HANDOFF_INTAKE_ANGLE_RADIANS = 2.8;
+        public static final double HANDOFF_INTAKE_ANGLE_RADIANS = Units.degreesToRadians(158.428);
         public static final double AMP_INTAKE_ANGLE_RADIANS = Units.degreesToRadians(75);
 
         public static final int INTAKE_PIVOT_MOTOR_CANID = 11;
@@ -288,5 +288,15 @@ public class Constants {
                 new Pose2d(1.9, 7.6, new Rotation2d(Math.PI / 2));
         public static final Pose2d OTF_AMP_POSE_RED =
                 new Pose2d(14.75, 7.6, new Rotation2d(-Math.PI / 2));
+    }
+
+    public static final class SequencingConstants {
+        //coordinatedSubwooferShot
+        public static final double CENTERING_NOTE_DURATION = .05;
+        public static final double UNTIL_SHOOT_DELAY = .6;
+        public static final double SHOOT_DURATION = .5;
+
+        // coordinatedFloorIntake
+        public static final double ROLLER_DELAY = .1;
     }
 }
