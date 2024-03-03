@@ -273,9 +273,9 @@ public class Constants {
         public static final double TARGET_TX_CUTOFF = 24; // DEGREES
         public static final double TARGET_THOR_CUTOFF = 70; // PIXELS
 
-        public static final double TRACKING_KP = 5;
-        public static final double TRACKING_MIN_COMMAND = 0.05;
-        public static final double TRACKING_STOP_THRESHOLD = 0.01; // RADIANS
+        public static final double TRACKING_KP = 5.5;
+        public static final double TRACKING_MIN_COMMAND = 0.1;
+        public static final double TRACKING_STOP_THRESHOLD = 0.025; // RADIANS
         public static final double MIN_COMMAND_TRESHOLD = 0.02; // RADIANS
     }
 

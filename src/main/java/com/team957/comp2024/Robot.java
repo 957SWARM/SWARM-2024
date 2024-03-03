@@ -208,8 +208,9 @@ public class Robot extends TimedRobot implements Logged {
 
         onGetNote.onFalse(Commands.run(() -> input.setRumble(false)).ignoringDisable(true));
 
-        noteTracking = new Trigger(input::noteTracking);
-        noteTracking.toggleOnTrue(
+        noteTracking =
+                new Trigger(() -> input.noteTracking() && !intakeRoller.debouncedNoteIsPresent());
+        noteTracking.whileTrue(
                 noteTargeting.getNoteTrackCommand(
                         () -> input.swerveX(),
                         () -> input.swerveY(),
