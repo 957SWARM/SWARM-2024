@@ -14,7 +14,7 @@ public class ScoringSequences {
                 .toHandoff()
                 .withTimeout(1)
                 .andThen(intakeRoller.shooterHandoff().withTimeout(.5))
-                .raceWith(shooter.halfCourtShot())
+                .raceWith(shooter.subwooferShot())
                 .andThen(
                         intakeRoller
                                 .idle()

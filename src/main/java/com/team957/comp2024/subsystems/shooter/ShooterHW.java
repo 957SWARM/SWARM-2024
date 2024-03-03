@@ -33,20 +33,14 @@ public class ShooterHW extends Shooter {
         leftMotor.restoreFactoryDefaults();
         rightMotor.restoreFactoryDefaults();
 
-        // set inversions
-        leftMotor.setInverted(true);
-        // rightMotor.setInverted(true);
-
         leftMotor.setSmartCurrentLimit(ShooterConstants.CURRENT_LIMIT);
         rightMotor.setSmartCurrentLimit(ShooterConstants.CURRENT_LIMIT);
-
-        // sets the leftMotor as the master and the rightMotor as follower
-        rightMotor.follow(leftMotor, true);
     }
 
     @Override
     public void setShooterVoltage(double voltage) {
-        leftMotor.setVoltage(voltage);
+        leftMotor.setVoltage(ShooterConstants.leftMotorInverted ? -voltage : voltage);
+        rightMotor.setVoltage(ShooterConstants.rightMotorInverted ? -voltage : voltage);
     }
 
     @Override
@@ -71,7 +65,7 @@ public class ShooterHW extends Shooter {
 
     @Override
     public double getVelocity() {
-        return (leftEncoder.getVelocity() + rightEncoder.getVelocity()) / 2.0;
+        return 2 * Math.PI * (leftEncoder.getVelocity() + rightEncoder.getVelocity()) / 2.0;
     }
 
     @Override

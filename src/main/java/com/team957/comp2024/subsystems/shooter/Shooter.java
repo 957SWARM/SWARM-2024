@@ -69,10 +69,4 @@ public abstract class Shooter implements Subsystem, Logged {
     public Command noVoltage() {
         return defaultShooterControlCommand(() -> 0.0).withName("noVoltage");
     }
-
-    public Command halfCourtShot() {
-        return defaultShooterControlCommand(
-                        () -> Constants.ShooterConstants.HALF_COURT_CONTROL_EFFORT_VOLTS)
-                .withName("halfCourtShot");
-    }
 }
