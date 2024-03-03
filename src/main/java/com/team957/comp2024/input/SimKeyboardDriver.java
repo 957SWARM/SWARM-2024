@@ -34,12 +34,7 @@ public class SimKeyboardDriver implements DriverInput {
     }
 
     @Override
-    public boolean speaker() {
-        return false;
-    }
-
-    @Override
-    public boolean intake() {
+    public boolean speakerSequence() {
         return false;
     }
 
@@ -54,51 +49,34 @@ public class SimKeyboardDriver implements DriverInput {
     }
 
     @Override
-    public boolean climb() {
+    public boolean climbWinch() {
         return false;
     }
 
-    @Override
-    public boolean floorIntake() {
-        return false;
-    }
-
-    @Override
-    public boolean otfAmp() {
-        return false;
-    }
-
-    @Override
-    public boolean otfSpeaker() {
-        return false;
-    }
-
-    // @Override
-    // public boolean amp() {
-    // return false;
-    // }
-
-    public boolean intakeFloor() {
+    public boolean intakeSequence() {
         return controller.getAButton();
     }
 
     @Override
     public boolean slowIntake() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'slowIntake'");
+        return false;
     }
 
     @Override
     public boolean slowEject() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'slowEject'");
+        return false;
     }
 
     @Override
     public void setRumble(boolean on) {}
 
     @Override
-    public boolean intakeStow() {
+    public boolean intakePivotStow() {
+        return false;
+    }
+
+    @Override
+    public boolean shootAmp() {
         return false;
     }
 }

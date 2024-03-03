@@ -48,73 +48,53 @@ public class DefaultDriver implements DriverInput {
     }
 
     @Override
-    public boolean speaker() {
+    public boolean speakerSequence() {
         return xboxController.getYButton();
     }
 
     @Override
-    public boolean intake() {
-        return xboxController.getXButton();
-    }
-
-    @Override
-    public boolean raiseHook() {
-        return xboxController.getRightBumper();
-    }
-
-    @Override
-    public boolean lowerHook() {
-        return xboxController.getLeftBumper();
-    }
-
-    @Override
-    public boolean climb() {
-        return xboxController.getBButton();
-    }
-
-    @Override
-    public boolean floorIntake() {
-        return xboxController.getXButton();
-    }
-
-    @Override
-    public boolean noteTracking() {
-        return (xboxController.getRightTriggerAxis() > .5);
-    }
-
-    @Override
-    public boolean otfSpeaker() {
-        return (xboxController.getLeftTriggerAxis() > .5);
-    }
-
-    public boolean enableAprilTagTracking() {
-        return (xboxController.getLeftTriggerAxis() > .5);
-    }
-
-    @Override
-    public boolean otfAmp() {
-        return false; // TODO
-    }
-
-    @Override
-    public boolean slowIntake() {
-        return (xboxController.getPOV() == 0);
-    }
-
-    @Override
-    public boolean intakeFloor() {
+    public boolean intakeSequence() {
         return xboxController.getAButton();
     }
 
     @Override
-    public boolean intakeStow() {
+    public boolean intakePivotStow() {
         return xboxController.getXButton();
     }
 
     @Override
     public boolean slowEject() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'slowEject'");
+        return xboxController.getRightBumper();
+    }
+
+    @Override
+    public boolean slowIntake() {
+        return xboxController.getLeftBumper();
+    }
+
+    @Override
+    public boolean raiseHook() {
+        return xboxController.getPOV() == 0;
+    }
+
+    @Override
+    public boolean lowerHook() {
+        return xboxController.getPOV() == 180;
+    }
+
+    @Override
+    public boolean climbWinch() {
+        return xboxController.getBButton();
+    }
+
+    @Override
+    public boolean noteTracking() {
+        return (xboxController.getLeftTriggerAxis() > .5);
+    }
+
+    @Override
+    public boolean shootAmp() {
+        return (xboxController.getRightTriggerAxis() > .5);
     }
 
     @Override

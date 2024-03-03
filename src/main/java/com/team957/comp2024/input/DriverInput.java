@@ -17,15 +17,8 @@ public interface DriverInput {
     // in true or false
     public boolean noteTracking();
 
-    public boolean otfAmp();
-
-    public boolean otfSpeaker();
-
     // shoot
-    public boolean speaker();
-
-    // pivots intake
-    public boolean intake();
+    public boolean speakerSequence();
 
     // raise hook
     public boolean raiseHook();
@@ -34,10 +27,7 @@ public interface DriverInput {
     public boolean lowerHook();
 
     // winch upwards!
-    public boolean climb();
-
-    // take the note in
-    public boolean floorIntake();
+    public boolean climbWinch();
 
     // slowly intakes
     public boolean slowIntake();
@@ -46,9 +36,11 @@ public interface DriverInput {
     public boolean slowEject();
 
     // brings intake to floor
-    public boolean intakeFloor();
+    public boolean intakeSequence();
 
     public void setRumble(boolean on);
 
-    public boolean intakeStow();
+    public boolean intakePivotStow();
+
+    public boolean shootAmp();
 }

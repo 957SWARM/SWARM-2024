@@ -70,6 +70,10 @@ public abstract class IntakeRoller implements Subsystem, Logged {
         return run(() -> setRollerVoltage(2));
     }
 
+    public Command slowEject() {
+        return run(() -> setRollerVoltage(-2));
+    }
+
     public Command shooterHandoff() {
         return run(() -> setRollerVoltage(IntakeRollerConstants.SHOOTER_HANDOFF_VOLTAGE))
                 .withName("shooterHandoff");
