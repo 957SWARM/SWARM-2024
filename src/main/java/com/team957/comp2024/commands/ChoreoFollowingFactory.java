@@ -19,6 +19,9 @@ import monologue.Annotations.IgnoreLogged;
 import monologue.Logged;
 
 public class ChoreoFollowingFactory implements Logged {
+    public static record CommandWithTime(Command command, double timeSeconds) {}
+    ;
+
     // being instance is slightly janky but needed to have a monologue context, but singleton works
 
     @IgnoreLogged
@@ -48,7 +51,7 @@ public class ChoreoFollowingFactory implements Logged {
         };
     }
 
-    public Command getPathFollowingCommand(
+    public CommandWithTime getPathFollowingCommand(
             Swerve swerve,
             ChoreoTrajectory trajectory,
             LLlocalization localization,
@@ -70,40 +73,45 @@ public class ChoreoFollowingFactory implements Logged {
                     return (alliance.get() == Alliance.Blue) ? trajectory : flipped;
                 };
 
-        return Commands.runOnce(
-                        () -> {
-                            timer.restart();
-                            if (resetPoseToInitial)
-                                localization.setPose(getMirroredPath.get().getInitialPose());
-                        })
-                // .andThen(Commands.runOnce((this.log("trajectory",trajectory))))
-                // choreotrajectory not supported in monologue :(
-                .andThen(
-                        swerve.getFieldRelativeControlCommand(
-                                        () ->
-                                                controlFunction.apply(
-                                                        localization.getPoseEstimate(),
-                                                        getMirroredPath.get().sample(timer.get())),
-                                        localization::getRotationEstimate)
-                                .alongWith(
-                                        Commands.run(
-                                                () -> {
-                                                    Pose2d pose =
-                                                            getMirroredPath
-                                                                    .get()
-                                                                    .sample(timer.get())
-                                                                    .getPose();
+        return new CommandWithTime(
+                Commands.runOnce(
+                                () -> {
+                                    timer.restart();
+                                    if (resetPoseToInitial)
+                                        localization.setPose(
+                                                getMirroredPath.get().getInitialPose());
+                                })
+                        // .andThen(Commands.runOnce((this.log("trajectory",trajectory))))
+                        // choreotrajectory not supported in monologue :(
+                        .andThen(
+                                swerve.getFieldRelativeControlCommand(
+                                                () ->
+                                                        controlFunction.apply(
+                                                                localization.getPoseEstimate(),
+                                                                getMirroredPath
+                                                                        .get()
+                                                                        .sample(timer.get())),
+                                                localization::getRotationEstimate)
+                                        .alongWith(
+                                                Commands.run(
+                                                        () -> {
+                                                            Pose2d pose =
+                                                                    getMirroredPath
+                                                                            .get()
+                                                                            .sample(timer.get())
+                                                                            .getPose();
 
-                                                    this.log("poseSetpoint", pose);
+                                                            this.log("poseSetpoint", pose);
 
-                                                    UI.instance.setSetpointPose(pose);
-                                                })))
-                .until(
-                        () ->
-                                getMirroredPath.get().getTotalTime()
-                                        < timer.get()
-                                                - Constants.AutoConstants
-                                                        .PROFILE_OVERRUN_TOLERANCE_SECONDS)
-                .withName("choreoFollowing");
+                                                            UI.instance.setSetpointPose(pose);
+                                                        })))
+                        .until(
+                                () ->
+                                        getMirroredPath.get().getTotalTime()
+                                                < timer.get()
+                                                        - Constants.AutoConstants
+                                                                .PROFILE_OVERRUN_TOLERANCE_SECONDS)
+                        .withName("choreoFollowing"),
+                getMirroredPath.get().getTotalTime());
     }
 }

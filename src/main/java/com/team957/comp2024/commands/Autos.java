@@ -2,6 +2,7 @@ package com.team957.comp2024.commands;
 
 import com.choreo.lib.Choreo;
 import com.choreo.lib.ChoreoTrajectory;
+import com.team957.comp2024.commands.ChoreoFollowingFactory.CommandWithTime;
 import com.team957.comp2024.peripherals.LLlocalization;
 import com.team957.comp2024.subsystems.intake.IntakePivot;
 import com.team957.comp2024.subsystems.intake.IntakeRoller;
@@ -38,7 +39,8 @@ public class Autos {
             this.alliance = alliance;
         }
 
-        Command shootTrajectoryPhase(int phaseIndex, boolean resetPose) {
+        Command shootTrajectoryPhase(
+                int phaseIndex, boolean resetPose, double shotHeadStartSeconds) {
             ChoreoTrajectory trajPhase;
 
             try {
@@ -47,14 +49,27 @@ public class Autos {
                 return new InstantCommand();
             }
 
-            return ChoreoFollowingFactory.instance
-                    .getPathFollowingCommand(swerve, trajPhase, localization, resetPose, alliance)
-                    .andThen(
-                            ScoringSequences.coordinatedSubwooferShot(
-                                    shooter, intakePivot, intakeRoller));
+            CommandWithTime following =
+                    ChoreoFollowingFactory.instance.getPathFollowingCommand(
+                            swerve, trajPhase, localization, resetPose, alliance);
+
+            double startShotDelay;
+
+            if (shotHeadStartSeconds < 0) startShotDelay = following.timeSeconds();
+            else if (shotHeadStartSeconds > following.timeSeconds()) startShotDelay = 0;
+            else startShotDelay = following.timeSeconds() - shotHeadStartSeconds;
+
+            return following
+                    .command()
+                    .alongWith(
+                            new WaitCommand(startShotDelay)
+                                    .andThen(
+                                            ScoringSequences.coordinatedSubwooferShot(
+                                                    shooter, intakePivot, intakeRoller)));
         }
 
-        Command floorTrajectoryPhase(int phaseIndex, boolean resetPose) {
+        Command floorTrajectoryPhase(
+                int phaseIndex, boolean resetPose, double pivotHeadStart, double endDelay) {
             ChoreoTrajectory trajPhase;
 
             try {
@@ -63,11 +78,14 @@ public class Autos {
                 return new InstantCommand();
             }
 
-            return new WaitCommand(.25)
+            return new WaitCommand(pivotHeadStart > 0 ? pivotHeadStart : 0)
                     .andThen(
-                            ChoreoFollowingFactory.instance.getPathFollowingCommand(
-                                    swerve, trajPhase, localization, resetPose, alliance))
-                    .alongWith(ScoringSequences.coordinatedFloorIntake(intakePivot, intakeRoller));
+                            ChoreoFollowingFactory.instance
+                                    .getPathFollowingCommand(
+                                            swerve, trajPhase, localization, resetPose, alliance)
+                                    .command())
+                    .alongWith(ScoringSequences.coordinatedFloorIntake(intakePivot, intakeRoller))
+                    .withTimeout(endDelay > 0 ? endDelay : 0);
         }
 
         Command stowTrajectoryPhase(int phaseIndex, boolean resetPose) {
@@ -81,6 +99,7 @@ public class Autos {
 
             return ChoreoFollowingFactory.instance
                     .getPathFollowingCommand(swerve, trajPhase, localization, resetPose, alliance)
+                    .command()
                     .alongWith(pivot.toStow());
         }
     }
@@ -131,8 +150,10 @@ public class Autos {
 
         if (!maybeTraj.isPresent()) return new InstantCommand();
 
-        return ChoreoFollowingFactory.instance.getPathFollowingCommand(
-                swerve, maybeTraj.get().get(0), localization, resetPoseToInitial, alliance);
+        return ChoreoFollowingFactory.instance
+                .getPathFollowingCommand(
+                        swerve, maybeTraj.get().get(0), localization, resetPoseToInitial, alliance)
+                .command();
     }
 
     public Command justLeaveAmp() {
@@ -172,8 +193,8 @@ public class Autos {
                 new AutoPhaseFactory(swerve, intakePivot, maybeTraj.get(), localization, alliance);
 
         return ScoringSequences.coordinatedSubwooferShot(shooter, intakePivot, intakeRoller)
-                .andThen(factory.floorTrajectoryPhase(0, true).withTimeout(2))
-                .andThen(factory.shootTrajectoryPhase(1, false))
+                .andThen(factory.floorTrajectoryPhase(0, true, .25, 2))
+                .andThen(factory.shootTrajectoryPhase(1, false, .25))
                 .andThen(factory.stowTrajectoryPhase(2, false));
     }
 }
