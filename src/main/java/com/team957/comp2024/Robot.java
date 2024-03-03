@@ -209,18 +209,21 @@ public class Robot extends TimedRobot implements Logged {
         onGetNote.onFalse(Commands.run(() -> input.setRumble(false)).ignoringDisable(true));
 
         noteTracking = new Trigger(input::noteTracking);
-        noteTracking.onTrue(
+        noteTracking.toggleOnTrue(
                 noteTargeting.getNoteTrackCommand(
-                        () -> input.swerveX(), () -> input.swerveY(), () -> input.swerveRot()));
+                        () -> input.swerveX(),
+                        () -> input.swerveY(),
+                        () -> input.swerveRot(),
+                        () -> fieldRelRotationOffset));
 
-        climbHookUp = new Trigger(input::raiseHook);
-        climbHookUp.onTrue(boxClimber.raiseCommand());
+        // climbHookUp = new Trigger(input::raiseHook);
+        // climbHookUp.onTrue(boxClimber.raiseCommand());
 
-        climbHookDown = new Trigger(input::lowerHook);
-        climbHookDown.onTrue(boxClimber.lowerCommand());
+        // climbHookDown = new Trigger(input::lowerHook);
+        // climbHookDown.onTrue(boxClimber.lowerCommand());
 
-        climbWinch = new Trigger(input::climbWinch);
-        climbWinch.onTrue(winch.raiseCommand());
+        // climbWinch = new Trigger(input::climbWinch);
+        // climbWinch.onTrue(winch.raiseCommand());
 
         resetFieldRelZero = new Trigger(input::zeroGyro);
 

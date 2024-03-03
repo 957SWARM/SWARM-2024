@@ -74,6 +74,10 @@ public abstract class IntakeRoller implements Subsystem, Logged {
         return run(() -> setRollerVoltage(-IntakeRollerConstants.SLOW_RUN_VOLTAGE));
     }
 
+    public Command slowCentering() {
+        return run(() -> setRollerVoltage(IntakeRollerConstants.CENTERING_VOLTAGE));
+    }
+
     public Command shooterHandoff() {
         return run(() -> setRollerVoltage(IntakeRollerConstants.SHOOTER_HANDOFF_VOLTAGE))
                 .withName("shooterHandoff");

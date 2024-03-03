@@ -25,16 +25,16 @@ public class DefaultDriver implements DriverInput {
     @Override
     public double swerveX() {
         // consistent polling rate so this is fine??
-        // double output =
-        //         Math.signum(xboxController.getLeftY()) * Math.pow(xboxController.getLeftY(), 2);
-        return xLimiter.calculate(LIN_MAX_SPEED * xboxController.getLeftY());
+        double output =
+                Math.signum(xboxController.getLeftY()) * Math.pow(xboxController.getLeftY(), 2);
+        return xLimiter.calculate(LIN_MAX_SPEED * output);
     }
 
     @Override
     public double swerveY() {
-        // double output = Math.signum(xboxController.getLeftX()) *
-        // Math.pow(xboxController.getLeftX(), 2);
-        return yLimiter.calculate(LIN_MAX_SPEED * xboxController.getLeftX());
+        double output =
+                Math.signum(xboxController.getLeftX()) * Math.pow(xboxController.getLeftX(), 2);
+        return yLimiter.calculate(LIN_MAX_SPEED * output);
     }
 
     @Override

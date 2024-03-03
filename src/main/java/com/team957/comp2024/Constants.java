@@ -225,6 +225,7 @@ public class Constants {
         public static final double SHOOTER_HANDOFF_VOLTAGE = -9;
         public static final double AMP_SHOT_VOLTAGE = -12;
         public static final double SLOW_RUN_VOLTAGE = 2;
+        public static final double CENTERING_VOLTAGE = .5;
 
         public static final int TOF_CANID = 0;
 

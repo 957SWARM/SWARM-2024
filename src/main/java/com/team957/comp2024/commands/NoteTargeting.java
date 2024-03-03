@@ -36,7 +36,10 @@ public class NoteTargeting {
 
     // AUTO AIMS TO NOTE IF NOTE IS TRACKABLE
     public Command getNoteTrackCommand(
-            Supplier<Double> swerveX, Supplier<Double> swerveY, Supplier<Double> swerveRot) {
+            Supplier<Double> swerveX,
+            Supplier<Double> swerveY,
+            Supplier<Double> swerveRot,
+            Supplier<Double> fieldRelRotationOffset) {
 
         return swerve.getFieldRelativeControlCommand(
                         () -> {
@@ -45,7 +48,10 @@ public class NoteTargeting {
                                     swerveY.get(),
                                     -getTrackingAngle(getTargetAngle()));
                         },
-                        poseEstimation::getRotationEstimate)
+                        () ->
+                                poseEstimation
+                                        .getRotationEstimate()
+                                        .minus(new Rotation2d(fieldRelRotationOffset.get())))
                 .unless(() -> !checkTarget())
                 .withName("noteTargeting");
     }

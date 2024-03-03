@@ -12,15 +12,15 @@ public class ScoringSequences {
 
         return intakePivot
                 .toHandoff()
-                .withTimeout(1)
+                .alongWith(intakeRoller.slowCentering().withTimeout(.05))
+                .withTimeout(.6)
                 .andThen(intakeRoller.shooterHandoff().withTimeout(.5))
                 .raceWith(shooter.subwooferShot())
                 .andThen(
                         intakeRoller
                                 .idle()
                                 .alongWith(intakePivot.toStow())
-                                .alongWith(shooter.idle())
-                                .withTimeout(.25));
+                                .alongWith(shooter.idle()));
     }
 
     public static Command coordinatedFloorIntake(
