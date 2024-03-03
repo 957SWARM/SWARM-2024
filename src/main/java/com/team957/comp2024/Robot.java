@@ -181,7 +181,7 @@ public class Robot extends TimedRobot implements Logged {
         ui.addAuto("Just Leave: Amp", autos.justLeaveAmp());
         ui.addAuto("Just Leave: Center", autos.justLeaveCenter());
         ui.addAuto("Just Leave: Source", autos.justLeaveSource());
-        ui.addAuto("Center Two Piece", autos.testSegmentedPath());
+        ui.addAuto("Center Two Piece", autos.centerTwoPiece());
         ui.addAuto("Test Path", autos.testPath());
         ui.addAuto("Five Piece Mockup", autos.fivePieceMockup());
         ui.addAuto("Four Piece Mockup", autos.fourPieceMockup());

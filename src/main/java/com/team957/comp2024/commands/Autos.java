@@ -150,8 +150,8 @@ public class Autos {
         return singleTrajectoryOnlyAuto("threePieceMockup", true);
     }
 
-    public Command testSegmentedPath() {
-        var maybeTraj = safeLoadTrajectory("testSegmentedPath");
+    public Command centerTwoPiece() {
+        var maybeTraj = safeLoadTrajectory("centerTwoPiece");
 
         if (!maybeTraj.isPresent()) return new InstantCommand();
 

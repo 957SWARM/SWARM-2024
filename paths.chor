@@ -4123,7 +4123,7 @@
             "usesDefaultFieldObstacles": true,
             "circleObstacles": []
         },
-        "testSegmentedPath": {
+        "centerTwoPiece": {
             "waypoints": [
                 {
                     "x": 1.353781819343567,
