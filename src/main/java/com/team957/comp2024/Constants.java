@@ -291,7 +291,7 @@ public class Constants {
     }
 
     public static final class SequencingConstants {
-        //coordinatedSubwooferShot
+        // coordinatedSubwooferShot
         public static final double CENTERING_NOTE_DURATION = .05;
         public static final double UNTIL_SHOOT_DELAY = .6;
         public static final double SHOOT_DURATION = .5;

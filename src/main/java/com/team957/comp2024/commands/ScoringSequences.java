@@ -1,5 +1,6 @@
 package com.team957.comp2024.commands;
 
+import com.team957.comp2024.Constants.SequencingConstants;
 import com.team957.comp2024.subsystems.intake.IntakePivot;
 import com.team957.comp2024.subsystems.intake.IntakeRoller;
 import com.team957.comp2024.subsystems.shooter.Shooter;
@@ -12,9 +13,15 @@ public class ScoringSequences {
 
         return intakePivot
                 .toHandoff()
-                .alongWith(intakeRoller.slowCentering().withTimeout(.05))
-                .withTimeout(.6)
-                .andThen(intakeRoller.shooterHandoff().withTimeout(.5))
+                .alongWith(
+                        intakeRoller
+                                .slowCentering()
+                                .withTimeout(SequencingConstants.CENTERING_NOTE_DURATION))
+                .withTimeout(SequencingConstants.UNTIL_SHOOT_DELAY)
+                .andThen(
+                        intakeRoller
+                                .shooterHandoff()
+                                .withTimeout(SequencingConstants.SHOOT_DURATION))
                 .raceWith(shooter.subwooferShot())
                 .andThen(
                         intakeRoller
@@ -27,7 +34,9 @@ public class ScoringSequences {
             IntakePivot intakePivot, IntakeRoller intakeRoller) {
         return intakePivot
                 .toFloor()
-                .raceWith(new WaitCommand(.1).andThen(intakeRoller.floorIntakeUntilNote()))
+                .raceWith(
+                        new WaitCommand(SequencingConstants.ROLLER_DELAY)
+                                .andThen(intakeRoller.floorIntakeUntilNote()))
                 .andThen(intakePivot.toStow());
     }
 }
