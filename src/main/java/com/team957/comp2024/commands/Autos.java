@@ -10,6 +10,7 @@ import com.team957.comp2024.subsystems.swerve.Swerve;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -37,6 +38,7 @@ public class Autos {
             this.alliance = alliance;
         }
 
+        // TODO: safe load of potentially non-existent trajectory phases
         Command shootTrajectoryPhase(int phaseIndex, boolean resetPose) {
             return ChoreoFollowingFactory.instance
                     .getPathFollowingCommand(
@@ -47,9 +49,14 @@ public class Autos {
         }
 
         Command floorTrajectoryPhase(int phaseIndex, boolean resetPose) {
-            return ChoreoFollowingFactory.instance
-                    .getPathFollowingCommand(
-                            swerve, traj.get(phaseIndex), localization, resetPose, alliance)
+            return new WaitCommand(.25)
+                    .andThen(
+                            ChoreoFollowingFactory.instance.getPathFollowingCommand(
+                                    swerve,
+                                    traj.get(phaseIndex),
+                                    localization,
+                                    resetPose,
+                                    alliance))
                     .alongWith(ScoringSequences.coordinatedFloorIntake(intakePivot, intakeRoller));
         }
 
@@ -107,12 +114,24 @@ public class Autos {
     }
 
     private Command singleTrajectoryOnlyAuto(String trajName, boolean resetPoseToInitial) {
-        var traj = safeLoadTrajectory(trajName);
+        var maybeTraj = safeLoadTrajectory(trajName);
 
-        if (!traj.isPresent()) return new InstantCommand();
+        if (!maybeTraj.isPresent()) return new InstantCommand();
 
         return ChoreoFollowingFactory.instance.getPathFollowingCommand(
-                swerve, traj.get().get(0), localization, resetPoseToInitial, alliance);
+                swerve, maybeTraj.get().get(0), localization, resetPoseToInitial, alliance);
+    }
+
+    public Command justLeaveAmp() {
+        return singleTrajectoryOnlyAuto("justLeaveAmp", true);
+    }
+
+    public Command justLeaveCenter() {
+        return singleTrajectoryOnlyAuto("justLeaveCenter", true);
+    }
+
+    public Command justLeaveSource() {
+        return singleTrajectoryOnlyAuto("justLeaveSource", true);
     }
 
     public Command testPath() {
@@ -129,5 +148,19 @@ public class Autos {
 
     public Command threePieceMockup() {
         return singleTrajectoryOnlyAuto("threePieceMockup", true);
+    }
+
+    public Command testSegmentedPath() {
+        var maybeTraj = safeLoadTrajectory("testSegmentedPath");
+
+        if (!maybeTraj.isPresent()) return new InstantCommand();
+
+        AutoPhaseFactory factory =
+                new AutoPhaseFactory(swerve, intakePivot, maybeTraj.get(), localization, alliance);
+
+        return ScoringSequences.coordinatedSubwooferShot(shooter, intakePivot, intakeRoller)
+                .andThen(factory.floorTrajectoryPhase(0, true).withTimeout(2))
+                .andThen(factory.shootTrajectoryPhase(1, false))
+                .andThen(factory.stowTrajectoryPhase(2, false));
     }
 }

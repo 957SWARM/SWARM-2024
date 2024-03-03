@@ -24,7 +24,6 @@ import com.team957.comp2024.subsystems.shooter.Shooter;
 import com.team957.comp2024.subsystems.swerve.Swerve;
 import com.team957.comp2024.util.LimelightLib;
 import com.team957.lib.util.DeltaTimeUtil;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DataLogManager;
@@ -179,10 +178,14 @@ public class Robot extends TimedRobot implements Logged {
         ui.setDriverInputChangeCallback((driverInput) -> this.input = driverInput);
         ui.setOperatorInputChangeCallback((operatorInput) -> {});
 
-        ui.addAuto("testPath", autos.testPath());
-        ui.addAuto("fivePieceMockup", autos.fivePieceMockup());
-        ui.addAuto("fourPieceMockup", autos.fourPieceMockup());
-        ui.addAuto("threePieceMockup", autos.threePieceMockup());
+        ui.addAuto("Just Leave: Amp", autos.justLeaveAmp());
+        ui.addAuto("Just Leave: Center", autos.justLeaveCenter());
+        ui.addAuto("Just Leave: Source", autos.justLeaveSource());
+        ui.addAuto("Center Two Piece", autos.testSegmentedPath());
+        ui.addAuto("Test Path", autos.testPath());
+        ui.addAuto("Five Piece Mockup", autos.fivePieceMockup());
+        ui.addAuto("Four Piece Mockup", autos.fourPieceMockup());
+        ui.addAuto("Three Piece Mockup", autos.threePieceMockup());
 
         swerve.setDefaultCommand(
                 swerve.getFieldRelativeControlCommand(
@@ -219,6 +222,9 @@ public class Robot extends TimedRobot implements Logged {
 
         intakeEject = new Trigger(() -> input.raiseHook());
         intakeEject.whileTrue(intakeRoller.shooterHandoffUntilNoteGone());
+
+        climb = new Trigger(input::climb);
+        climb.onTrue(ScoringSequences.coordinatedAmpShot(pivot, intakeRoller));
 
         intakeSlowActive = new Trigger(input::slowIntake);
         intakeSlowActive.whileTrue(intakeRoller.slowIntake());
@@ -340,6 +346,8 @@ public class Robot extends TimedRobot implements Logged {
 
     @Override
     public void teleopInit() {
+        CommandScheduler.getInstance().cancelAll();
+
         // shooter.setDefaultCommand(shooter.idle());
 
         // Default commands
@@ -360,12 +368,7 @@ public class Robot extends TimedRobot implements Logged {
 
     @Override
     public void autonomousInit() {
-        // ui.getAuto().schedule();
-        otf.otfPathingCommand(
-                        swerve,
-                        () -> new Pose2d(1.35, 5.5, new Rotation2d()),
-                        poseEstimation::getPoseEstimate)
-                .schedule();
+        ui.getAuto().schedule();
     }
 
     @Log

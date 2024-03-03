@@ -131,8 +131,8 @@ public class Constants {
         public static final double SUBWOOFER_CONTROL_EFFORT_VOLTS = -9;
         public static final double HALF_COURT_CONTROL_EFFORT_VOLTS = -12;
 
-        public static final boolean leftMotorInverted = false;
-        public static final boolean rightMotorInverted = true;
+        public static final boolean leftMotorInverted = true;
+        public static final boolean rightMotorInverted = false;
         public static final boolean leftEncoderInverted = false;
         public static final boolean rightEncoderInverted = true;
     }

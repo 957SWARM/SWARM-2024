@@ -20,7 +20,8 @@ public class ScoringSequences {
                         intakeRoller
                                 .idle()
                                 .alongWith(intakePivot.toStow())
-                                .alongWith(shooter.idle()));
+                                .alongWith(shooter.idle())
+                                .withTimeout(.25));
     }
 
     public static Command coordinatedAmpShot(IntakePivot intakePivot, IntakeRoller intakeRoller) {
