@@ -3,7 +3,7 @@ package com.team957.comp2024.commands;
 import java.util.*;
 
 import com.team957.comp2024.Constants.VisionConstants;
-import com.team957.comp2024.LLlocalization;
+import com.team957.comp2024.peripherals.LLlocalization;
 import com.team957.comp2024.subsystems.swerve.Swerve;
 
 import edu.wpi.first.math.geometry.Pose2d;
