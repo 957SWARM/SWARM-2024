@@ -67,11 +67,11 @@ public abstract class IntakeRoller implements Subsystem, Logged {
     }
 
     public Command slowIntake() {
-        return run(() -> setRollerVoltage(2));
+        return run(() -> setRollerVoltage(IntakeRollerConstants.SLOW_RUN_VOLTAGE));
     }
 
     public Command slowEject() {
-        return run(() -> setRollerVoltage(-2));
+        return run(() -> setRollerVoltage(-IntakeRollerConstants.SLOW_RUN_VOLTAGE));
     }
 
     public Command shooterHandoff() {

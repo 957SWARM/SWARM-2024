@@ -79,4 +79,9 @@ public class SimKeyboardDriver implements DriverInput {
     public boolean shootAmp() {
         return false;
     }
+
+    @Override
+    public boolean pivotAmp() {
+        return false;
+    }
 }

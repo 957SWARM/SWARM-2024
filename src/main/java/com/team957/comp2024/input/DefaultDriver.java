@@ -101,4 +101,9 @@ public class DefaultDriver implements DriverInput {
     public void setRumble(boolean on) {
         xboxController.setRumble(RumbleType.kBothRumble, on ? 1 : 0);
     }
+
+    @Override
+    public boolean pivotAmp() {
+        return xboxController.getBButton();
+    }
 }

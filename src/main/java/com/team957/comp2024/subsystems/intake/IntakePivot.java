@@ -6,7 +6,6 @@ import com.team957.comp2024.Constants.MiscConstants;
 import com.team957.comp2024.UI;
 import com.team957.lib.controllers.feedback.PID;
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.trajectory.ExponentialProfile;
 import edu.wpi.first.math.trajectory.ExponentialProfile.Constraints;
 import edu.wpi.first.math.trajectory.ExponentialProfile.State;
@@ -71,19 +70,6 @@ public abstract class IntakePivot implements Subsystem, Logged {
 
     public Command getSysIdDynamic(boolean forward) {
         return routine.dynamic(forward ? Direction.kForward : Direction.kReverse);
-    }
-
-    public Command holdPosition() {
-        ArmFeedforward feedforward =
-                new ArmFeedforward(
-                        IntakePivotConstants.PLANT_KS,
-                        IntakePivotConstants.PLANT_KG,
-                        IntakePivotConstants.PLANT_KV,
-                        IntakePivotConstants.PLANT_KA);
-
-        return run(() -> setVoltage(feedforward.calculate(getPositionRadians(), 0)))
-                .withName("holdPosition");
-        // technically allows for some drift but fairly minor
     }
 
     public Command goToSetpoint(Supplier<Double> setpointRadians) {

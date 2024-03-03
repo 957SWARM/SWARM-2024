@@ -43,4 +43,6 @@ public interface DriverInput {
     public boolean intakePivotStow();
 
     public boolean shootAmp();
+
+    public boolean pivotAmp();
 }

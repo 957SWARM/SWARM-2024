@@ -94,10 +94,13 @@ public class Robot extends TimedRobot implements Logged {
     private Trigger resetFieldRelZero;
     private Trigger noteTracking;
 
-    private Trigger intakeStow;
     private Trigger speakerSequence;
     private Trigger intakeSequence;
-    private Trigger ampSequence;
+
+    private Trigger intakePivotAmp;
+    private Trigger intakePivotStow;
+
+    private Trigger shootAmp;
 
     private Trigger climbHookDown;
     private Trigger climbHookUp;
@@ -182,17 +185,14 @@ public class Robot extends TimedRobot implements Logged {
         intakeSequence = new Trigger(input::intakeSequence);
         intakeSequence.toggleOnTrue(ScoringSequences.coordinatedFloorIntake(pivot, intakeRoller));
 
-        intakeStow = new Trigger(input::intakePivotStow);
-        intakeStow.toggleOnTrue(pivot.toStow());
+        intakePivotStow = new Trigger(input::intakePivotStow);
+        intakePivotStow.toggleOnTrue(pivot.toStow());
 
-        climbHookDown = new Trigger(input::lowerHook);
-        climbHookDown.whileTrue(intakeRoller.floorIntakeUntilNote());
+        intakePivotAmp = new Trigger(input::pivotAmp);
+        intakePivotAmp.onTrue(pivot.toAmp());
 
-        climbHookUp = new Trigger(input::raiseHook);
-        climbHookUp.whileTrue(intakeRoller.shooterHandoffUntilNoteGone());
-
-        ampSequence = new Trigger(input::climbWinch);
-        ampSequence.onTrue(ScoringSequences.coordinatedAmpShot(pivot, intakeRoller));
+        shootAmp = new Trigger(input::shootAmp);
+        shootAmp.onTrue(intakeRoller.ampShotUntilNoteGone());
 
         intakeSlow = new Trigger(input::slowIntake);
         intakeSlow.whileTrue(intakeRoller.slowIntake());
