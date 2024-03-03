@@ -38,37 +38,50 @@ public class Autos {
             this.alliance = alliance;
         }
 
-        // TODO: safe load of potentially non-existent trajectory phases
         Command shootTrajectoryPhase(int phaseIndex, boolean resetPose) {
+            ChoreoTrajectory trajPhase;
+
+            try {
+                trajPhase = traj.get(phaseIndex);
+            } catch (IndexOutOfBoundsException e) {
+                return new InstantCommand();
+            }
+
             return ChoreoFollowingFactory.instance
-                    .getPathFollowingCommand(
-                            swerve, traj.get(phaseIndex), localization, resetPose, alliance)
+                    .getPathFollowingCommand(swerve, trajPhase, localization, resetPose, alliance)
                     .andThen(
                             ScoringSequences.coordinatedSubwooferShot(
                                     shooter, intakePivot, intakeRoller));
         }
 
         Command floorTrajectoryPhase(int phaseIndex, boolean resetPose) {
+            ChoreoTrajectory trajPhase;
+
+            try {
+                trajPhase = traj.get(phaseIndex);
+            } catch (IndexOutOfBoundsException e) {
+                return new InstantCommand();
+            }
+
             return new WaitCommand(.25)
                     .andThen(
                             ChoreoFollowingFactory.instance.getPathFollowingCommand(
-                                    swerve,
-                                    traj.get(phaseIndex),
-                                    localization,
-                                    resetPose,
-                                    alliance))
+                                    swerve, trajPhase, localization, resetPose, alliance))
                     .alongWith(ScoringSequences.coordinatedFloorIntake(intakePivot, intakeRoller));
         }
 
         Command stowTrajectoryPhase(int phaseIndex, boolean resetPose) {
-            return ChoreoFollowingFactory.instance
-                    .getPathFollowingCommand(
-                            swerve, traj.get(phaseIndex), localization, resetPose, alliance)
-                    .alongWith(pivot.toStow());
-        }
+            ChoreoTrajectory trajPhase;
 
-        Command lock() {
-            return swerve.lockDrivetrain().alongWith(pivot.toStow());
+            try {
+                trajPhase = traj.get(phaseIndex);
+            } catch (IndexOutOfBoundsException e) {
+                return new InstantCommand();
+            }
+
+            return ChoreoFollowingFactory.instance
+                    .getPathFollowingCommand(swerve, trajPhase, localization, resetPose, alliance)
+                    .alongWith(pivot.toStow());
         }
     }
 
