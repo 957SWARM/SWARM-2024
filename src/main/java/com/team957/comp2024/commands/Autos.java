@@ -40,7 +40,7 @@ public class Autos {
         }
 
         Command shootTrajectoryPhase(
-                int phaseIndex, boolean resetPose, double shotHeadStartSeconds) {
+                int phaseIndex, boolean resetPose, double shotHeadStartSeconds, double endTimeout) {
             ChoreoTrajectory trajPhase;
 
             try {
@@ -65,7 +65,8 @@ public class Autos {
                             new WaitCommand(startShotDelay)
                                     .andThen(
                                             ScoringSequences.coordinatedSubwooferShot(
-                                                    shooter, intakePivot, intakeRoller)));
+                                                    shooter, intakePivot, intakeRoller)))
+                    .withTimeout(following.timeSeconds() + endTimeout);
         }
 
         Command floorTrajectoryPhase(
@@ -193,8 +194,9 @@ public class Autos {
                 new AutoPhaseFactory(swerve, intakePivot, maybeTraj.get(), localization, alliance);
 
         return ScoringSequences.coordinatedSubwooferShot(shooter, intakePivot, intakeRoller)
+                .withTimeout(1)
                 .andThen(factory.floorTrajectoryPhase(0, true, .25, 2))
-                .andThen(factory.shootTrajectoryPhase(1, false, .25))
+                .andThen(factory.shootTrajectoryPhase(1, false, .25, .75))
                 .andThen(factory.stowTrajectoryPhase(2, false));
     }
 }
