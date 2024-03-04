@@ -5,10 +5,10 @@ import com.team957.comp2024.Constants.MiscConstants;
 import com.team957.comp2024.Constants.PDHConstants;
 import com.team957.comp2024.Constants.SwerveConstants;
 import com.team957.comp2024.commands.Autos;
-import com.team957.comp2024.commands.ChoreoFollowingFactory;
 import com.team957.comp2024.commands.LEDStripPatterns;
 import com.team957.comp2024.commands.NoteTargeting;
 import com.team957.comp2024.commands.ScoringSequences;
+import com.team957.comp2024.commands.TrajectoryFollowing;
 import com.team957.comp2024.input.DefaultDriver;
 import com.team957.comp2024.input.DriverInput;
 import com.team957.comp2024.input.SimKeyboardDriver;
@@ -55,7 +55,7 @@ public class Robot extends TimedRobot implements Logged {
     private final UI ui = UI.instance;
 
     @SuppressWarnings("unused")
-    private final ChoreoFollowingFactory trajectoryFollowing = ChoreoFollowingFactory.instance;
+    private final TrajectoryFollowing trajectoryFollowing = TrajectoryFollowing.instance;
 
     private final PDH pdh = new PDH(PDHConstants.STARTING_SWITCHABLE_CHANNEL_STATE);
 

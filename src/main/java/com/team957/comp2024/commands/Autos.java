@@ -2,7 +2,7 @@ package com.team957.comp2024.commands;
 
 import com.choreo.lib.Choreo;
 import com.choreo.lib.ChoreoTrajectory;
-import com.team957.comp2024.commands.ChoreoFollowingFactory.CommandWithTime;
+import com.team957.comp2024.commands.TrajectoryFollowing.CommandWithTime;
 import com.team957.comp2024.peripherals.LLlocalization;
 import com.team957.comp2024.subsystems.intake.IntakePivot;
 import com.team957.comp2024.subsystems.intake.IntakeRoller;
@@ -50,7 +50,7 @@ public class Autos {
             }
 
             CommandWithTime following =
-                    ChoreoFollowingFactory.instance.getPathFollowingCommand(
+                    TrajectoryFollowing.instance.getPathFollowingCommand(
                             swerve, trajPhase, localization, resetPose, alliance);
 
             double startShotDelay;
@@ -81,7 +81,7 @@ public class Autos {
 
             return new WaitCommand(pivotHeadStart > 0 ? pivotHeadStart : 0)
                     .andThen(
-                            ChoreoFollowingFactory.instance
+                            TrajectoryFollowing.instance
                                     .getPathFollowingCommand(
                                             swerve, trajPhase, localization, resetPose, alliance)
                                     .command())
@@ -98,7 +98,7 @@ public class Autos {
                 return new InstantCommand();
             }
 
-            return ChoreoFollowingFactory.instance
+            return TrajectoryFollowing.instance
                     .getPathFollowingCommand(swerve, trajPhase, localization, resetPose, alliance)
                     .command()
                     .alongWith(pivot.toStow());
@@ -151,7 +151,7 @@ public class Autos {
 
         if (!maybeTraj.isPresent()) return new InstantCommand();
 
-        return ChoreoFollowingFactory.instance
+        return TrajectoryFollowing.instance
                 .getPathFollowingCommand(
                         swerve, maybeTraj.get().get(0), localization, resetPoseToInitial, alliance)
                 .command();
