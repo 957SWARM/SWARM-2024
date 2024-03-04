@@ -201,6 +201,8 @@ public class Constants {
         public static final int CURRENT_LIMIT = 40;
         // positive = going up. negative = going down.
         public static final boolean MOTOR_INVERTED = false;
+
+        public static final double IDLE_VOLTAGE = -2;
     }
 
     public static final class OIConstants {
@@ -210,7 +212,7 @@ public class Constants {
     public static final class WinchConstants {
         // CAN ID not set
         public static final int MOTOR_CANID = 14;
-        public static final double STANDARD_VOLTAGE = 6;
+        public static final double STANDARD_VOLTAGE = 12;
         public static final int CURRENT_LIMIT = 40;
         // positive = going up. negative = going down.
         public static final boolean MOTOR_INVERTED = false;

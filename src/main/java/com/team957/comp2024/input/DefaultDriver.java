@@ -84,7 +84,7 @@ public class DefaultDriver implements DriverInput {
 
     @Override
     public boolean climbWinch() {
-        return xboxController.getBButton();
+        return xboxController.getRawButton(7);
     }
 
     @Override

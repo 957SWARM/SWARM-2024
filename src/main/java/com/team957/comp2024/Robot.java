@@ -158,6 +158,7 @@ public class Robot extends TimedRobot implements Logged {
         ui.addAuto("Just Leave: Source", autos.justLeaveSource());
         ui.addAuto("Center Two Piece", autos.centerTwoPiece());
         ui.addAuto("Center Four Piece", autos.centerFourPiece());
+        ui.addAuto("Source Far Three Piece", autos.sourceFarThreePiece());
         ui.addAuto("Test Path", autos.testPath());
         ui.addAuto("Five Piece Mockup", autos.fivePieceMockup());
         ui.addAuto("Four Piece Mockup", autos.fourPieceMockup());
@@ -218,14 +219,14 @@ public class Robot extends TimedRobot implements Logged {
                         () -> input.swerveRot(),
                         () -> fieldRelRotationOffset));
 
-        // climbHookUp = new Trigger(input::raiseHook);
-        // climbHookUp.onTrue(boxClimber.raiseCommand());
+        climbHookUp = new Trigger(input::raiseHook);
+        climbHookUp.whileTrue(boxClimber.raiseCommand());
 
-        // climbHookDown = new Trigger(input::lowerHook);
-        // climbHookDown.onTrue(boxClimber.lowerCommand());
+        climbHookDown = new Trigger(input::lowerHook);
+        climbHookDown.whileTrue(boxClimber.lowerCommand());
 
-        // climbWinch = new Trigger(input::climbWinch);
-        // climbWinch.onTrue(winch.raiseCommand());
+        climbWinch = new Trigger(input::climbWinch);
+        climbWinch.whileTrue(winch.raiseCommand().alongWith(shooter.off()));
 
         resetFieldRelZero = new Trigger(input::zeroGyro);
 
