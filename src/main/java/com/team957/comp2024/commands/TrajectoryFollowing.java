@@ -129,14 +129,14 @@ public class TrajectoryFollowing implements Logged {
     // pose is locked in at command scheduling, relative to the localized pose at that time.
     public Command driveToRelativePose(
             Swerve swerve, Supplier<Pose2d> localization, Supplier<Transform2d> setpoint) {
-        final PID xController = new PID(AutoConstants.LINEAR_PATHFINDING_GAINS, 0);
-        final PID yController = new PID(AutoConstants.LINEAR_PATHFINDING_GAINS, 0);
-        final PID thetaController = new PID(AutoConstants.ROTATIONAL_PATHFINDING_GAINS, 0);
+        final PID xController = new PID(AutoConstants.LINEAR_GAINS_NO_FF, 0);
+        final PID yController = new PID(AutoConstants.LINEAR_GAINS_NO_FF, 0);
+        final PID thetaController = new PID(AutoConstants.ROTATIONAL_GAINS_NO_FF, 0);
 
         final ChoreoControlFunction controlFunc =
                 alternateControlFunction(xController, yController, thetaController);
 
-        return swerve.runOnce(
+        return Commands.runOnce(
                         () -> {
                             poseSetpoint = localization.get().transformBy(setpoint.get());
                             referenceState =

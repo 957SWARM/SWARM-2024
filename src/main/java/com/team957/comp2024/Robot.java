@@ -25,6 +25,7 @@ import com.team957.comp2024.util.LimelightLib;
 import com.team957.lib.util.DeltaTimeUtil;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -35,7 +36,9 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import java.util.ConcurrentModificationException;
 import monologue.Annotations.Log;
 import monologue.Logged;
 import monologue.Monologue;
@@ -119,6 +122,9 @@ public class Robot extends TimedRobot implements Logged {
     private final Alert canUtil = new Alert("High CAN utilization!", AlertType.WARNING);
     private final Alert practiceBot =
             new Alert("Using practice robot constants!", AlertType.WARNING);
+    private final Alert loopSkipped =
+            new Alert(
+                    "Handling concurrency error: CommandScheduler loop skipped!", AlertType.ERROR);
 
     @Log
     public boolean isCompetitionRobot() {
@@ -191,7 +197,17 @@ public class Robot extends TimedRobot implements Logged {
         intakePivotStow.toggleOnTrue(pivot.toStow());
 
         intakePivotAmp = new Trigger(input::pivotAmp);
-        intakePivotAmp.onTrue(pivot.toAmp());
+        intakePivotAmp.onTrue(
+                TrajectoryFollowing.instance
+                        .driveToRelativePose(
+                                swerve,
+                                poseEstimation::getPoseEstimate,
+                                () -> new Transform2d(.09, 0, new Rotation2d()))
+                        .alongWith(
+                                pivot.toAmp()
+                                        .alongWith(
+                                                new WaitCommand(1).andThen(intakeRoller.ampShot())))
+                        .withTimeout(2));
 
         shootAmp = new Trigger(input::shootAmp);
         shootAmp.onTrue(intakeRoller.ampShotUntilNoteGone());
@@ -241,7 +257,12 @@ public class Robot extends TimedRobot implements Logged {
     }
 
     public void loop() {
-        CommandScheduler.getInstance().run();
+        try {
+            CommandScheduler.getInstance().run();
+            loopSkipped.set(false);
+        } catch (ConcurrentModificationException e) {
+            loopSkipped.set(true);
+        } // something deep in wpilib internals
 
         double dtSeconds = dt.getTimeSecondsSinceLastCall();
 
