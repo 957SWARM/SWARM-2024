@@ -140,6 +140,9 @@ public class Constants {
         public static final PIDConstants LINEAR_PATHFINDING_GAINS = new PIDConstants(10, 0, 0);
         public static final PIDConstants ROTATIONAL_PATHFINDING_GAINS = new PIDConstants(10, 0, 0);
 
+        public static final PIDConstants LINEAR_GAINS_NO_FF = new PIDConstants(3, 0, 0);
+        public static final PIDConstants ROTATIONAL_GAINS_NO_FF = new PIDConstants(3, 0, 0);
+
         public static final double DEFAULT_PIVOT_DELAY_SECONDS = 0.5;
 
         public static final double PROFILE_OVERRUN_TOLERANCE_SECONDS = 0.4;
@@ -178,7 +181,7 @@ public class Constants {
         public static final double FLOOR_INTAKE_ANGLE_RADIANS = Units.degreesToRadians(326.6);
         public static final double STOW_INTAKE_ANGLE_RADIANS = Units.degreesToRadians(120);
         public static final double HANDOFF_INTAKE_ANGLE_RADIANS = Units.degreesToRadians(158.428);
-        public static final double AMP_INTAKE_ANGLE_RADIANS = Units.degreesToRadians(75);
+        public static final double AMP_INTAKE_ANGLE_RADIANS = Units.degreesToRadians(70);
 
         public static final int INTAKE_PIVOT_MOTOR_CANID = 11;
 
@@ -225,7 +228,7 @@ public class Constants {
 
         public static final double FLOOR_INTAKE_VOLTAGE = 6;
         public static final double SHOOTER_HANDOFF_VOLTAGE = -9;
-        public static final double AMP_SHOT_VOLTAGE = -12;
+        public static final double AMP_SHOT_VOLTAGE = -6;
         public static final double SLOW_RUN_VOLTAGE = 2;
         public static final double CENTERING_VOLTAGE = .5;
 
@@ -239,6 +242,10 @@ public class Constants {
 
         public static final double SIM_MOCK_OUTTAKE_DELAY_SECONDS = 0.5;
         public static final double SIM_MOCK_INTAKE_DELAY_SECONDS = 0.5;
+
+        public static final double CENTERING_REVERSAL_HYSTERESIS_METERS = .01; // 10mm
+
+        public static final double CENTERING_PULSE_VOLTAGE = 2;
     }
 
     public static final class AlertConstants {

@@ -7,7 +7,6 @@ import com.revrobotics.CANSparkMax;
 import com.team957.comp2024.Constants;
 import com.team957.comp2024.Constants.IntakeRollerConstants;
 import com.team957.comp2024.util.SparkMaxUtils;
-import monologue.Annotations.Log;
 
 public class IntakeRollerHW extends IntakeRoller {
     double tofReadingMeters = 0;
@@ -59,7 +58,7 @@ public class IntakeRollerHW extends IntakeRoller {
     public void setSimulationNoteIsPresentMock(boolean mock) {}
 
     // may be stale
-    @Log
+    @Override
     public double getTofReadingMeters() {
         return tofReadingMeters;
     }
