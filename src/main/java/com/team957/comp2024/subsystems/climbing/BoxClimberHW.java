@@ -16,7 +16,6 @@ public class BoxClimberHW extends BoxClimber {
 
         climbMotor.configPeakCurrentLimit(BoxClimberConstants.CURRENT_LIMIT);
 
-        
         climbMotor.setInverted(BoxClimberConstants.MOTOR_INVERTED);
 
         climbMotor.setNeutralMode(NeutralMode.Brake);
