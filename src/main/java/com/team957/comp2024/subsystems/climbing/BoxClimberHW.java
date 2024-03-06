@@ -1,6 +1,7 @@
 package com.team957.comp2024.subsystems.climbing;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.team957.comp2024.Constants.BoxClimberConstants;
 
@@ -15,7 +16,10 @@ public class BoxClimberHW extends BoxClimber {
 
         climbMotor.configPeakCurrentLimit(BoxClimberConstants.CURRENT_LIMIT);
 
+        
         climbMotor.setInverted(BoxClimberConstants.MOTOR_INVERTED);
+
+        climbMotor.setNeutralMode(NeutralMode.Brake);
     }
 
     @Override
