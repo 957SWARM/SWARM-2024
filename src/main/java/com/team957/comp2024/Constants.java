@@ -242,6 +242,10 @@ public class Constants {
 
         public static final double SIM_MOCK_OUTTAKE_DELAY_SECONDS = 0.5;
         public static final double SIM_MOCK_INTAKE_DELAY_SECONDS = 0.5;
+
+        public static final double CENTERING_REVERSAL_HYSTERESIS_METERS = .01; // 10mm
+
+        public static final double CENTERING_PULSE_VOLTAGE = 2;
     }
 
     public static final class AlertConstants {

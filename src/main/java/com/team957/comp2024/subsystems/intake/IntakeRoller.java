@@ -32,6 +32,9 @@ public abstract class IntakeRoller implements Subsystem, Logged {
         return debouncedNotePresent;
     }
 
+    @Log.NT
+    public abstract double getTofReadingMeters();
+
     public abstract void setSimulationNoteIsPresentMock(boolean mock);
 
     protected IntakeRoller() {
