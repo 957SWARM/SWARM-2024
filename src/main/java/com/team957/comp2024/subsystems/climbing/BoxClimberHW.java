@@ -14,7 +14,6 @@ public class BoxClimberHW extends BoxClimber {
         // talons
         climbMotor.clearStickyFaults();
 
-
         climbMotor.configPeakCurrentLimit(BoxClimberConstants.CURRENT_LIMIT);
         climbMotor.enableCurrentLimit(true);
 
