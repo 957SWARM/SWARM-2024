@@ -178,7 +178,7 @@ public class Constants {
 
         public static final double PIVOT_TO_TIP_METERS = Units.inchesToMeters(14);
 
-        public static final double FLOOR_INTAKE_ANGLE_RADIANS = Units.degreesToRadians(326.6);
+        public static final double FLOOR_INTAKE_ANGLE_RADIANS = Units.degreesToRadians(327.5);
         public static final double STOW_INTAKE_ANGLE_RADIANS = Units.degreesToRadians(120);
         public static final double HANDOFF_INTAKE_ANGLE_RADIANS = Units.degreesToRadians(158.428);
         public static final double AMP_INTAKE_ANGLE_RADIANS = Units.degreesToRadians(70);
@@ -201,11 +201,11 @@ public class Constants {
         public static final double STANDARD_VOLTAGE = 6;
         // CAN ID not set
         public static final int MOTOR_CANID = 13;
-        public static final int CURRENT_LIMIT = 40;
+        public static final int CURRENT_LIMIT = 20;
         // positive = going up. negative = going down.
         public static final boolean MOTOR_INVERTED = false;
 
-        public static final double IDLE_VOLTAGE = -2;
+        public static final double IDLE_VOLTAGE = -4;
     }
 
     public static final class OIConstants {

@@ -92,7 +92,7 @@ public class Robot extends TimedRobot implements Logged {
     private DriverInput input;
 
     private final NoteTargeting noteTargeting =
-            new NoteTargeting(swerve, poseEstimation, "limelight");
+            new NoteTargeting(swerve, poseEstimation, "limelight-note");
 
     private Trigger resetFieldRelZero;
     private Trigger noteTracking;
@@ -153,7 +153,7 @@ public class Robot extends TimedRobot implements Logged {
             input = new SimKeyboardDriver();
         }
 
-        LimelightLib.setPipelineIndex("limelight", 4);
+        LimelightLib.setPipelineIndex("limelight-note", 4);
 
         Monologue.setupMonologue(this, "Robot", false, true);
 
@@ -261,10 +261,12 @@ public class Robot extends TimedRobot implements Logged {
         ledEndGame.whileTrue(led.endGameCommand(0, 50, .100, false));
 
         ledNotePickup = new Trigger(() -> intakeRoller.debouncedNoteIsPresent());
-        ledNotePickup.whileTrue(
-                led.notePickupCommand(0, 50)
-                        .withTimeout(2)
-                        .andThen(led.noteInRobotCommand(0, 50, .1, isAutonomous())));
+        ledNotePickup
+                .onTrue(
+                        led.notePickupCommand(0, 50)
+                                .withTimeout(2)
+                                .andThen(led.noteInRobotCommand(0, 50, .1, isAutonomous())))
+                .onFalse(led.allianceColor(0, 50));
 
         fastLoop.startPeriodic(MiscConstants.NOMINAL_LOOP_TIME_SECONDS);
     }

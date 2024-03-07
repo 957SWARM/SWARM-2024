@@ -215,7 +215,7 @@ public class Autos {
                 .andThen(factory.floorTrajectoryPhase(2, false, 0.25, 2))
                 .andThen(factory.shootTrajectoryPhase(3, false, 0.5, 0.75))
                 .andThen(factory.floorTrajectoryPhase(4, false, 0, 2))
-                .andThen(factory.shootTrajectoryPhase(5, false, 0.5, 0.75))
+                .andThen(factory.shootTrajectoryPhase(5, false, 0.25, 1))
                 .andThen(factory.stowTrajectoryPhase(6, false));
     }
 
@@ -230,7 +230,7 @@ public class Autos {
         return ScoringSequences.coordinatedSubwooferShot(shooter, intakePivot, intakeRoller)
                 .withTimeout(1)
                 .andThen(factory.floorTrajectoryPhase(0, true, 0, 5))
-                .andThen(factory.shootTrajectoryPhase(1, true, 0.5, 0.75))
+                .andThen(factory.shootTrajectoryPhase(1, false, 0.5, 0.75))
                 .andThen(factory.floorTrajectoryPhase(2, false, .25, 5))
                 .andThen(factory.shootTrajectoryPhase(3, false, 0.5, 0.75))
                 .andThen(factory.stowTrajectoryPhase(4, false));

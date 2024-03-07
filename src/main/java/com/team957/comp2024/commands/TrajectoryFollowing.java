@@ -35,7 +35,8 @@ public class TrajectoryFollowing implements Logged {
     @Log.NT private Pose2d poseSetpoint = new Pose2d();
 
     @Log.NT
-    private ChoreoTrajectoryState referenceState = new ChoreoTrajectoryState(0, 0, 0, 0, 0, 0, 0);
+    private ChoreoTrajectoryState referenceState =
+            new ChoreoTrajectoryState(0.01, 0, 0, 0, 0, 0, 0);
 
     private ChoreoControlFunction alternateControlFunction(PID x, PID y, PID theta) {
         return (pose, referenceState) -> {
