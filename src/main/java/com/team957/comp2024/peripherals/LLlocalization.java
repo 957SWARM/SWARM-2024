@@ -44,7 +44,6 @@ public class LLlocalization implements Logged {
 
         return flipped;
     }
-    ;
 
     public LLlocalization(
             SwerveDriveKinematics kinematics,

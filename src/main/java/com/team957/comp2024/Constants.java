@@ -108,7 +108,7 @@ public class Constants {
 
         public static final int BACK_LEFT_DRIVE_CANID = 5;
         public static final int BACK_LEFT_STEER_CANID = 6;
-        public static final double BACK_LEFT_STEER_OFFSET_RADIANS = 0.527;
+        public static final double BACK_LEFT_STEER_OFFSET_RADIANS = 0.478;
         public static final boolean BACK_LEFT_DRIVE_INVERTED = false;
         public static final double PRACTICE_BACK_LEFT_STEER_OFFSET_RADIANS = 6.27;
 

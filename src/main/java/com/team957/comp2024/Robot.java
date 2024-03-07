@@ -114,6 +114,9 @@ public class Robot extends TimedRobot implements Logged {
 
     private Trigger onGetNote;
 
+    private Trigger ledEndGame;
+    private Trigger ledNotePickup;
+
     private double fieldRelRotationOffset = 0;
 
     private final Notifier fastLoop = new Notifier(this::loop);
@@ -185,6 +188,7 @@ public class Robot extends TimedRobot implements Logged {
         intakeRoller.setDefaultCommand(intakeRoller.idle());
         boxClimber.setDefaultCommand(boxClimber.idleCommand());
         winch.setDefaultCommand(winch.idleCommand());
+        led.scheduleDefaultCommand(led.allianceColor(0, 50));
 
         speakerSequence = new Trigger(input::speakerSequence);
         speakerSequence.toggleOnTrue(
@@ -253,6 +257,15 @@ public class Robot extends TimedRobot implements Logged {
                                     poseEstimation.getRotationEstimate().getRadians();
                         }));
 
+        ledEndGame = new Trigger(() -> DriverStation.getMatchTime() <= 20);
+        ledEndGame.whileTrue(led.endGameCommand(0, 50, .100, false));
+
+        ledNotePickup = new Trigger(() -> intakeRoller.debouncedNoteIsPresent());
+        ledNotePickup.whileTrue(
+                led.notePickupCommand(0, 50)
+                        .withTimeout(2)
+                        .andThen(led.noteInRobotCommand(0, 50, .1, isAutonomous())));
+
         fastLoop.startPeriodic(MiscConstants.NOMINAL_LOOP_TIME_SECONDS);
     }
 
@@ -288,7 +301,8 @@ public class Robot extends TimedRobot implements Logged {
     @Override
     public void teleopInit() {
         CommandScheduler.getInstance().cancelAll();
-        led.endGameCommand(0, 50, .100, false).schedule();
+        // led.endGameCommand(0, 50, .100, false).schedule();
+        // led.scheduleDefaultCommand(led.allianceColor(0, 0));
     }
 
     @Override
