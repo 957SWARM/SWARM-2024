@@ -235,4 +235,18 @@ public class Autos {
                 .andThen(factory.shootTrajectoryPhase(3, false, 0.5, 0.75))
                 .andThen(factory.stowTrajectoryPhase(4, false));
     }
+
+    public Command sourceTwoPiece() {
+        var maybeTraj = safeLoadTrajectory("sourceTwoPiece");
+
+        if (!maybeTraj.isPresent()) return new InstantCommand();
+
+        AutoPhaseFactory factory =
+                new AutoPhaseFactory(swerve, intakePivot, maybeTraj.get(), localization, alliance);
+
+        return ScoringSequences.coordinatedSubwooferShot(shooter, intakePivot, intakeRoller)
+                .withTimeout(1)
+                .andThen(factory.floorTrajectoryPhase(0, true, 0, 5))
+                .andThen(factory.shootTrajectoryPhase(1, false, 0.5, 0.75));
+    }
 }
