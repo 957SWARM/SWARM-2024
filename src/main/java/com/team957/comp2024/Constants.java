@@ -246,6 +246,9 @@ public class Constants {
         public static final double CENTERING_REVERSAL_HYSTERESIS_METERS = .01; // 10mm
 
         public static final double CENTERING_PULSE_VOLTAGE = 2;
+
+        public static final int STALENESS_THRESHOLD_CYCLES =
+                5; // reports stale data fault if reported value is identical for this many cycles
     }
 
     public static final class AlertConstants {
@@ -307,5 +310,14 @@ public class Constants {
 
         // coordinatedFloorIntake
         public static final double ROLLER_DELAY = .1;
+    }
+
+    public static final class SparkMaxAlertsConstants {
+        public static final double OVERTEMPERATURE_THRESHOLD_C = 60;
+
+        public static final int VOLTAGE_MEASUREMENT_STALENESS_THRESHOLD = 5;
+
+        public static final double SUSPICIOUS_TEMPERATURE_RATE =
+                50; // 50 celsius / second is not going to happen, ever
     }
 }
