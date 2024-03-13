@@ -12264,7 +12264,7 @@
             "eventMarkers": [],
             "isTrajectoryStale": false
         },
-        "wideCenterFourPiece": {
+        "narrowCenterFourPiece": {
             "waypoints": [
                 {
                     "x": 1.320634365081787,
@@ -13543,37 +13543,43 @@
                     "scope": [
                         "first"
                     ],
-                    "type": "StopPoint"
+                    "type": "StopPoint",
+                    "direction": 0
                 },
                 {
                     "scope": [
                         0
                     ],
-                    "type": "StopPoint"
+                    "type": "StopPoint",
+                    "direction": 0
                 },
                 {
                     "scope": [
                         2
                     ],
-                    "type": "StopPoint"
+                    "type": "StopPoint",
+                    "direction": 0
                 },
                 {
                     "scope": [
                         4
                     ],
-                    "type": "StopPoint"
+                    "type": "StopPoint",
+                    "direction": 0
                 },
                 {
                     "scope": [
                         6
                     ],
-                    "type": "StopPoint"
+                    "type": "StopPoint",
+                    "direction": 0
                 },
                 {
                     "scope": [
                         "last"
                     ],
-                    "type": "StopPoint"
+                    "type": "StopPoint",
+                    "direction": 0
                 }
             ],
             "usesControlIntervalGuessing": true,

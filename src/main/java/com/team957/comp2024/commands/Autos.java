@@ -269,8 +269,9 @@ public class Autos {
                 .withTimeout(1);
     }
 
-    public Command wideFourPiece() {
-        var maybeTraj = safeLoadTrajectory("wideCenterFourPiece");
+    // avoids going wide, more straight lines
+    public Command narrowFourPiece() {
+        var maybeTraj = safeLoadTrajectory("narrowCenterFourPiece");
 
         if (!maybeTraj.isPresent()) return new InstantCommand();
 
