@@ -19,6 +19,7 @@ import com.team957.comp2024.subsystems.climbing.BoxClimber;
 import com.team957.comp2024.subsystems.climbing.Winch;
 import com.team957.comp2024.subsystems.intake.IntakePivot;
 import com.team957.comp2024.subsystems.intake.IntakeRoller;
+import com.team957.comp2024.subsystems.led.LED;
 import com.team957.comp2024.subsystems.shooter.Shooter;
 import com.team957.comp2024.subsystems.swerve.Swerve;
 import com.team957.comp2024.util.LimelightLib;
@@ -74,7 +75,8 @@ public class Robot extends TimedRobot implements Logged {
 
     private final Winch winch = Winch.getWinch(isReal());
 
-    private final LEDStripPatterns led = new LEDStripPatterns();
+    private final LED led = new LED(Constants.LEDConstants.TOTAL_PIXELS);
+    private final LEDStripPatterns ledPatterns = new LEDStripPatterns();
 
     private final DeltaTimeUtil dt = new DeltaTimeUtil();
 
@@ -194,7 +196,7 @@ public class Robot extends TimedRobot implements Logged {
         intakeRoller.setDefaultCommand(intakeRoller.idle());
         boxClimber.setDefaultCommand(boxClimber.stop());
         winch.setDefaultCommand(winch.idleCommand());
-        led.scheduleDefaultCommand(led.allianceColor(0, 50));
+        led.setDefaultCommand(ledPatterns.allianceColor(led, this::getAlliance));
 
         speakerSequence = new Trigger(input::speakerSequence);
         speakerSequence.toggleOnTrue(
@@ -267,15 +269,16 @@ public class Robot extends TimedRobot implements Logged {
                         }));
 
         ledEndGame = new Trigger(() -> DriverStation.getMatchTime() <= 20);
-        ledEndGame.whileTrue(led.endGameCommand(0, 50, .100, false));
+        ledEndGame.whileTrue(ledPatterns.endGameCommand(led, .100, false));
 
         ledNotePickup = new Trigger(() -> intakeRoller.debouncedNoteIsPresent());
         ledNotePickup
                 .onTrue(
-                        led.notePickupCommand(0, 50)
+                        ledPatterns
+                                .notePickupCommand(led)
                                 .withTimeout(2)
-                                .andThen(led.noteInRobotCommand(0, 50, .1, isAutonomous())))
-                .onFalse(led.allianceColor(0, 50));
+                                .andThen(ledPatterns.noteInRobotCommand(led, .1, isAutonomous())))
+                .onFalse(ledPatterns.allianceColor(led, this::getAlliance));
 
         fastLoop.startPeriodic(MiscConstants.NOMINAL_LOOP_TIME_SECONDS);
     }
