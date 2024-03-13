@@ -278,12 +278,43 @@ public class Autos {
         AutoPhaseFactory factory =
                 new AutoPhaseFactory(swerve, intakePivot, maybeTraj.get(), localization, alliance);
 
-        return factory.driveTrajectoryPhase(0, false)
-                .andThen(factory.driveTrajectoryPhase(1, false))
-                .andThen(factory.driveTrajectoryPhase(2, false))
-                .andThen(factory.driveTrajectoryPhase(3, false))
-                .andThen(factory.driveTrajectoryPhase(4, false))
-                .andThen(factory.driveTrajectoryPhase(5, false))
-                .andThen(factory.driveTrajectoryPhase(6, false));
+        return factory.driveTrajectoryPhase(0, true) // floor
+                .andThen(factory.driveTrajectoryPhase(1, false)) // shoot
+                .andThen(factory.driveTrajectoryPhase(2, false)) // floor
+                .andThen(factory.driveTrajectoryPhase(3, false)) // shoot
+                .andThen(factory.driveTrajectoryPhase(4, false)) // floor
+                .andThen(factory.driveTrajectoryPhase(5, false)) // shoot
+                .andThen(factory.driveTrajectoryPhase(6, false)); // stow
+    }
+
+    public Command centerThreePiece() {
+        var maybeTraj = safeLoadTrajectory("centerThreePiece");
+
+        if (!maybeTraj.isPresent()) return new InstantCommand();
+
+        AutoPhaseFactory factory =
+                new AutoPhaseFactory(swerve, intakePivot, maybeTraj.get(), localization, alliance);
+
+        return factory.driveTrajectoryPhase(0, true) // floor
+                .andThen(factory.driveTrajectoryPhase(1, false)) // shoot
+                .andThen(factory.driveTrajectoryPhase(2, false)) // floor
+                .andThen(factory.driveTrajectoryPhase(3, false)) // shoot
+                .andThen(factory.driveTrajectoryPhase(4, false)); // stow
+    }
+
+    public Command ampThreePiece() {
+        var maybeTraj = safeLoadTrajectory("ampThreePiece");
+
+        if (!maybeTraj.isPresent()) return new InstantCommand();
+
+        AutoPhaseFactory factory =
+                new AutoPhaseFactory(swerve, intakePivot, maybeTraj.get(), localization, alliance);
+
+        return ScoringSequences.coordinatedSubwooferShot(shooter, intakePivot, intakeRoller)
+                .withTimeout(1)
+                .andThen(factory.floorTrajectoryPhase(0, true, 0, 5)) // floor
+                .andThen(factory.shootTrajectoryPhase(1, false, 0.5, 0.75)) // shoot
+                .andThen(factory.floorTrajectoryPhase(2, true, 0, 5)) // floor
+                .andThen(factory.shootTrajectoryPhase(3, false, 0.5, 0.75)); // shoot
     }
 }

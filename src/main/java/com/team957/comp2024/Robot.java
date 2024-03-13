@@ -170,7 +170,9 @@ public class Robot extends TimedRobot implements Logged {
         ui.addAuto("Center Four Piece", autos.centerFourPiece());
         ui.addAuto("Source Two Piece", autos.sourceTwoPiece());
         ui.addAuto("Just Shoot", autos.justShoot());
-        ui.addAuto("Wide Center Four Piece", autos.narrowFourPiece());
+        ui.addAuto("Narrow Center Four Piece", autos.narrowFourPiece());
+        ui.addAuto("Center Three Piece", autos.centerThreePiece());
+        ui.addAuto("Amp Three Piece}", autos.ampThreePiece());
         // ui.addAuto("Source Far Three Piece", autos.sourceFarThreePiece());
         // ui.addAuto("Test Path", autos.testPath());
         // ui.addAuto("Five Piece Mockup", autos.fivePieceMockup());
@@ -322,6 +324,8 @@ public class Robot extends TimedRobot implements Logged {
     @Override
     public void disabledInit() {
         CommandScheduler.getInstance().cancelAll();
+
+        swerve.lockDrivetrain().ignoringDisable(true);
     }
 
     @Override
