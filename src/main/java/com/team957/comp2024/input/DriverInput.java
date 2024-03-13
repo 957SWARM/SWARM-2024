@@ -45,4 +45,6 @@ public interface DriverInput {
     public boolean shootAmp();
 
     public boolean pivotAmp();
+
+    public boolean toggleClimbRetract();
 }

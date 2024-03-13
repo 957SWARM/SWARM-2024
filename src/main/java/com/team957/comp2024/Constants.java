@@ -228,7 +228,7 @@ public class Constants {
 
         public static final double FLOOR_INTAKE_VOLTAGE = 6;
         public static final double SHOOTER_HANDOFF_VOLTAGE = -9;
-        public static final double AMP_SHOT_VOLTAGE = -6;
+        public static final double AMP_SHOT_VOLTAGE = -4;
         public static final double SLOW_RUN_VOLTAGE = 2;
         public static final double CENTERING_VOLTAGE = .5;
 

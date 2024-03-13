@@ -106,4 +106,9 @@ public class DefaultDriver implements DriverInput {
     public boolean pivotAmp() {
         return xboxController.getBButton();
     }
+
+    @Override
+    public boolean toggleClimbRetract() {
+        return (xboxController.getPOV() == 90);
+    }
 }

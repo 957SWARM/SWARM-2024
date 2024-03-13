@@ -108,6 +108,7 @@ public class Robot extends TimedRobot implements Logged {
     private Trigger climbHookDown;
     private Trigger climbHookUp;
     private Trigger climbWinch;
+    private Trigger climbRetract;
 
     private Trigger intakeSlow;
     private Trigger outakeSlow;
@@ -168,6 +169,8 @@ public class Robot extends TimedRobot implements Logged {
         ui.addAuto("Center Two Piece", autos.centerTwoPiece());
         ui.addAuto("Center Four Piece", autos.centerFourPiece());
         ui.addAuto("Source Two Piece", autos.sourceTwoPiece());
+        ui.addAuto("Just Shoot", autos.justShoot());
+        ui.addAuto("Wide Center Four Piece", autos.wideFourPiece());
         // ui.addAuto("Source Far Three Piece", autos.sourceFarThreePiece());
         // ui.addAuto("Test Path", autos.testPath());
         // ui.addAuto("Five Piece Mockup", autos.fivePieceMockup());
@@ -187,7 +190,7 @@ public class Robot extends TimedRobot implements Logged {
         pivot.setDefaultCommand(pivot.toStow());
         shooter.setDefaultCommand(shooter.idle());
         intakeRoller.setDefaultCommand(intakeRoller.idle());
-        boxClimber.setDefaultCommand(boxClimber.idleCommand());
+        boxClimber.setDefaultCommand(boxClimber.stop());
         winch.setDefaultCommand(winch.idleCommand());
         led.scheduleDefaultCommand(led.allianceColor(0, 50));
 
@@ -249,6 +252,9 @@ public class Robot extends TimedRobot implements Logged {
         climbWinch = new Trigger(input::climbWinch);
         climbWinch.whileTrue(winch.raiseCommand().alongWith(shooter.off()));
 
+        climbRetract = new Trigger(input::toggleClimbRetract);
+        climbRetract.toggleOnTrue(boxClimber.stop()).toggleOnFalse(boxClimber.idleCommand());
+
         resetFieldRelZero = new Trigger(input::zeroGyro);
 
         resetFieldRelZero.onTrue(
@@ -278,7 +284,12 @@ public class Robot extends TimedRobot implements Logged {
             loopSkipped.set(false);
         } catch (ConcurrentModificationException e) {
             loopSkipped.set(true);
-        } // something deep in wpilib internals
+        }
+        // catch (IndexOutOfBoundsException e){
+        //         CommandScheduler.getInstance().cancelAll();
+        // }
+
+        // something deep in wpilib internals
 
         double dtSeconds = dt.getTimeSecondsSinceLastCall();
 

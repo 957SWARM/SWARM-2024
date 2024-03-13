@@ -84,4 +84,10 @@ public class SimKeyboardDriver implements DriverInput {
     public boolean pivotAmp() {
         return false;
     }
+
+    @Override
+    public boolean toggleClimbRetract() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'toggleClimbRetract'");
+    }
 }

@@ -103,6 +103,20 @@ public class Autos {
                     .command()
                     .alongWith(pivot.toStow());
         }
+
+        Command driveTrajectoryPhase(int phaseIndex, boolean resetPose) {
+            ChoreoTrajectory trajPhase;
+
+            try {
+                trajPhase = traj.get(phaseIndex);
+            } catch (IndexOutOfBoundsException e) {
+                return new InstantCommand();
+            }
+
+            return TrajectoryFollowing.instance
+                    .getPathFollowingCommand(swerve, trajPhase, localization, resetPose, alliance)
+                    .command();
+        }
     }
 
     private final Swerve swerve;
@@ -248,5 +262,27 @@ public class Autos {
                 .withTimeout(1)
                 .andThen(factory.floorTrajectoryPhase(0, true, 0, 5))
                 .andThen(factory.shootTrajectoryPhase(1, false, 0.5, 0.75));
+    }
+
+    public Command justShoot() {
+        return ScoringSequences.coordinatedSubwooferShot(shooter, intakePivot, intakeRoller)
+                .withTimeout(1);
+    }
+
+    public Command wideFourPiece() {
+        var maybeTraj = safeLoadTrajectory("wideCenterFourPiece");
+
+        if (!maybeTraj.isPresent()) return new InstantCommand();
+
+        AutoPhaseFactory factory =
+                new AutoPhaseFactory(swerve, intakePivot, maybeTraj.get(), localization, alliance);
+
+        return factory.driveTrajectoryPhase(0, false)
+                .andThen(factory.driveTrajectoryPhase(1, false))
+                .andThen(factory.driveTrajectoryPhase(2, false))
+                .andThen(factory.driveTrajectoryPhase(3, false))
+                .andThen(factory.driveTrajectoryPhase(4, false))
+                .andThen(factory.driveTrajectoryPhase(5, false))
+                .andThen(factory.driveTrajectoryPhase(6, false));
     }
 }
