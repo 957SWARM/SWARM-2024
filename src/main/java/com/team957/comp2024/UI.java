@@ -189,4 +189,8 @@ public class UI implements Logged {
         operatorChooser.onChange(callback);
     }
     // TODO: push automation indicators to dashboard
+
+    public void log(String msg) {
+        log("message", msg);
+    }
 }

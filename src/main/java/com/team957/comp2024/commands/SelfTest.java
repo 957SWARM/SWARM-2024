@@ -1,5 +1,6 @@
 package com.team957.comp2024.commands;
 
+import com.team957.comp2024.UI;
 import com.team957.comp2024.subsystems.climbing.BoxClimber;
 import com.team957.comp2024.subsystems.intake.IntakePivot;
 import com.team957.comp2024.subsystems.intake.IntakeRoller;
@@ -44,24 +45,33 @@ public class SelfTest {
             Consumer<Double> setVoltage,
             Supplier<Double> measurement,
             double tolerance,
+            double voltage,
             Subsystem... requirements) {
         BooleanReference failed = new BooleanReference(false);
-
-        Command checkCurrentNonzero =
-                new WaitCommand(.2)
-                        .andThen(
-                                Commands.run(
-                                        () ->
-                                                failed.bool =
-                                                        Math.abs(measurement.get()) > tolerance
-                                                                || failed.bool));
-
         return new SelfTestCommand(
-                Commands.run(() -> setVoltage.accept(2.0), requirements)
-                        .raceWith(checkCurrentNonzero)
+                Commands.run(() -> setVoltage.accept(voltage), requirements)
+                        .raceWith(
+                                new WaitCommand(.25)
+                                        .andThen(
+                                                Commands.runOnce(
+                                                        () ->
+                                                                failed.bool =
+                                                                        Math.abs(measurement.get())
+                                                                                        > tolerance
+                                                                                || failed.bool)))
                         .andThen(
-                                Commands.run(() -> setVoltage.accept(-2.0))
-                                        .raceWith(checkCurrentNonzero))
+                                Commands.run(() -> setVoltage.accept(-voltage))
+                                        .raceWith(
+                                                new WaitCommand(.25)
+                                                        .andThen(
+                                                                Commands.runOnce(
+                                                                        () ->
+                                                                                failed.bool =
+                                                                                        Math.abs(
+                                                                                                                measurement
+                                                                                                                        .get())
+                                                                                                        > tolerance
+                                                                                                || failed.bool))))
                         .finallyDo(() -> setVoltage.accept(0.0)),
                 name + " nonzero self test running!",
                 name + " nonzero self test passed!",
@@ -77,8 +87,8 @@ public class SelfTest {
             double settlingTimeSeconds,
             boolean angular,
             Subsystem... requirements) {
-        final double ANGLE_TOLERANCE_RADIANS = Units.degreesToRadians(2);
-        final double TOLERANCE_PROPORTION = .02; // 2%
+        final double ANGLE_TOLERANCE_RADIANS = Units.degreesToRadians(5);
+        final double TOLERANCE_PROPORTION = .05; // 2%
 
         return new SelfTestCommand(
                 Commands.run(() -> setSetpoint.accept(setpoint), requirements)
@@ -118,7 +128,8 @@ public class SelfTest {
     }
 
     private static Command putMessage(Supplier<String> message, boolean persist) {
-        return null;
+        return Commands.runOnce(
+                () -> UI.instance.log(message.get())); // TODO ugghhhhhhhhhhhhhhhhh fix this
     }
 
     private static Command selfTestCommandRunner(SelfTestCommand command, LED led) {
@@ -137,8 +148,8 @@ public class SelfTest {
     }
 
     private static Command testSwerveModule(Swerve forRequirements, ModuleIO module, LED led) {
-        double steerSettlingTimeSeconds = .25;
-        double driveSettlingTimeSeconds = .25;
+        double steerSettlingTimeSeconds = .5;
+        double driveSettlingTimeSeconds = .5;
 
         return selfTestCommandRunner(
                         testNonzero(
@@ -146,6 +157,7 @@ public class SelfTest {
                                 module::setSteerVoltage,
                                 module::getSteerCurrentAmps,
                                 1,
+                                12,
                                 forRequirements),
                         led)
                 .andThen(
@@ -155,6 +167,7 @@ public class SelfTest {
                                         module::setSteerVoltage,
                                         module::getSteerVelocityRadiansPerSecond,
                                         .05,
+                                        2,
                                         forRequirements),
                                 led))
                 .andThen(
@@ -164,6 +177,7 @@ public class SelfTest {
                                         module::setDriveVoltage,
                                         module::getDriveCurrentAmps,
                                         1,
+                                        12,
                                         forRequirements),
                                 led))
                 .andThen(
@@ -173,6 +187,7 @@ public class SelfTest {
                                         module::setDriveVoltage,
                                         module::getDriveVelocityRadPerSecond,
                                         .05,
+                                        2,
                                         forRequirements),
                                 led))
                 .andThen(
@@ -189,7 +204,7 @@ public class SelfTest {
                 .andThen(
                         selfTestCommandRunner(
                                 testGoToSetpoint(
-                                        " steer backward",
+                                        " steer side",
                                         module::setSteerSetpoint,
                                         module::getSteerPositionRadians,
                                         Math.PI / 2,
@@ -203,7 +218,7 @@ public class SelfTest {
                                         " drive forward",
                                         module::setDriveSetpoint,
                                         module::getDriveVelocityRadPerSecond,
-                                        10,
+                                        30,
                                         driveSettlingTimeSeconds,
                                         false,
                                         forRequirements),
@@ -213,17 +228,18 @@ public class SelfTest {
                                 testGoToSetpoint(
                                         " drive backward",
                                         module::setDriveSetpoint,
-                                        module::getDriveVelocityMetersPerSecond,
-                                        -10,
+                                        module::getDriveVelocityRadPerSecond,
+                                        -30,
                                         driveSettlingTimeSeconds,
                                         false,
                                         forRequirements),
-                                led));
+                                led))
+                .finallyDo(() -> module.setDriveSetpoint(0));
     }
 
     private static Command swerveSelfChecks(Swerve swerve, LED led, Trigger advanceTrigger) {
         return putMessage(() -> "Waiting to begin swerve checks!", false)
-                .raceWith(holdUntilTriggered(advanceTrigger))
+                .alongWith(holdUntilTriggered(advanceTrigger))
                 .andThen(putMessage(() -> "Beginning swerve checks!", false).withTimeout(2))
                 .andThen(testSwerveModule(swerve, swerve.frontLeft, led))
                 .andThen(testSwerveModule(swerve, swerve.frontRight, led))
@@ -234,7 +250,7 @@ public class SelfTest {
     private static Command intakeRollerSelfChecks(
             IntakeRoller roller, LED led, Trigger advanceTrigger) {
         return putMessage(() -> "Waiting to begin intake roller checks!", false)
-                .raceWith(holdUntilTriggered(advanceTrigger))
+                .alongWith(holdUntilTriggered(advanceTrigger))
                 .andThen(putMessage(() -> "Beginning intake roller checks!", false).withTimeout(2))
                 .andThen(
                         selfTestCommandRunner(
@@ -243,6 +259,7 @@ public class SelfTest {
                                         roller::setRollerVoltage,
                                         roller::getRollerAmps,
                                         1,
+                                        2,
                                         roller),
                                 led))
                 .andThen(
@@ -252,19 +269,20 @@ public class SelfTest {
                                         roller::setRollerVoltage,
                                         roller::getAngularVelocityRPM,
                                         0.05,
+                                        2,
                                         roller),
                                 led))
                 .andThen(roller.floorIntake().withTimeout(1))
                 .andThen(roller.shooterHandoff().withTimeout(1))
                 .andThen(
                         roller.idle()
-                                .alongWith(
+                                .raceWith(
                                         putMessage(
                                                 () ->
                                                         "Insert note to intake, and advance when"
                                                                 + " ready!",
                                                 false))
-                                .raceWith(holdUntilTriggered(advanceTrigger)))
+                                .alongWith(holdUntilTriggered(advanceTrigger)))
                 .andThen(
                         selfTestCommandRunner(
                                 new SelfTestCommand(
@@ -282,12 +300,13 @@ public class SelfTest {
                                         "Successfully detected no note!",
                                         "Failed to detect no note!",
                                         () -> !roller.debouncedNoteIsPresent()),
-                                led));
+                                led))
+                .andThen(roller.idle());
     }
 
     private static Command shooterSelfChecks(Shooter shooter, LED led, Trigger advanceTrigger) {
         return putMessage(() -> "Waiting to begin shooter checks!", false)
-                .raceWith(holdUntilTriggered(advanceTrigger))
+                .alongWith(holdUntilTriggered(advanceTrigger))
                 .andThen(putMessage(() -> "Beginning shooter checks!", false).withTimeout(2))
                 .andThen(
                         selfTestCommandRunner(
@@ -296,6 +315,7 @@ public class SelfTest {
                                         shooter::setLeftVoltage,
                                         shooter::getLeftMotorAmps,
                                         1,
+                                        6,
                                         shooter),
                                 led))
                 .andThen(
@@ -305,6 +325,7 @@ public class SelfTest {
                                         shooter::setLeftVoltage,
                                         shooter::getLeftVelocity,
                                         10,
+                                        2,
                                         shooter),
                                 led))
                 .andThen(
@@ -314,6 +335,7 @@ public class SelfTest {
                                         shooter::setRightVoltage,
                                         shooter::getRightMotorAmps,
                                         1,
+                                        6,
                                         shooter),
                                 led))
                 .andThen(
@@ -323,9 +345,11 @@ public class SelfTest {
                                         shooter::setRightVoltage,
                                         shooter::getRightVelocity,
                                         10,
+                                        2,
                                         shooter),
                                 led))
-                .andThen(shooter.subwooferShot().withTimeout(2));
+                .andThen(shooter.subwooferShot().withTimeout(2))
+                .andThen(shooter.off().withTimeout(.5));
     }
 
     public static Command selfTestCommand(

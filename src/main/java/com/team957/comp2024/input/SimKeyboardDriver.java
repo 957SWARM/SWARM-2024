@@ -90,4 +90,10 @@ public class SimKeyboardDriver implements DriverInput {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'toggleClimbRetract'");
     }
+
+    @Override
+    public boolean testModeContinue() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'testModeContinue'");
+    }
 }

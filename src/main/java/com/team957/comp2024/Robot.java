@@ -121,6 +121,8 @@ public class Robot extends TimedRobot implements Logged {
     private Trigger ledEndGame;
     private Trigger ledNotePickup;
 
+    private Trigger selfTestContinue;
+
     private double fieldRelRotationOffset = 0;
 
     private final Notifier fastLoop = new Notifier(this::loop);
@@ -281,6 +283,8 @@ public class Robot extends TimedRobot implements Logged {
                                 .andThen(ledPatterns.noteInRobotCommand(led, .1, isAutonomous())))
                 .onFalse(ledPatterns.allianceColor(led, this::getAlliance));
 
+        selfTestContinue = new Trigger(input::testModeContinue);
+
         fastLoop.startPeriodic(MiscConstants.NOMINAL_LOOP_TIME_SECONDS);
     }
 
@@ -330,7 +334,7 @@ public class Robot extends TimedRobot implements Logged {
         CommandScheduler.getInstance().cancelAll();
 
         SelfTest.selfTestCommand(
-                        boxClimber, intakeRoller, pivot, led, shooter, swerve, intakeSequence)
+                        boxClimber, intakeRoller, pivot, led, shooter, swerve, selfTestContinue)
                 .schedule();
     }
 
