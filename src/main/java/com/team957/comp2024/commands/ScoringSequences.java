@@ -6,6 +6,7 @@ import com.team957.comp2024.subsystems.intake.IntakeRoller;
 import com.team957.comp2024.subsystems.shooter.Shooter;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import java.util.function.BooleanSupplier;
 
 public class ScoringSequences {
     public static Command coordinatedSubwooferShot(
@@ -31,12 +32,24 @@ public class ScoringSequences {
     }
 
     public static Command coordinatedFloorIntake(
-            IntakePivot intakePivot, IntakeRoller intakeRoller) {
+            IntakePivot intakePivot,
+            IntakeRoller intakeRoller,
+            BooleanSupplier notePresentTrigger) {
         return intakePivot
                 .toFloor()
                 .raceWith(
                         new WaitCommand(SequencingConstants.ROLLER_DELAY)
-                                .andThen(intakeRoller.floorIntakeUntilNote()))
+                                .andThen(
+                                        intakeRoller
+                                                .floorIntake()
+                                                .until(notePresentTrigger)
+                                                .andThen(intakeRoller.idle())))
                 .andThen(intakePivot.toStow());
+    }
+
+    public static Command coordinatedFloorIntake(
+            IntakePivot intakePivot, IntakeRoller intakeRoller) {
+        return coordinatedFloorIntake(
+                intakePivot, intakeRoller, intakeRoller::debouncedNoteIsPresent);
     }
 }

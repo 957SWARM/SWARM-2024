@@ -115,6 +115,11 @@ public class SwerveSim extends Swerve {
             steerSim.update(dt);
             driveSim.update(dt);
         }
+
+        @Override
+        public double getSteerVelocityRadiansPerSecond() {
+            return steerSim.getAngularVelocityRadPerSec();
+        }
     }
 
     public SwerveSim() {

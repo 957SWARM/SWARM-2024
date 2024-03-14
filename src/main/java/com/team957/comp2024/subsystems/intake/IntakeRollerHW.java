@@ -4,6 +4,7 @@ import com.playingwithfusion.TimeOfFlight;
 import com.playingwithfusion.TimeOfFlight.RangingMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
 import com.team957.comp2024.Constants;
 import com.team957.comp2024.Constants.IntakeRollerConstants;
 import com.team957.comp2024.util.FaultDetectionUtil.StaleNoisyDataDetector;
@@ -26,6 +27,8 @@ public class IntakeRollerHW extends IntakeRoller {
                     true,
                     true,
                     true);
+
+    private final RelativeEncoder encoder = roller.getEncoder();
 
     private final TimeOfFlight tof = new TimeOfFlight(IntakeRollerConstants.TOF_CANID);
 
@@ -81,5 +84,10 @@ public class IntakeRollerHW extends IntakeRoller {
         detector.poll(tofReadingMeters);
 
         util.poll();
+    }
+
+    @Override
+    public double getAngularVelocityRPM() {
+        return encoder.getVelocity();
     }
 }

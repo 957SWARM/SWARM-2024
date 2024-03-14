@@ -9,8 +9,14 @@ import monologue.Logged;
 
 public abstract class Shooter implements Subsystem, Logged {
 
-    // sets the voltage to the shooter. Motors should follow each other!
-    public abstract void setShooterVoltage(double voltage);
+    public void setShooterVoltage(double voltage) {
+        setLeftVoltage(voltage);
+        setRightVoltage(voltage);
+    }
+
+    public abstract void setLeftVoltage(double voltage);
+
+    public abstract void setRightVoltage(double voltage);
 
     // returns the current voltage of the left motor
     @Log.NT
@@ -28,9 +34,16 @@ public abstract class Shooter implements Subsystem, Logged {
     @Log.NT
     public abstract double getRightMotorAmps();
 
-    // returns the current RPM of the shooter
     @Log.NT
-    public abstract double getVelocity();
+    public double getVelocity() {
+        return (getRightVelocity() + getLeftVelocity()) / 2;
+    }
+
+    @Log.NT
+    public abstract double getRightVelocity();
+
+    @Log.NT
+    public abstract double getLeftVelocity();
 
     protected Shooter() {
         register();

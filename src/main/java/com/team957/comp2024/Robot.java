@@ -8,6 +8,7 @@ import com.team957.comp2024.commands.Autos;
 import com.team957.comp2024.commands.LEDStripPatterns;
 import com.team957.comp2024.commands.NoteTargeting;
 import com.team957.comp2024.commands.ScoringSequences;
+import com.team957.comp2024.commands.SelfTest;
 import com.team957.comp2024.commands.TrajectoryFollowing;
 import com.team957.comp2024.input.DefaultDriver;
 import com.team957.comp2024.input.DriverInput;
@@ -322,6 +323,15 @@ public class Robot extends TimedRobot implements Logged {
         CommandScheduler.getInstance().cancelAll();
         // led.endGameCommand(0, 50, .100, false).schedule();
         // led.scheduleDefaultCommand(led.allianceColor(0, 0));
+    }
+
+    @Override
+    public void testInit() {
+        CommandScheduler.getInstance().cancelAll();
+
+        SelfTest.selfTestCommand(
+                        boxClimber, intakeRoller, pivot, led, shooter, swerve, intakeSequence)
+                .schedule();
     }
 
     @Override

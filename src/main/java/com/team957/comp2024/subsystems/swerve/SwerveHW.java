@@ -273,6 +273,11 @@ public class SwerveHW extends Swerve {
             steerUtil.poll();
             driveUtil.poll();
         }
+
+        @Override
+        public double getSteerVelocityRadiansPerSecond() {
+            return steerEncoder.getVelocity() * 2 * Math.PI;
+        }
     }
 
     public SwerveHW(boolean isCompetitionRobot) {

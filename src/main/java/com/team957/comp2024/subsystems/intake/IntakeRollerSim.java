@@ -42,4 +42,9 @@ public class IntakeRollerSim extends IntakeRoller {
         // not required to override this, but want to prevent accidentially overriding the code in
         // superclass
     }
+
+    @Override
+    public double getAngularVelocityRPM() {
+        return 0;
+    }
 }

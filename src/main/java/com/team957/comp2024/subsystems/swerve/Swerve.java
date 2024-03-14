@@ -69,6 +69,9 @@ public abstract class Swerve implements Subsystem, Logged {
         @Log.NT
         public abstract double getSteerCurrentAmps();
 
+        @Log.NT
+        public abstract double getSteerVelocityRadiansPerSecond();
+
         public abstract void setBrakeMode(boolean active);
 
         @Log.NT

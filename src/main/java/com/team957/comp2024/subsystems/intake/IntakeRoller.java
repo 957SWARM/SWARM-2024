@@ -54,6 +54,8 @@ public abstract class IntakeRoller implements Subsystem, Logged {
         return (isReal) ? new IntakeRollerHW() : new IntakeRollerSim();
     }
 
+    public abstract double getAngularVelocityRPM();
+
     // intakes notes at constant voltage
     public Command floorIntake() {
         return run(() -> setRollerVoltage(IntakeRollerConstants.FLOOR_INTAKE_VOLTAGE))

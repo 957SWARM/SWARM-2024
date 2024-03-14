@@ -44,8 +44,12 @@ public class ShooterHW extends Shooter {
     }
 
     @Override
-    public void setShooterVoltage(double voltage) {
+    public void setLeftVoltage(double voltage) {
         leftMotor.setVoltage(ShooterConstants.leftMotorInverted ? -voltage : voltage);
+    }
+
+    @Override
+    public void setRightVoltage(double voltage) {
         rightMotor.setVoltage(ShooterConstants.rightMotorInverted ? -voltage : voltage);
     }
 
@@ -70,8 +74,13 @@ public class ShooterHW extends Shooter {
     }
 
     @Override
-    public double getVelocity() {
-        return 2 * Math.PI * (leftEncoder.getVelocity() + rightEncoder.getVelocity()) / 2.0;
+    public double getLeftVelocity() {
+        return leftEncoder.getVelocity();
+    }
+
+    @Override
+    public double getRightVelocity() {
+        return rightEncoder.getVelocity();
     }
 
     @Override
