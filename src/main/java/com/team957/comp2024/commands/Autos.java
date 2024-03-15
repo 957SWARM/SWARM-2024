@@ -278,13 +278,15 @@ public class Autos {
         AutoPhaseFactory factory =
                 new AutoPhaseFactory(swerve, intakePivot, maybeTraj.get(), localization, alliance);
 
-        return factory.driveTrajectoryPhase(0, true) // floor
-                .andThen(factory.driveTrajectoryPhase(1, false)) // shoot
-                .andThen(factory.driveTrajectoryPhase(2, false)) // floor
-                .andThen(factory.driveTrajectoryPhase(3, false)) // shoot
-                .andThen(factory.driveTrajectoryPhase(4, false)) // floor
-                .andThen(factory.driveTrajectoryPhase(5, false)) // shoot
-                .andThen(factory.driveTrajectoryPhase(6, false)); // stow
+        return ScoringSequences.coordinatedSubwooferShot(shooter, intakePivot, intakeRoller)
+                .withTimeout(1)
+                .andThen(factory.floorTrajectoryPhase(0, true, 0, 2)) // floor
+                .andThen(factory.shootTrajectoryPhase(1, false, .5, .75)) // shoot
+                .andThen(factory.floorTrajectoryPhase(2, false, 0, 2)) // floor
+                .andThen(factory.shootTrajectoryPhase(3, false, .5, .75)) // shoot
+                .andThen(factory.floorTrajectoryPhase(4, false, 0, 2)) // floor
+                .andThen(factory.shootTrajectoryPhase(5, false, .5, .75)) // shoot
+                .andThen(factory.stowTrajectoryPhase(6, false)); // stow
     }
 
     public Command centerThreePiece() {
@@ -295,11 +297,13 @@ public class Autos {
         AutoPhaseFactory factory =
                 new AutoPhaseFactory(swerve, intakePivot, maybeTraj.get(), localization, alliance);
 
-        return factory.driveTrajectoryPhase(0, true) // floor
-                .andThen(factory.driveTrajectoryPhase(1, false)) // shoot
-                .andThen(factory.driveTrajectoryPhase(2, false)) // floor
-                .andThen(factory.driveTrajectoryPhase(3, false)) // shoot
-                .andThen(factory.driveTrajectoryPhase(4, false)); // stow
+        return ScoringSequences.coordinatedSubwooferShot(shooter, intakePivot, intakeRoller)
+                .withTimeout(1)
+                .andThen(factory.floorTrajectoryPhase(0, true, 0, 2)) // floor
+                .andThen(factory.shootTrajectoryPhase(1, false, .5, .75)) // shoot
+                .andThen(factory.floorTrajectoryPhase(2, false, 0, 2)) // floor
+                .andThen(factory.shootTrajectoryPhase(3, false, .5, .75)) // shoot
+                .andThen(factory.stowTrajectoryPhase(4, false)); // stow
     }
 
     public Command ampThreePiece() {
@@ -312,9 +316,9 @@ public class Autos {
 
         return ScoringSequences.coordinatedSubwooferShot(shooter, intakePivot, intakeRoller)
                 .withTimeout(1)
-                .andThen(factory.floorTrajectoryPhase(0, true, 0, 5)) // floor
+                .andThen(factory.floorTrajectoryPhase(0, true, 0, 2)) // floor
                 .andThen(factory.shootTrajectoryPhase(1, false, 0.5, 0.75)) // shoot
-                .andThen(factory.floorTrajectoryPhase(2, true, 0, 5)) // floor
+                .andThen(factory.floorTrajectoryPhase(2, false, 0, 2)) // floor
                 .andThen(factory.shootTrajectoryPhase(3, false, 0.5, 0.75)); // shoot
     }
 }

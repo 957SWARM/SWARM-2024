@@ -118,7 +118,7 @@ public class Robot extends TimedRobot implements Logged {
     private Trigger ledEndGame;
     private Trigger ledNotePickup;
 
-    private double fieldRelRotationOffset = 0;
+    private double fieldRelRotationOffset = Math.PI;
 
     private final Notifier fastLoop = new Notifier(this::loop);
 
@@ -173,7 +173,8 @@ public class Robot extends TimedRobot implements Logged {
         ui.addAuto("Narrow Center Four Piece", autos.narrowFourPiece());
         ui.addAuto("Center Three Piece", autos.centerThreePiece());
         ui.addAuto("Amp Three Piece}", autos.ampThreePiece());
-        // ui.addAuto("Source Far Three Piece", autos.sourceFarThreePiece());
+        ui.addAuto("Source Far Three Piece", autos.sourceFarThreePiece());
+        ui.addAuto("Five Piece??", autos.fivePieceMockup());
         // ui.addAuto("Test Path", autos.testPath());
         // ui.addAuto("Five Piece Mockup", autos.fivePieceMockup());
         // ui.addAuto("Four Piece Mockup", autos.fourPieceMockup());
