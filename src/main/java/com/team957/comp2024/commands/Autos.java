@@ -2,14 +2,18 @@ package com.team957.comp2024.commands;
 
 import com.choreo.lib.Choreo;
 import com.choreo.lib.ChoreoTrajectory;
+import com.team957.comp2024.Constants.MiscConstants;
 import com.team957.comp2024.commands.TrajectoryFollowing.CommandWithTime;
 import com.team957.comp2024.peripherals.LLlocalization;
 import com.team957.comp2024.subsystems.intake.IntakePivot;
 import com.team957.comp2024.subsystems.intake.IntakeRoller;
 import com.team957.comp2024.subsystems.shooter.Shooter;
 import com.team957.comp2024.subsystems.swerve.Swerve;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import java.util.ArrayList;
@@ -116,6 +120,20 @@ public class Autos {
             return TrajectoryFollowing.instance
                     .getPathFollowingCommand(swerve, trajPhase, localization, resetPose, alliance)
                     .command();
+        }
+
+        Command startAngle(double angle) {
+
+            double invert = (alliance.get() == Alliance.Red) ? 1 : -1;
+
+            return Commands.runOnce(
+                    () -> {
+                        localization.setPose(
+                                new Pose2d(
+                                        localization.getPoseEstimate().getTranslation(),
+                                        new Rotation2d(angle)));
+                    },
+                    swerve);
         }
     }
 
@@ -264,9 +282,46 @@ public class Autos {
                 .andThen(factory.shootTrajectoryPhase(1, false, 0.5, 0.75));
     }
 
-    public Command justShoot() {
+    public Command justShootCenter() {
+
+        var maybeTraj = safeLoadTrajectory("justLeaveCenter");
+
+        if (!maybeTraj.isPresent()) return new InstantCommand();
+
+        AutoPhaseFactory factory =
+                new AutoPhaseFactory(swerve, intakePivot, maybeTraj.get(), localization, alliance);
+
         return ScoringSequences.coordinatedSubwooferShot(shooter, intakePivot, intakeRoller)
-                .withTimeout(1);
+                .withTimeout(1)
+                .andThen(factory.startAngle(0));
+    }
+
+    public Command justShootSource() {
+
+        var maybeTraj = safeLoadTrajectory("justLeaveSource");
+
+        if (!maybeTraj.isPresent()) return new InstantCommand();
+
+        AutoPhaseFactory factory =
+                new AutoPhaseFactory(swerve, intakePivot, maybeTraj.get(), localization, alliance);
+
+        return ScoringSequences.coordinatedSubwooferShot(shooter, intakePivot, intakeRoller)
+                .withTimeout(1)
+                .andThen(factory.startAngle(MiscConstants.SUBWOOFER_SIDE_ANGLE));
+    }
+
+    public Command justShootAmp() {
+
+        var maybeTraj = safeLoadTrajectory("justLeaveAmp");
+
+        if (!maybeTraj.isPresent()) return new InstantCommand();
+
+        AutoPhaseFactory factory =
+                new AutoPhaseFactory(swerve, intakePivot, maybeTraj.get(), localization, alliance);
+
+        return ScoringSequences.coordinatedSubwooferShot(shooter, intakePivot, intakeRoller)
+                .withTimeout(1)
+                .andThen(factory.startAngle(-MiscConstants.SUBWOOFER_SIDE_ANGLE));
     }
 
     // avoids going wide, more straight lines
@@ -318,7 +373,7 @@ public class Autos {
                 .withTimeout(1)
                 .andThen(factory.floorTrajectoryPhase(0, true, 0, 2)) // floor
                 .andThen(factory.shootTrajectoryPhase(1, false, 0.5, 0.75)) // shoot
-                .andThen(factory.floorTrajectoryPhase(2, false, 0, 2)) // floor
+                .andThen(factory.floorTrajectoryPhase(2, false, 0, 4)) // floor
                 .andThen(factory.shootTrajectoryPhase(3, false, 0.5, 0.75)); // shoot
     }
 }
