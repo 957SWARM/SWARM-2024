@@ -1,5 +1,6 @@
 package com.team957.comp2024.commands;
 
+import com.team957.comp2024.Constants.IntakePivotConstants;
 import com.team957.comp2024.UI;
 import com.team957.comp2024.subsystems.climbing.BoxClimber;
 import com.team957.comp2024.subsystems.intake.IntakePivot;
@@ -81,18 +82,16 @@ public class SelfTest {
 
     private static SelfTestCommand testGoToSetpoint(
             String name,
-            Consumer<Double> setSetpoint,
-            Supplier<Double> measurement,
+            Command setpointTrackingCommand,
             double setpoint,
+            Supplier<Double> measurement,
             double settlingTimeSeconds,
-            boolean angular,
-            Subsystem... requirements) {
+            boolean angular) {
         final double ANGLE_TOLERANCE_RADIANS = Units.degreesToRadians(5);
-        final double TOLERANCE_PROPORTION = .05; // 2%
+        final double TOLERANCE_PROPORTION = .05; // 5%
 
         return new SelfTestCommand(
-                Commands.run(() -> setSetpoint.accept(setpoint), requirements)
-                        .withTimeout(settlingTimeSeconds),
+                setpointTrackingCommand.withTimeout(settlingTimeSeconds),
                 name + " setpoint self test running!",
                 name + " setpoint self test passed!",
                 name + " setpoint self test failed!",
@@ -103,6 +102,23 @@ public class SelfTest {
                                         < ANGLE_TOLERANCE_RADIANS
                                 : UtilityMath.epsilonEqualsProportion(
                                         setpoint, measurement.get(), TOLERANCE_PROPORTION));
+    }
+
+    private static SelfTestCommand testGoToSetpoint(
+            String name,
+            Consumer<Double> setSetpoint,
+            Supplier<Double> measurement,
+            double setpoint,
+            double settlingTimeSeconds,
+            boolean angular,
+            Subsystem... requirements) {
+        return testGoToSetpoint(
+                name,
+                Commands.run(() -> setSetpoint.accept(setpoint), requirements),
+                setpoint,
+                measurement,
+                settlingTimeSeconds,
+                angular);
     }
 
     private static Command flashFailure(LED led) {
@@ -352,6 +368,75 @@ public class SelfTest {
                 .andThen(shooter.off().withTimeout(.5));
     }
 
+    public static Command intakePivotSelfChecks(
+            IntakePivot pivot, LED led, Trigger advanceTrigger) {
+        return putMessage(() -> "Waiting to begin intake pivot checks!", false)
+                .alongWith(holdUntilTriggered(advanceTrigger))
+                .andThen(putMessage(() -> "Starting intake pivot checks!", false).withTimeout(2))
+                .andThen(
+                        selfTestCommandRunner(
+                                testNonzero(
+                                        "Intake pivot current",
+                                        pivot::setVoltage,
+                                        pivot::getCurrentAmps,
+                                        1,
+                                        3,
+                                        pivot),
+                                led))
+                .andThen(pivot.toStow().withTimeout(1))
+                .andThen(
+                        selfTestCommandRunner(
+                                testNonzero(
+                                        "Intake pivot velocity",
+                                        pivot::setVoltage,
+                                        pivot::getVelocityRadiansPerSecond,
+                                        1,
+                                        3,
+                                        pivot),
+                                led))
+                .andThen(pivot.toStow().withTimeout(1))
+                .andThen(
+                        selfTestCommandRunner(
+                                testGoToSetpoint(
+                                        "Intake pivot handoff",
+                                        pivot.toHandoff(),
+                                        IntakePivotConstants.HANDOFF_INTAKE_ANGLE_RADIANS,
+                                        pivot::getPositionRadians,
+                                        1,
+                                        true),
+                                led))
+                .andThen(
+                        selfTestCommandRunner(
+                                testGoToSetpoint(
+                                        "Intake pivot floor",
+                                        pivot.toFloor(),
+                                        IntakePivotConstants.FLOOR_INTAKE_ANGLE_RADIANS,
+                                        pivot::getPositionRadians,
+                                        1,
+                                        true),
+                                led))
+                .andThen(
+                        selfTestCommandRunner(
+                                testGoToSetpoint(
+                                        "Intake pivot stow",
+                                        pivot.toStow(),
+                                        IntakePivotConstants.STOW_INTAKE_ANGLE_RADIANS,
+                                        pivot::getPositionRadians,
+                                        1,
+                                        true),
+                                led))
+                .andThen(
+                        selfTestCommandRunner(
+                                testGoToSetpoint(
+                                        "Intake pivot amp",
+                                        pivot.toAmp(),
+                                        IntakePivotConstants.AMP_INTAKE_ANGLE_RADIANS,
+                                        pivot::getPositionRadians,
+                                        1,
+                                        true),
+                                led));
+    }
+
     public static Command selfTestCommand(
             BoxClimber climber,
             IntakeRoller roller,
@@ -362,6 +447,7 @@ public class SelfTest {
             Trigger advanceTrigger) {
         return intakeRollerSelfChecks(roller, led, advanceTrigger)
                 .andThen(shooterSelfChecks(shooter, led, advanceTrigger))
-                .andThen(swerveSelfChecks(swerve, led, advanceTrigger));
+                .andThen(swerveSelfChecks(swerve, led, advanceTrigger))
+                .andThen(intakePivotSelfChecks(pivot, led, advanceTrigger));
     }
 }
