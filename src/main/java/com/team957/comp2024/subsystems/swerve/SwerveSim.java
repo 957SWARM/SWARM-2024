@@ -2,12 +2,22 @@ package com.team957.comp2024.subsystems.swerve;
 
 import com.team957.comp2024.Constants.SwerveConstants;
 import com.team957.lib.math.UtilityMath;
-import com.team957.lib.util.DeltaTimeUtil;
 import edu.wpi.first.math.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj.simulation.DCMotorSim;
 
 public class SwerveSim extends Swerve {
     private static class SimModuleIO extends ModuleIO {
+        final String name;
+
+        SimModuleIO(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public String getName() {
+            return name;
+        }
+
         final DCMotorSim steerSim =
                 new DCMotorSim(
                         LinearSystemId.createDCMotorSystem(
@@ -107,21 +117,16 @@ public class SwerveSim extends Swerve {
         }
     }
 
-    private final DeltaTimeUtil dtUtil = new DeltaTimeUtil();
-
     public SwerveSim() {
-        super(new SimModuleIO(), new SimModuleIO(), new SimModuleIO(), new SimModuleIO());
+        super(
+                new SimModuleIO("front left"),
+                new SimModuleIO("front right"),
+                new SimModuleIO("back right"),
+                new SimModuleIO("back left"));
     }
 
     @Override
     public void periodic() {
         super.periodic();
-
-        double dt = dtUtil.getTimeSecondsSinceLastCall();
-
-        frontLeft.update(dt);
-        frontRight.update(dt);
-        backRight.update(dt);
-        backLeft.update(dt);
     }
 }
