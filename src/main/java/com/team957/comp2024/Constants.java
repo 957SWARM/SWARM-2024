@@ -182,7 +182,7 @@ public class Constants {
 
         public static final double FLOOR_INTAKE_ANGLE_RADIANS = Units.degreesToRadians(327.5);
         public static final double STOW_INTAKE_ANGLE_RADIANS = Units.degreesToRadians(120);
-        public static final double HANDOFF_INTAKE_ANGLE_RADIANS = Units.degreesToRadians(158.428);
+        public static final double HANDOFF_INTAKE_ANGLE_RADIANS = 2.9;
         public static final double AMP_INTAKE_ANGLE_RADIANS = Units.degreesToRadians(70);
 
         public static final int INTAKE_PIVOT_MOTOR_CANID = 11;
@@ -194,7 +194,7 @@ public class Constants {
         public static final double INTAKE_PIVOT_PROFILE_CONTROL_EFFORT = 3;
 
         // reported angle when the pivot is at "zero" (straight ahead)
-        public static final double INTAKE_PIVOT_OFFSET_RADIANS = -.1;
+        public static final double INTAKE_PIVOT_OFFSET_RADIANS = -.58;
 
         public static final PIDConstants PID_CONSTANTS = new PIDConstants(2.5, 0, 0);
     }
@@ -229,16 +229,16 @@ public class Constants {
         public static final boolean ROLLER_INVERTED = false;
 
         public static final double FLOOR_INTAKE_VOLTAGE = 6;
-        public static final double SHOOTER_HANDOFF_VOLTAGE = -9;
-        public static final double AMP_SHOT_VOLTAGE = -4;
+        public static final double SHOOTER_HANDOFF_VOLTAGE = -12;
+        public static final double AMP_SHOT_VOLTAGE = -12;
         public static final double SLOW_RUN_VOLTAGE = 2;
-        public static final double CENTERING_VOLTAGE = .5;
+        public static final double CENTERING_VOLTAGE = 1;
 
         public static final int TOF_CANID = 0;
 
         public static final double TOF_TIMING_BUDGET_MS = 30;
 
-        public static final double TOF_NOTE_PRESENT_THRESHOLD_METERS = .45;
+        public static final double TOF_NOTE_PRESENT_THRESHOLD_METERS = .4;
 
         public static final double TOF_NOTE_PRESENT_DEBOUNCE_SECONDS = 0.1;
 
@@ -247,7 +247,7 @@ public class Constants {
 
         public static final double CENTERING_REVERSAL_HYSTERESIS_METERS = .01; // 10mm
 
-        public static final double CENTERING_PULSE_VOLTAGE = 2;
+        public static final double CENTERING_PULSE_VOLTAGE = 4;
 
         public static final int STALENESS_THRESHOLD_CYCLES =
                 5; // reports stale data fault if reported value is identical for this many cycles
