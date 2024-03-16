@@ -15,6 +15,9 @@ import java.util.function.Supplier;
 public class NoteTargeting {
 
     private final Swerve swerve;
+    private double swerveX;
+    private double swerveY;
+    private double fieldRelRotationOffset;
     private final LLlocalization poseEstimation;
     private final String limelightName;
 
@@ -28,30 +31,33 @@ public class NoteTargeting {
         return outputStart + slope * (input - inputStart);
     }
 
-    public NoteTargeting(Swerve swerve, LLlocalization poseEstimation, String limelightName) {
+    public NoteTargeting(
+            Swerve swerve,
+            Supplier<Double> swerveX,
+            Supplier<Double> swerveY,
+            Supplier<Double> fieldRelRotationOffset,
+            LLlocalization poseEstimation,
+            String limelightName) {
         this.swerve = swerve;
+        this.swerveX = swerveX.get();
+        this.swerveY = swerveY.get();
+        this.fieldRelRotationOffset = fieldRelRotationOffset.get();
         this.poseEstimation = poseEstimation;
         this.limelightName = limelightName;
     }
 
     // AUTO AIMS TO NOTE IF NOTE IS TRACKABLE
-    public Command getNoteTrackCommand(
-            Supplier<Double> swerveX,
-            Supplier<Double> swerveY,
-            Supplier<Double> swerveRot,
-            Supplier<Double> fieldRelRotationOffset) {
+    public Command getNoteTrackCommand() {
 
         return swerve.getFieldRelativeControlCommand(
                         () -> {
                             return new ChassisSpeeds(
-                                    swerveX.get(),
-                                    swerveY.get(),
-                                    -getTrackingAngle(getTargetAngle()));
+                                    swerveX, swerveY, -getTrackingAngle(getTargetAngle()));
                         },
                         () ->
                                 poseEstimation
                                         .getRotationEstimate()
-                                        .minus(new Rotation2d(fieldRelRotationOffset.get())))
+                                        .minus(new Rotation2d(fieldRelRotationOffset)))
                 .unless(() -> !checkTarget())
                 .withName("noteTargeting");
     }
@@ -60,9 +66,10 @@ public class NoteTargeting {
         double kp = VisionConstants.TRACKING_KP;
         double minCommand = VisionConstants.TRACKING_MIN_COMMAND;
         if (Math.abs(targetAngle) > VisionConstants.TRACKING_STOP_THRESHOLD) {
-            if (targetAngle > 0 && targetAngle < VisionConstants.MIN_COMMAND_TRESHOLD) {
+            if (targetAngle > 0 && targetAngle < VisionConstants.TRACKING_MIN_COMMAND_TRESHOLD) {
                 return -minCommand;
-            } else if (targetAngle < 0 && targetAngle > -VisionConstants.MIN_COMMAND_TRESHOLD) {
+            } else if (targetAngle < 0
+                    && targetAngle > -VisionConstants.TRACKING_MIN_COMMAND_TRESHOLD) {
                 return minCommand;
             } else {
                 return kp * targetAngle;
@@ -177,15 +184,17 @@ public class NoteTargeting {
 
     private boolean checkTarget() { // CHECKS IF NOTE IS TRACKABLE
         boolean trackable = true;
-        /*if (!LimelightLib.getTV(limelightName)) {
-            trackable = false;
-        } else if ((Math.abs(LimelightLib.getTX(limelightName))
-                > VisionConstants.TARGET_TX_CUTOFF)) {
-            trackable = false;
-        } else if ((Math.abs(LimelightLib.getTHOR(limelightName))
-                < VisionConstants.TARGET_THOR_CUTOFF)) {
-            trackable = false;
-        }*/
+        /*
+         * if (!LimelightLib.getTV(limelightName)) {
+         * trackable = false;
+         * } else if ((Math.abs(LimelightLib.getTX(limelightName))
+         * > VisionConstants.TARGET_TX_CUTOFF)) {
+         * trackable = false;
+         * } else if ((Math.abs(LimelightLib.getTHOR(limelightName))
+         * < VisionConstants.TARGET_THOR_CUTOFF)) {
+         * trackable = false;
+         * }
+         */
         return trackable;
     }
 }

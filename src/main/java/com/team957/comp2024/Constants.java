@@ -57,8 +57,7 @@ public class Constants {
         public static final double STEER_GEARING = 42.62;
         public static final double DRIVE_GEARING = 4.71;
 
-        public static final GearRatioHelper DRIVE_GEARING_HELPER =
-                new GearRatioHelper(1, DRIVE_GEARING);
+        public static final GearRatioHelper DRIVE_GEARING_HELPER = new GearRatioHelper(1, DRIVE_GEARING);
 
         public static final DCMotor STEER_MOTOR = DCMotor.getNeo550(1);
         public static final DCMotor DRIVE_MOTOR = DCMotor.getNEO(1);
@@ -75,12 +74,11 @@ public class Constants {
         public static final Translation2d BACK_RIGHT_TRANSLATION = new Translation2d(-a, -b);
         public static final Translation2d BACK_LEFT_TRANSLATION = new Translation2d(-a, b);
 
-        public static final SwerveDriveKinematics KINEMATICS =
-                new SwerveDriveKinematics(
-                        FRONT_LEFT_TRANSLATION,
-                        FRONT_RIGHT_TRANSLATION,
-                        BACK_RIGHT_TRANSLATION,
-                        BACK_LEFT_TRANSLATION);
+        public static final SwerveDriveKinematics KINEMATICS = new SwerveDriveKinematics(
+                FRONT_LEFT_TRANSLATION,
+                FRONT_RIGHT_TRANSLATION,
+                BACK_RIGHT_TRANSLATION,
+                BACK_LEFT_TRANSLATION);
 
         public static final double ONBOARD_DRIVE_CONTROLLER_KP = 0.00004;
         public static final double ONBOARD_DRIVE_CONTROLLER_KI = 0;
@@ -250,43 +248,67 @@ public class Constants {
 
     public static final class VisionConstants {
 
-        public static final boolean VISION_POSE_ESTIMATION_ENABLED = false;
+        public static final boolean VISION_POSE_ESTIMATION_ENABLED = true;
+
+        public static final int LL1_NOTE_TRACKING_PL = 4;
+        public static final int LL1_POSE_ESTIMATION_PL = 0;
+        public static final int LL2_POSE_ESTIMATION_PL = 0;
+
+        public static final String LL1_NAME = "limelight-note";
+        public static final String LL2_NAME = "limelight-tag";
+        public static final String PCAM_NAME = "photoncamera";
 
         public static final double LL_FOV_DEGREES = (29.8 * 2);
         public static final double LL_FOV_PIXELS = 320;
 
         public static final double NOTE_WIDTH = 14; // 0.3556 METERS
 
-        public static final Vector<N3> STATE_STDS =
-                VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5));
-        public static final Vector<N3> VISION_STDS =
-                VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(30));
+        public static final Vector<N3> STATE_STDS = VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5));
+        public static final Vector<N3> VISION_STDS = VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(30));
 
-        public static final Transform3d LL1_TO_CENTER =
-                new Transform3d(
-                        new Translation3d(-Units.inchesToMeters(3), 0, Units.inchesToMeters(24)),
-                        new Rotation3d(0, 0, 0));
-        public static final Transform3d LL2_TO_CENTER =
-                new Transform3d(new Translation3d(0, 0, 0), new Rotation3d(0, 0, 0));
+        public static final Transform3d LL1_TO_CENTER = new Transform3d(
+                new Translation3d(-Units.inchesToMeters(3), 0, Units.inchesToMeters(24)),
+                new Rotation3d(0, 0, 0));
+        public static final Transform3d LL2_TO_CENTER = new Transform3d(new Translation3d(0, 0, 0),
+                new Rotation3d(0, 0, 0));
+        public static final Transform3d PCAM_TO_CENTER = new Transform3d(new Translation3d(0, 0, 0),
+                new Rotation3d(0, 0, 0));
 
         public static final double TARGET_AREA_CUTOFF = 0.5; // PERCENT OF SCREEN //TODO: FIND VAL
         public static final double TARGET_TX_CUTOFF = 24; // DEGREES
         public static final double TARGET_THOR_CUTOFF = 70; // PIXELS
 
-        public static final double TRACKING_KP = 5.5;
-        public static final double TRACKING_MIN_COMMAND = 0.1;
-        public static final double TRACKING_STOP_THRESHOLD = 0.025; // RADIANS
-        public static final double MIN_COMMAND_TRESHOLD = 0.02; // RADIANS
+        public static final double TRACKING_KP = 5;
+        public static final double TRACKING_MIN_COMMAND = 0.05;
+        public static final double TRACKING_STOP_THRESHOLD = 0.01; // RADIANS
+        public static final double TRACKING_MIN_COMMAND_TRESHOLD = 0.02; // RADIANS
+        public static final double TRACKING_MAX_SPEED = 100; // TODO: TUNE VALUE
+
+        // OLD WIP VISION PATHING/ALIGNMENT STUFF
+
+        public static final double ALIGNING_KP = 0;
+        public static final double ALIGNING_MIN_COMMAND = 0;
+        public static final double ALIGNING_STOP_THRESHOLD = 0;
+        public static final double ALINGING_MIN_COMMAND_TRESHOLD = 0;
+        public static final double ALIGNING_MAX_SPEED = 4; // TODO: TUNE VALUE
+
+        public static final Pose2d BLUE_AMP = new Pose2d();
+        public static final Pose2d BLUE_SUBWOOFER_CENTER = null;
+        public static final Pose2d BLUE_SUBWOOFER_LEFT = null;
+        public static final Pose2d BLUE_SUBWOOFER_RIGHT = null;
+        public static final Pose2d BLUE_SPEAKER = new Pose2d(0.21, 5.5, new Rotation2d());
+        public static final Pose2d RED_AMP = new Pose2d();
+        public static final Pose2d RED_SUBWOOFER_CENTER = null;
+        public static final Pose2d RED_SUBWOOFER_LEFT = null;
+        public static final Pose2d RED_SUBWOOFER_RIGHT = null;
+        public static final Pose2d RED_SPEAKER = new Pose2d(16.32, 5.5, new Rotation2d());
     }
 
     public static final class OtfPathingConstants {
         public static final Pose2d OTF_SPEAKER_POSE_BLUE = new Pose2d(1.6, 5.5, new Rotation2d());
-        public static final Pose2d OTF_SPEAKER_POSE_RED =
-                new Pose2d(15, 5.5, new Rotation2d(Math.PI));
+        public static final Pose2d OTF_SPEAKER_POSE_RED = new Pose2d(15, 5.5, new Rotation2d(Math.PI));
 
-        public static final Pose2d OTF_AMP_POSE_BLUE =
-                new Pose2d(1.9, 7.6, new Rotation2d(Math.PI / 2));
-        public static final Pose2d OTF_AMP_POSE_RED =
-                new Pose2d(14.75, 7.6, new Rotation2d(-Math.PI / 2));
+        public static final Pose2d OTF_AMP_POSE_BLUE = new Pose2d(1.9, 7.6, new Rotation2d(Math.PI / 2));
+        public static final Pose2d OTF_AMP_POSE_RED = new Pose2d(14.75, 7.6, new Rotation2d(-Math.PI / 2));
     }
 }
