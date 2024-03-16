@@ -28,22 +28,22 @@ public class VisionAlignment extends Command {
     Pose2d subwooferRight = new Pose2d();
     Pose2d speaker = new Pose2d();
 
-    private Pose2d[] targetPoses = { amp, subwooferCenter, subwooferLeft, subwooferRight, speaker };
+    private Pose2d[] targetPoses = {amp, subwooferCenter, subwooferLeft, subwooferRight, speaker};
 
     private final Pose2d[] blueTargetPoses = {
-            VisionConstants.BLUE_AMP,
-            VisionConstants.BLUE_SUBWOOFER_CENTER,
-            VisionConstants.BLUE_SUBWOOFER_LEFT,
-            VisionConstants.BLUE_SUBWOOFER_RIGHT,
-            VisionConstants.BLUE_SPEAKER
+        VisionConstants.BLUE_AMP,
+        VisionConstants.BLUE_SUBWOOFER_CENTER,
+        VisionConstants.BLUE_SUBWOOFER_LEFT,
+        VisionConstants.BLUE_SUBWOOFER_RIGHT,
+        VisionConstants.BLUE_SPEAKER
     };
 
     private final Pose2d[] redTargetPoses = {
-            VisionConstants.RED_AMP,
-            VisionConstants.RED_SUBWOOFER_CENTER,
-            VisionConstants.RED_SUBWOOFER_LEFT,
-            VisionConstants.RED_SUBWOOFER_RIGHT,
-            VisionConstants.RED_SPEAKER
+        VisionConstants.RED_AMP,
+        VisionConstants.RED_SUBWOOFER_CENTER,
+        VisionConstants.RED_SUBWOOFER_LEFT,
+        VisionConstants.RED_SUBWOOFER_RIGHT,
+        VisionConstants.RED_SPEAKER
     };
 
     public static double clamp(double val, double min, double max) {
@@ -100,7 +100,8 @@ public class VisionAlignment extends Command {
 
     public double getSpeakerAngle() { // TODO: TEST BY PRINTING GETSPEAKERANGLE
         Translation2d pointToFace = speaker.getTranslation();
-        Rotation2d rotationNeeded = pointToFace.minus(poseEstimation.getPoseEstimate().getTranslation()).getAngle();
+        Rotation2d rotationNeeded =
+                pointToFace.minus(poseEstimation.getPoseEstimate().getTranslation()).getAngle();
         return rotationNeeded.getDegrees();
     }
 
@@ -121,9 +122,10 @@ public class VisionAlignment extends Command {
                                                 .getRadians(), // MIGHT NEED DEGREES
                                         getNearestTarget().getRotation().getRadians()));
                     },
-                    () -> poseEstimation
-                            .getRotationEstimate()
-                            .minus(new Rotation2d(fieldRelRotationOffset)));
+                    () ->
+                            poseEstimation
+                                    .getRotationEstimate()
+                                    .minus(new Rotation2d(fieldRelRotationOffset)));
         } else {
             return null;
         }
