@@ -5,6 +5,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.team957.comp2024.Constants.ShooterConstants;
 import com.team957.comp2024.util.SparkMaxUtils;
+import com.team957.comp2024.util.SparkMaxUtils.SparkMaxAlertsUtil;
 
 public class ShooterHW extends Shooter {
 
@@ -25,6 +26,11 @@ public class ShooterHW extends Shooter {
                     true,
                     true,
                     true);
+
+    private final SparkMaxAlertsUtil rightUtil =
+            new SparkMaxAlertsUtil(rightMotor, "shooter right", ShooterConstants.CURRENT_LIMIT);
+    private final SparkMaxAlertsUtil leftUtil =
+            new SparkMaxAlertsUtil(leftMotor, "shooter left", ShooterConstants.CURRENT_LIMIT);
 
     private final RelativeEncoder leftEncoder = leftMotor.getEncoder();
     private final RelativeEncoder rightEncoder = rightMotor.getEncoder();
@@ -72,7 +78,7 @@ public class ShooterHW extends Shooter {
     public void periodic() {
         super.periodic();
 
-        // not required to override this, but want to prevent accidentially overriding the code in
-        // superclass
+        leftUtil.poll();
+        rightUtil.poll();
     }
 }

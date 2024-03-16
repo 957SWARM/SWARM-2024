@@ -11,6 +11,7 @@ import com.revrobotics.SparkPIDController;
 import com.team957.comp2024.Constants;
 import com.team957.comp2024.Constants.SwerveConstants;
 import com.team957.comp2024.util.SparkMaxUtils;
+import com.team957.comp2024.util.SparkMaxUtils.SparkMaxAlertsUtil;
 import com.team957.lib.math.UtilityMath;
 import edu.wpi.first.math.util.Units;
 import monologue.Annotations.Log;
@@ -18,8 +19,18 @@ import monologue.Annotations.Log;
 public class SwerveHW extends Swerve {
 
     private static class HWModuleIO extends ModuleIO {
+        private final String name;
+
+        @Override
+        public String getName() {
+            return name;
+        }
+
         private final CANSparkMax steer;
         private final CANSparkMax drive;
+
+        private final SparkMaxAlertsUtil steerUtil;
+        private final SparkMaxAlertsUtil driveUtil;
 
         private final SparkPIDController steerController;
         private final SparkPIDController driveController;
@@ -32,7 +43,14 @@ public class SwerveHW extends Swerve {
 
         private boolean brakeModeIsActive = false;
 
-        HWModuleIO(int steerCANID, int driveCANID, double steerOffsetRadians, boolean invertDrive) {
+        HWModuleIO(
+                int steerCANID,
+                int driveCANID,
+                double steerOffsetRadians,
+                boolean invertDrive,
+                String name) {
+            this.name = name;
+
             steer =
                     SparkMaxUtils.slowUnusedPeriodics(
                             new CANSparkMax(steerCANID, MotorType.kBrushless),
@@ -50,6 +68,13 @@ public class SwerveHW extends Swerve {
                             true,
                             true,
                             true);
+
+            steerUtil =
+                    new SparkMaxAlertsUtil(
+                            steer, name + " swerve steer", SwerveConstants.STEER_CURRENT_LIMIT);
+            driveUtil =
+                    new SparkMaxAlertsUtil(
+                            drive, name + " swerve drive", SwerveConstants.DRIVE_CURRENT_LIMIT);
 
             steer.restoreFactoryDefaults();
             drive.restoreFactoryDefaults();
@@ -244,7 +269,10 @@ public class SwerveHW extends Swerve {
         }
 
         @Override
-        protected void update(double dt) {}
+        protected void update(double dt) {
+            steerUtil.poll();
+            driveUtil.poll();
+        }
     }
 
     public SwerveHW(boolean isCompetitionRobot) {
@@ -255,28 +283,32 @@ public class SwerveHW extends Swerve {
                         isCompetitionRobot
                                 ? Constants.SwerveConstants.FRONT_LEFT_STEER_OFFSET_RADIANS
                                 : SwerveConstants.PRACTICE_FRONT_LEFT_STEER_OFFSET_RADIANS,
-                        SwerveConstants.FRONT_LEFT_DRIVE_INVERTED),
+                        SwerveConstants.FRONT_LEFT_DRIVE_INVERTED,
+                        "front left"),
                 new HWModuleIO(
                         SwerveConstants.FRONT_RIGHT_STEER_CANID,
                         SwerveConstants.FRONT_RIGHT_DRIVE_CANID,
                         isCompetitionRobot
                                 ? SwerveConstants.FRONT_RIGHT_STEER_OFFSET_RADIANS
                                 : SwerveConstants.PRACTICE_FRONT_RIGHT_STEER_OFFSET_RADIANS,
-                        SwerveConstants.FRONT_RIGHT_DRIVE_INVERTED),
+                        SwerveConstants.FRONT_RIGHT_DRIVE_INVERTED,
+                        "front right"),
                 new HWModuleIO(
                         SwerveConstants.BACK_RIGHT_STEER_CANID,
                         SwerveConstants.BACK_RIGHT_DRIVE_CANID,
                         isCompetitionRobot
                                 ? SwerveConstants.BACK_RIGHT_STEER_OFFSET_RADIANS
                                 : SwerveConstants.PRACTICE_BACK_RIGHT_STEER_OFFSET_RADIANS,
-                        SwerveConstants.BACK_RIGHT_DRIVE_INVERTED),
+                        SwerveConstants.BACK_RIGHT_DRIVE_INVERTED,
+                        "back right"),
                 new HWModuleIO(
                         SwerveConstants.BACK_LEFT_STEER_CANID,
                         SwerveConstants.BACK_LEFT_DRIVE_CANID,
                         isCompetitionRobot
                                 ? SwerveConstants.BACK_LEFT_STEER_OFFSET_RADIANS
                                 : SwerveConstants.PRACTICE_BACK_LEFT_STEER_OFFSET_RADIANS,
-                        SwerveConstants.BACK_LEFT_DRIVE_INVERTED));
+                        SwerveConstants.BACK_LEFT_DRIVE_INVERTED,
+                        "back left"));
     }
 
     @Override

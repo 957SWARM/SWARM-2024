@@ -84,7 +84,7 @@ public class DefaultDriver implements DriverInput {
 
     @Override
     public boolean climbWinch() {
-        return xboxController.getBButton();
+        return xboxController.getRawButton(7);
     }
 
     @Override
@@ -105,5 +105,10 @@ public class DefaultDriver implements DriverInput {
     @Override
     public boolean pivotAmp() {
         return xboxController.getBButton();
+    }
+
+    @Override
+    public boolean toggleClimbRetract() {
+        return (xboxController.getPOV() == 90);
     }
 }

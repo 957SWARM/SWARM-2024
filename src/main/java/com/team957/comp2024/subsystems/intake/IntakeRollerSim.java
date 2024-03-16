@@ -21,6 +21,11 @@ public class IntakeRollerSim extends IntakeRoller {
     }
 
     @Override
+    public double getTofReadingMeters() {
+        return 0;
+    }
+
+    @Override
     public double getRollerAmps() {
         return 0;
     }

@@ -6,11 +6,16 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.team957.comp2024.Constants;
 import com.team957.comp2024.Constants.IntakeRollerConstants;
+import com.team957.comp2024.util.FaultDetectionUtil.StaleNoisyDataDetector;
 import com.team957.comp2024.util.SparkMaxUtils;
-import monologue.Annotations.Log;
+import com.team957.comp2024.util.SparkMaxUtils.SparkMaxAlertsUtil;
 
 public class IntakeRollerHW extends IntakeRoller {
-    double tofReadingMeters = 0;
+    private double tofReadingMeters = 0;
+
+    private final StaleNoisyDataDetector detector =
+            new StaleNoisyDataDetector(
+                    "Time of flight range", IntakeRollerConstants.STALENESS_THRESHOLD_CYCLES);
 
     private final CANSparkMax roller =
             SparkMaxUtils.slowUnusedPeriodics(
@@ -23,6 +28,9 @@ public class IntakeRollerHW extends IntakeRoller {
                     true);
 
     private final TimeOfFlight tof = new TimeOfFlight(IntakeRollerConstants.TOF_CANID);
+
+    private final SparkMaxAlertsUtil util =
+            new SparkMaxAlertsUtil(roller, "intake roller", IntakeRollerConstants.CURRENT_LIMIT);
 
     public IntakeRollerHW() {
         tof.setRangingMode(RangingMode.Short, IntakeRollerConstants.TOF_TIMING_BUDGET_MS);
@@ -59,7 +67,7 @@ public class IntakeRollerHW extends IntakeRoller {
     public void setSimulationNoteIsPresentMock(boolean mock) {}
 
     // may be stale
-    @Log
+    @Override
     public double getTofReadingMeters() {
         return tofReadingMeters;
     }
@@ -69,5 +77,9 @@ public class IntakeRollerHW extends IntakeRoller {
         super.periodic();
 
         tofReadingMeters = tof.getRange() / 1000;
+
+        detector.poll(tofReadingMeters);
+
+        util.poll();
     }
 }

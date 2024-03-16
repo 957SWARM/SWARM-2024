@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 
 public class LEDStripPatterns {
@@ -17,6 +18,10 @@ public class LEDStripPatterns {
 
     public LEDStripPatterns() {
         timer.restart();
+    }
+
+    public void scheduleDefaultCommand(Command command) {
+        CommandScheduler.getInstance().setDefaultCommand(led, command);
     }
 
     public Command getBlankPatternCommand(int start, int length) {

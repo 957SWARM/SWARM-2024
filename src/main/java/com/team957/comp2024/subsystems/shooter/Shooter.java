@@ -66,7 +66,7 @@ public abstract class Shooter implements Subsystem, Logged {
                 .withName("idle");
     }
 
-    public Command noVoltage() {
+    public Command off() {
         return defaultShooterControlCommand(() -> 0.0).withName("noVoltage");
     }
 }

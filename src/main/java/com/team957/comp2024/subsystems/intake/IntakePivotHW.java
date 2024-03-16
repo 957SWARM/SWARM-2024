@@ -5,7 +5,9 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
 import com.team957.comp2024.Constants;
+import com.team957.comp2024.Constants.IntakePivotConstants;
 import com.team957.comp2024.util.SparkMaxUtils;
+import com.team957.comp2024.util.SparkMaxUtils.SparkMaxAlertsUtil;
 import com.team957.lib.math.UtilityMath;
 
 public class IntakePivotHW extends IntakePivot {
@@ -21,6 +23,10 @@ public class IntakePivotHW extends IntakePivot {
                     false);
 
     private final AbsoluteEncoder encoder = motor.getAbsoluteEncoder(Type.kDutyCycle);
+
+    private final SparkMaxAlertsUtil util =
+            new SparkMaxAlertsUtil(
+                    motor, "intake pivot", IntakePivotConstants.INTAKE_PIVOT_CURRENT_LIMIT_AMPS);
 
     public IntakePivotHW() {
         motor.restoreFactoryDefaults();
@@ -64,7 +70,6 @@ public class IntakePivotHW extends IntakePivot {
     public void periodic() {
         super.periodic();
 
-        // not required to override this, but want to prevent accidentially overriding the code in
-        // superclass
+        util.poll();
     }
 }

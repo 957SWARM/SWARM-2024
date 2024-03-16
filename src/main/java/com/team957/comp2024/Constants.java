@@ -29,6 +29,8 @@ public class Constants {
         public static final double HIGH_CAN_UTIL_THRESHOLD = .8;
 
         public static final int PRACTICE_BOT_JUMPER_CHANNEL = 0;
+
+        public static final double SUBWOOFER_SIDE_ANGLE = Units.degreesToRadians(57);
     }
 
     public static final class LEDConstants {
@@ -108,7 +110,7 @@ public class Constants {
 
         public static final int BACK_LEFT_DRIVE_CANID = 5;
         public static final int BACK_LEFT_STEER_CANID = 6;
-        public static final double BACK_LEFT_STEER_OFFSET_RADIANS = 0.527;
+        public static final double BACK_LEFT_STEER_OFFSET_RADIANS = 0.478;
         public static final boolean BACK_LEFT_DRIVE_INVERTED = false;
         public static final double PRACTICE_BACK_LEFT_STEER_OFFSET_RADIANS = 6.27;
 
@@ -139,6 +141,9 @@ public class Constants {
     public static final class AutoConstants {
         public static final PIDConstants LINEAR_PATHFINDING_GAINS = new PIDConstants(10, 0, 0);
         public static final PIDConstants ROTATIONAL_PATHFINDING_GAINS = new PIDConstants(10, 0, 0);
+
+        public static final PIDConstants LINEAR_GAINS_NO_FF = new PIDConstants(3, 0, 0);
+        public static final PIDConstants ROTATIONAL_GAINS_NO_FF = new PIDConstants(3, 0, 0);
 
         public static final double DEFAULT_PIVOT_DELAY_SECONDS = 0.5;
 
@@ -175,10 +180,10 @@ public class Constants {
 
         public static final double PIVOT_TO_TIP_METERS = Units.inchesToMeters(14);
 
-        public static final double FLOOR_INTAKE_ANGLE_RADIANS = 5.7;
+        public static final double FLOOR_INTAKE_ANGLE_RADIANS = Units.degreesToRadians(327.5);
         public static final double STOW_INTAKE_ANGLE_RADIANS = Units.degreesToRadians(120);
-        public static final double HANDOFF_INTAKE_ANGLE_RADIANS = 2.8;
-        public static final double AMP_INTAKE_ANGLE_RADIANS = Units.degreesToRadians(75);
+        public static final double HANDOFF_INTAKE_ANGLE_RADIANS = 2.9;
+        public static final double AMP_INTAKE_ANGLE_RADIANS = Units.degreesToRadians(70);
 
         public static final int INTAKE_PIVOT_MOTOR_CANID = 11;
 
@@ -189,7 +194,7 @@ public class Constants {
         public static final double INTAKE_PIVOT_PROFILE_CONTROL_EFFORT = 3;
 
         // reported angle when the pivot is at "zero" (straight ahead)
-        public static final double INTAKE_PIVOT_OFFSET_RADIANS = -.1;
+        public static final double INTAKE_PIVOT_OFFSET_RADIANS = -.58;
 
         public static final PIDConstants PID_CONSTANTS = new PIDConstants(2.5, 0, 0);
     }
@@ -198,9 +203,11 @@ public class Constants {
         public static final double STANDARD_VOLTAGE = 6;
         // CAN ID not set
         public static final int MOTOR_CANID = 13;
-        public static final int CURRENT_LIMIT = 40;
+        public static final int CURRENT_LIMIT = 20;
         // positive = going up. negative = going down.
         public static final boolean MOTOR_INVERTED = false;
+
+        public static final double IDLE_VOLTAGE = -4;
     }
 
     public static final class OIConstants {
@@ -210,7 +217,7 @@ public class Constants {
     public static final class WinchConstants {
         // CAN ID not set
         public static final int MOTOR_CANID = 14;
-        public static final double STANDARD_VOLTAGE = 6;
+        public static final double STANDARD_VOLTAGE = 12;
         public static final int CURRENT_LIMIT = 40;
         // positive = going up. negative = going down.
         public static final boolean MOTOR_INVERTED = false;
@@ -222,21 +229,28 @@ public class Constants {
         public static final boolean ROLLER_INVERTED = false;
 
         public static final double FLOOR_INTAKE_VOLTAGE = 6;
-        public static final double SHOOTER_HANDOFF_VOLTAGE = -9;
+        public static final double SHOOTER_HANDOFF_VOLTAGE = -12;
         public static final double AMP_SHOT_VOLTAGE = -12;
         public static final double SLOW_RUN_VOLTAGE = 2;
-        public static final double CENTERING_VOLTAGE = .5;
+        public static final double CENTERING_VOLTAGE = 1;
 
         public static final int TOF_CANID = 0;
 
         public static final double TOF_TIMING_BUDGET_MS = 30;
 
-        public static final double TOF_NOTE_PRESENT_THRESHOLD_METERS = .45;
+        public static final double TOF_NOTE_PRESENT_THRESHOLD_METERS = .4;
 
         public static final double TOF_NOTE_PRESENT_DEBOUNCE_SECONDS = 0.1;
 
         public static final double SIM_MOCK_OUTTAKE_DELAY_SECONDS = 0.5;
         public static final double SIM_MOCK_INTAKE_DELAY_SECONDS = 0.5;
+
+        public static final double CENTERING_REVERSAL_HYSTERESIS_METERS = .01; // 10mm
+
+        public static final double CENTERING_PULSE_VOLTAGE = 4;
+
+        public static final int STALENESS_THRESHOLD_CYCLES =
+                5; // reports stale data fault if reported value is identical for this many cycles
     }
 
     public static final class AlertConstants {
@@ -318,5 +332,24 @@ public class Constants {
                 new Pose2d(1.9, 7.6, new Rotation2d(Math.PI / 2));
         public static final Pose2d OTF_AMP_POSE_RED =
                 new Pose2d(14.75, 7.6, new Rotation2d(-Math.PI / 2));
+    }
+
+    public static final class SequencingConstants {
+        // coordinatedSubwooferShot
+        public static final double CENTERING_NOTE_DURATION = .05;
+        public static final double UNTIL_SHOOT_DELAY = .6;
+        public static final double SHOOT_DURATION = .5;
+
+        // coordinatedFloorIntake
+        public static final double ROLLER_DELAY = .1;
+    }
+
+    public static final class SparkMaxAlertsConstants {
+        public static final double OVERTEMPERATURE_THRESHOLD_C = 60;
+
+        public static final int VOLTAGE_MEASUREMENT_STALENESS_THRESHOLD = 5;
+
+        public static final double SUSPICIOUS_TEMPERATURE_RATE =
+                50; // 50 celsius / second is not going to happen, ever
     }
 }

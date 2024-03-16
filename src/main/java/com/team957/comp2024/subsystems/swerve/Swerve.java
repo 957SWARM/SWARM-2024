@@ -4,6 +4,7 @@ import com.team957.comp2024.Constants;
 import com.team957.comp2024.Constants.MiscConstants;
 import com.team957.comp2024.Constants.SwerveConstants;
 import com.team957.comp2024.UI;
+import com.team957.lib.util.DeltaTimeUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -156,6 +157,8 @@ public abstract class Swerve implements Subsystem, Logged {
         }
 
         protected abstract void update(double dt);
+
+        public abstract String getName();
     }
 
     public static Swerve getSwerve(boolean isReal, boolean isCompetitionRobot) {
@@ -340,9 +343,18 @@ public abstract class Swerve implements Subsystem, Logged {
                 .withName("lockDrivetrain");
     }
 
+    private final DeltaTimeUtil dtUtil = new DeltaTimeUtil();
+
     @Override
     public void periodic() {
         UI.instance.setSwerveStates(getStates());
+
+        double dt = dtUtil.getTimeSecondsSinceLastCall();
+
+        frontLeft.update(dt);
+        frontRight.update(dt);
+        backRight.update(dt);
+        backLeft.update(dt);
 
         Command activeCommand = getCurrentCommand();
 

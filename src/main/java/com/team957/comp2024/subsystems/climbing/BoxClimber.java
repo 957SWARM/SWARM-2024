@@ -31,9 +31,16 @@ public abstract class BoxClimber implements Subsystem, Logged {
     // puts the climber in rest
     public Command idleCommand() {
         return run(() -> {
-                    setMotorVoltage(0);
+                    setMotorVoltage(BoxClimberConstants.IDLE_VOLTAGE);
                 })
                 .withName("idle");
+    }
+
+    public Command stop() {
+        return run(() -> {
+                    setMotorVoltage(0);
+                })
+                .withName("stop");
     }
 
     // raises the climber

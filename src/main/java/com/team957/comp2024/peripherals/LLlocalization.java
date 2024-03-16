@@ -57,7 +57,6 @@ public class LLlocalization implements Logged {
 
         return flipped;
     }
-    ;
 
     public LLlocalization(
             SwerveDriveKinematics kinematics,
@@ -71,21 +70,19 @@ public class LLlocalization implements Logged {
         this.gyro = gyro;
         this.robotReal = robotReal;
 
-        poseEstimator =
-                new SwerveDrivePoseEstimator(
-                        kinematics,
-                        gyro.get(),
-                        invertDistances(modulePositions.get()),
-                        new Pose2d(),
-                        VisionConstants.STATE_STDS,
-                        VisionConstants.VISION_STDS);
+        poseEstimator = new SwerveDrivePoseEstimator(
+                kinematics,
+                gyro.get(),
+                invertDistances(modulePositions.get()),
+                new Pose2d(),
+                VisionConstants.STATE_STDS,
+                VisionConstants.VISION_STDS);
 
-        photonEstimator =
-                new PhotonPoseEstimator(
-                        ATFieldLayout,
-                        PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
-                        photonCam,
-                        VisionConstants.PCAM_TO_CENTER);
+        photonEstimator = new PhotonPoseEstimator(
+                ATFieldLayout,
+                PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
+                photonCam,
+                VisionConstants.PCAM_TO_CENTER);
 
         photonEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
     }
@@ -94,8 +91,7 @@ public class LLlocalization implements Logged {
         double dt = dtUtil.getTimeSecondsSinceLastCall();
 
         simGyro.calculate(
-                SwerveConstants.KINEMATICS.toChassisSpeeds(moduleStates.get())
-                        .omegaRadiansPerSecond,
+                SwerveConstants.KINEMATICS.toChassisSpeeds(moduleStates.get()).omegaRadiansPerSecond,
                 dt);
 
         Rotation2d rotation;
@@ -120,22 +116,19 @@ public class LLlocalization implements Logged {
 
             double[] botpose = LimelightLib.getBotPose_wpiBlue(limelightName);
 
-            Rotation3d rot3 =
-                    new Rotation3d(
-                            Units.degreesToRadians(botpose[3]),
-                            Units.degreesToRadians(botpose[4]),
-                            Units.degreesToRadians(botpose[5]));
+            Rotation3d rot3 = new Rotation3d(
+                    Units.degreesToRadians(botpose[3]),
+                    Units.degreesToRadians(botpose[4]),
+                    Units.degreesToRadians(botpose[5]));
 
             Pose3d visionPose = new Pose3d(botpose[0], botpose[1], botpose[2], rot3);
 
             if (visionPose != null && LimelightLib.getTV(limelightName)) {
                 if (LimelightLib.getTA(limelightName) > VisionConstants.TARGET_AREA_CUTOFF) {
-                    visionPose2d =
-                            new Pose2d(visionPose.getTranslation().toTranslation2d(), gyro.get());
-                    double timeStampSeconds =
-                            Timer.getFPGATimestamp()
-                                    - (LimelightLib.getLatency_Pipeline(limelightName) / 1000.0)
-                                    - (LimelightLib.getLatency_Capture(limelightName) / 1000.0);
+                    visionPose2d = new Pose2d(visionPose.getTranslation().toTranslation2d(), gyro.get());
+                    double timeStampSeconds = Timer.getFPGATimestamp()
+                            - (LimelightLib.getLatency_Pipeline(limelightName) / 1000.0)
+                            - (LimelightLib.getLatency_Capture(limelightName) / 1000.0);
 
                     System.out.println(visionPose2d.getX() + " || " + visionPose2d.getY());
 
@@ -147,8 +140,7 @@ public class LLlocalization implements Logged {
 
     public void estimateVisionPosePV() {
         if (VisionConstants.VISION_POSE_ESTIMATION_ENABLED) {
-            final Optional<EstimatedRobotPose> optionalEstimatedRobotPose =
-                    photonEstimator.update();
+            final Optional<EstimatedRobotPose> optionalEstimatedRobotPose = photonEstimator.update();
             if (optionalEstimatedRobotPose.isPresent()) {
                 final EstimatedRobotPose estimatedRobotPose = optionalEstimatedRobotPose.get();
                 poseEstimator.addVisionMeasurement(
