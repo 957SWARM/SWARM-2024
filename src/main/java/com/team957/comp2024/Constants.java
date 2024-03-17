@@ -264,7 +264,15 @@ public class Constants {
 
     public static final class VisionConstants {
 
-        public static final boolean VISION_POSE_ESTIMATION_ENABLED = false;
+        public static final boolean VISION_POSE_ESTIMATION_ENABLED = true;
+
+        public static final int LL1_NOTE_TRACKING_PL = 4;
+        public static final int LL1_POSE_ESTIMATION_PL = 0;
+        public static final int LL2_POSE_ESTIMATION_PL = 0;
+
+        public static final String LL1_NAME = "limelight-note";
+        public static final String LL2_NAME = "limelight-tag";
+        public static final String PCAM_NAME = "photoncamera";
 
         public static final double LL_FOV_DEGREES = (29.8 * 2);
         public static final double LL_FOV_PIXELS = 320;
@@ -282,15 +290,37 @@ public class Constants {
                         new Rotation3d(0, 0, 0));
         public static final Transform3d LL2_TO_CENTER =
                 new Transform3d(new Translation3d(0, 0, 0), new Rotation3d(0, 0, 0));
+        public static final Transform3d PCAM_TO_CENTER =
+                new Transform3d(new Translation3d(0, 0, 0), new Rotation3d(0, 0, 0));
 
         public static final double TARGET_AREA_CUTOFF = 0.5; // PERCENT OF SCREEN //TODO: FIND VAL
         public static final double TARGET_TX_CUTOFF = 24; // DEGREES
         public static final double TARGET_THOR_CUTOFF = 70; // PIXELS
 
-        public static final double TRACKING_KP = 5.5;
-        public static final double TRACKING_MIN_COMMAND = 0.1;
-        public static final double TRACKING_STOP_THRESHOLD = 0.025; // RADIANS
-        public static final double MIN_COMMAND_TRESHOLD = 0.02; // RADIANS
+        public static final double TRACKING_KP = 5;
+        public static final double TRACKING_MIN_COMMAND = 0.05;
+        public static final double TRACKING_STOP_THRESHOLD = 0.01; // RADIANS
+        public static final double TRACKING_MIN_COMMAND_TRESHOLD = 0.02; // RADIANS
+        public static final double TRACKING_MAX_SPEED = 100; // TODO: TUNE VALUE
+
+        // OLD WIP VISION PATHING/ALIGNMENT STUFF
+
+        public static final double ALIGNING_KP = 0;
+        public static final double ALIGNING_MIN_COMMAND = 0;
+        public static final double ALIGNING_STOP_THRESHOLD = 0;
+        public static final double ALINGING_MIN_COMMAND_TRESHOLD = 0;
+        public static final double ALIGNING_MAX_SPEED = 4; // TODO: TUNE VALUE
+
+        public static final Pose2d BLUE_AMP = new Pose2d();
+        public static final Pose2d BLUE_SUBWOOFER_CENTER = null;
+        public static final Pose2d BLUE_SUBWOOFER_LEFT = null;
+        public static final Pose2d BLUE_SUBWOOFER_RIGHT = null;
+        public static final Pose2d BLUE_SPEAKER = new Pose2d(0.21, 5.5, new Rotation2d());
+        public static final Pose2d RED_AMP = new Pose2d();
+        public static final Pose2d RED_SUBWOOFER_CENTER = null;
+        public static final Pose2d RED_SUBWOOFER_LEFT = null;
+        public static final Pose2d RED_SUBWOOFER_RIGHT = null;
+        public static final Pose2d RED_SPEAKER = new Pose2d(16.32, 5.5, new Rotation2d());
     }
 
     public static final class OtfPathingConstants {
