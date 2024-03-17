@@ -335,7 +335,7 @@ public class Autos {
 
         return ScoringSequences.coordinatedSubwooferShot(shooter, intakePivot, intakeRoller)
                 .withTimeout(1)
-                .andThen(factory.floorTrajectoryPhase(0, true, 0, 2)) // floor
+                .andThen(factory.floorTrajectoryPhase(0, true, 1, 2)) // floor
                 .andThen(factory.shootTrajectoryPhase(1, false, .5, .75)) // shoot
                 .andThen(factory.floorTrajectoryPhase(2, false, 0, 2)) // floor
                 .andThen(factory.shootTrajectoryPhase(3, false, .5, .75)) // shoot

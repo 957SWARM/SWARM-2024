@@ -225,14 +225,14 @@ public class Constants {
 
     public static final class IntakeRollerConstants {
         public static final int ROLLER_CANID = 12;
-        public static final int CURRENT_LIMIT = 10;
+        public static final int CURRENT_LIMIT = 30;
         public static final boolean ROLLER_INVERTED = false;
 
-        public static final double FLOOR_INTAKE_VOLTAGE = 12;
+        public static final double FLOOR_INTAKE_VOLTAGE = 8;
         public static final double SHOOTER_HANDOFF_VOLTAGE = -12;
         public static final double AMP_SHOT_VOLTAGE = -12;
         public static final double SLOW_RUN_VOLTAGE = 2;
-        public static final double CENTERING_VOLTAGE = 1;
+        public static final double CENTERING_VOLTAGE = .5;
 
         public static final int TOF_CANID = 0;
 
@@ -264,7 +264,7 @@ public class Constants {
 
     public static final class VisionConstants {
 
-        public static final boolean VISION_POSE_ESTIMATION_ENABLED = true;
+        public static final boolean VISION_POSE_ESTIMATION_ENABLED = false;
 
         public static final int LL1_NOTE_TRACKING_PL = 4;
         public static final int LL1_POSE_ESTIMATION_PL = 0;

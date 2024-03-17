@@ -27,6 +27,8 @@ public class IntakeRollerHW extends IntakeRoller {
                     true,
                     true);
 
+    // private final TalonSRX roller = new TalonSRX(12);
+
     private final TimeOfFlight tof = new TimeOfFlight(IntakeRollerConstants.TOF_CANID);
 
     private final SparkMaxAlertsUtil util =
@@ -35,9 +37,15 @@ public class IntakeRollerHW extends IntakeRoller {
     public IntakeRollerHW() {
         tof.setRangingMode(RangingMode.Short, IntakeRollerConstants.TOF_TIMING_BUDGET_MS);
 
+        // CANSparkMax roller code
         roller.restoreFactoryDefaults();
-
         roller.setSmartCurrentLimit(IntakeRollerConstants.CURRENT_LIMIT);
+
+        // Talon roller code
+        // roller.configFactoryDefault();
+        // roller.configContinuousCurrentLimit(IntakeRollerConstants.CURRENT_LIMIT);
+        // roller.configPeakCurrentLimit(IntakeRollerConstants.CURRENT_LIMIT);
+        // roller.enableCurrentLimit(true);
 
         // intaking = positive, puking = negative
         roller.setInverted(IntakeRollerConstants.ROLLER_INVERTED);
@@ -46,16 +54,19 @@ public class IntakeRollerHW extends IntakeRoller {
     @Override
     public void setRollerVoltage(double voltage) {
         roller.setVoltage(voltage);
+        // roller.set(ControlMode.PercentOutput, voltage / 12);
     }
 
     @Override
     public double getRollerAmps() {
         return roller.getOutputCurrent();
+        // return roller.getStatorCurrent();
     }
 
     @Override
     public double getAppliedVoltage() {
         return roller.getAppliedOutput() * roller.getBusVoltage();
+        // return roller.getMotorOutputVoltage() * roller.getBusVoltage();
     }
 
     @Override

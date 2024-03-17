@@ -4,8 +4,8 @@ import com.ctre.phoenix6.SignalLogger;
 import com.team957.comp2024.Constants.MiscConstants;
 import com.team957.comp2024.Constants.PDHConstants;
 import com.team957.comp2024.Constants.SwerveConstants;
-import com.team957.comp2024.commands.ActiveNoteCentering;
 import com.team957.comp2024.Constants.VisionConstants;
+import com.team957.comp2024.commands.ActiveNoteCentering;
 import com.team957.comp2024.commands.Autos;
 import com.team957.comp2024.commands.LEDStripPatterns;
 import com.team957.comp2024.commands.NoteTargeting;
@@ -26,6 +26,7 @@ import com.team957.comp2024.subsystems.swerve.Swerve;
 import com.team957.comp2024.util.LimelightLib;
 import com.team957.lib.util.DeltaTimeUtil;
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -50,75 +51,148 @@ import org.littletonrobotics.urcl.URCL;
 
 public class Robot extends TimedRobot implements Logged {
 
-        private final DigitalInput practiceBotJumper = new DigitalInput(MiscConstants.PRACTICE_BOT_JUMPER_CHANNEL);
+    private final DigitalInput practiceBotJumper =
+            new DigitalInput(MiscConstants.PRACTICE_BOT_JUMPER_CHANNEL);
 
-        // these need to be constructed/declared so that
-        // monologue can work its reflection magic
-        private final IMU imu = new IMU();
+    // these need to be constructed/declared so that
+    // monologue can work its reflection magic
+    private final IMU imu = new IMU();
 
-        private final UI ui = UI.instance;
+    private final UI ui = UI.instance;
 
-        @SuppressWarnings("unused")
-        private final TrajectoryFollowing trajectoryFollowing = TrajectoryFollowing.instance;
+    @SuppressWarnings("unused")
+    private final TrajectoryFollowing trajectoryFollowing = TrajectoryFollowing.instance;
 
-        private final PDH pdh = new PDH(PDHConstants.STARTING_SWITCHABLE_CHANNEL_STATE);
+    private final PDH pdh = new PDH(PDHConstants.STARTING_SWITCHABLE_CHANNEL_STATE);
 
-        private final Swerve swerve = Swerve.getSwerve(isReal(), isCompetitionRobot());
+    private final Swerve swerve = Swerve.getSwerve(isReal(), isCompetitionRobot());
 
-        private final Shooter shooter = Shooter.getShooter(isReal());
+    private final Shooter shooter = Shooter.getShooter(isReal());
 
-        private final IntakePivot pivot = IntakePivot.getIntakePivot(isReal());
+    private final IntakePivot pivot = IntakePivot.getIntakePivot(isReal());
 
-        private final IntakeRoller intakeRoller = IntakeRoller.getIntakeRoller(isReal());
+    private final IntakeRoller intakeRoller = IntakeRoller.getIntakeRoller(isReal());
 
-        private final BoxClimber boxClimber = BoxClimber.getBoxClimber(isReal());
+    private final BoxClimber boxClimber = BoxClimber.getBoxClimber(isReal());
 
-        private final Winch winch = Winch.getWinch(isReal());
+    private final Winch winch = Winch.getWinch(isReal());
 
-        private final LEDStripPatterns led = new LEDStripPatterns();
+    private final LEDStripPatterns led = new LEDStripPatterns();
 
-        private final DeltaTimeUtil dt = new DeltaTimeUtil();
+    private final DeltaTimeUtil dt = new DeltaTimeUtil();
 
-        private final LLlocalization poseEstimation = new LLlocalization(
-                        SwerveConstants.KINEMATICS,
-                        swerve::getStates,
-                        swerve::getPositions,
-                        imu::getCorrectedAngle,
-                        isReal());
+    private DriverInput input;
 
-        private final Autos autos = new Autos(swerve, pivot, intakeRoller, shooter, poseEstimation, this::getAlliance);
+    private Trigger resetFieldRelZero;
+    private Trigger noteTracking;
 
-        private DriverInput input;
+    private Trigger speakerSequence;
+    private Trigger intakeSequence;
 
-        private Trigger resetFieldRelZero;
-        private Trigger noteTracking;
+    private Trigger intakePivotAmp;
+    private Trigger intakePivotStow;
 
-        private Trigger speakerSequence;
-        private Trigger intakeSequence;
+    private Trigger shootAmp;
 
-        private Trigger intakePivotAmp;
-        private Trigger intakePivotStow;
+    private Trigger climbHookDown;
+    private Trigger climbHookUp;
+    private Trigger climbWinch;
+    private Trigger climbRetract;
 
-        private Trigger shootAmp;
+    private Trigger intakeSlow;
+    private Trigger outakeSlow;
 
-        private Trigger climbHookDown;
-        private Trigger climbHookUp;
-        private Trigger climbWinch;
-        private Trigger climbRetract;
+    private Trigger onGetNote;
 
-        private Trigger intakeSlow;
-        private Trigger outakeSlow;
-
-        private Trigger onGetNote;
-
-        private Trigger ledEndGame;
-        private Trigger ledNotePickup;
+    private Trigger ledEndGame;
+    private Trigger ledNotePickup;
 
     private Trigger activeNoteCentering;
 
-        private double fieldRelRotationOffset = 0;
+    private double fieldRelRotationOffset = 0;
 
-        private final NoteTargeting noteTargeting = new NoteTargeting(
+    private final LLlocalization poseEstimation =
+            new LLlocalization(
+                    SwerveConstants.KINEMATICS,
+                    swerve::getStates,
+                    swerve::getPositions,
+                    imu::getCorrectedAngle,
+                    () -> fieldRelRotationOffset,
+                    isReal());
+
+    private NoteTargeting noteTargeting;
+
+    private final Autos autos =
+            new Autos(swerve, pivot, intakeRoller, shooter, poseEstimation, this::getAlliance);
+
+    private final Notifier fastLoop = new Notifier(this::loop);
+
+    private final Alert loopOverrun = new Alert("Loop overrun!", AlertType.WARNING);
+    private final Alert canUtil = new Alert("High CAN utilization!", AlertType.WARNING);
+    private final Alert practiceBot =
+            new Alert("Using practice robot constants!", AlertType.WARNING);
+    private final Alert loopSkipped =
+            new Alert(
+                    "Handling concurrency error: CommandScheduler loop skipped!", AlertType.ERROR);
+
+    @Log
+    public boolean isCompetitionRobot() {
+        return practiceBotJumper.get();
+    }
+
+    @Override
+    public void robotInit() {
+
+        CommandScheduler.getInstance()
+                .setPeriod(Constants.MiscConstants.LOOP_WATCHDOG_TRIGGER_SECONDS);
+
+        SignalLogger.enableAutoLogging(true);
+        SignalLogger.start();
+
+        if (isReal()) {
+            URCL.start(); // URCL segfaults in sim
+
+            input = new DefaultDriver();
+
+            CameraServer.startAutomaticCapture().setResolution(480, 360);
+        } else {
+            input = new SimKeyboardDriver();
+        }
+
+        LimelightLib.setPipelineIndex(
+                VisionConstants.LL1_NAME, VisionConstants.LL1_NOTE_TRACKING_PL);
+        LimelightLib.setPipelineIndex(
+                VisionConstants.LL2_NAME, VisionConstants.LL2_POSE_ESTIMATION_PL);
+
+        Monologue.setupMonologue(this, "Robot", false, true);
+
+        DriverStation.startDataLog(DataLogManager.getLog()); // same log used by monologue
+
+        ui.setDriverInputChangeCallback((driverInput) -> this.input = driverInput);
+        ui.setOperatorInputChangeCallback((operatorInput) -> {});
+
+        ui.addAuto("Narrow Center Four Piece", autos.narrowFourPiece());
+        ui.addAuto("Source Far Three Piece", autos.sourceFarThreePiece());
+        ui.addAuto("Amp Three Piece", autos.ampThreePiece());
+        ui.addAuto("Center Three Piece", autos.centerThreePiece());
+        ui.addAuto("Center Two Piece", autos.centerTwoPiece());
+        // ui.addAuto("Center Four Piece", autos.centerFourPiece());
+        // ui.addAuto("Source Two Piece", autos.sourceTwoPiece());
+        ui.addAuto("Just Leave: Center", autos.justLeaveCenter());
+        ui.addAuto("Just Leave: Amp", autos.justLeaveAmp());
+        ui.addAuto("Just Leave: Source", autos.justLeaveSource());
+        ui.addAuto("Just Shoot: Center", autos.justShootCenter());
+        ui.addAuto("Just Shoot: Amp", autos.justShootAmp());
+        ui.addAuto("Just Shoot: Source", autos.justShootSource());
+
+        // ui.addAuto("Five Piece??", autos.fivePieceMockup());
+        // ui.addAuto("Test Path", autos.testPath());
+        // ui.addAuto("Five Piece Mockup", autos.fivePieceMockup());
+        // ui.addAuto("Four Piece Mockup", autos.fourPieceMockup());
+        // ui.addAuto("Three Piece Mockup", autos.threePieceMockup());
+
+        noteTargeting =
+                new NoteTargeting(
                         swerve,
                         () -> input.swerveX(),
                         () -> input.swerveY(),
@@ -126,227 +200,165 @@ public class Robot extends TimedRobot implements Logged {
                         poseEstimation,
                         VisionConstants.LL1_NAME);
 
-        private final Notifier fastLoop = new Notifier(this::loop);
+        swerve.setDefaultCommand(
+                swerve.getFieldRelativeControlCommand(
+                        () ->
+                                new ChassisSpeeds(
+                                        input.swerveX(), input.swerveY(), input.swerveRot()),
+                        () ->
+                                poseEstimation
+                                        .getRotationEstimate()
+                                        .minus(new Rotation2d(fieldRelRotationOffset))));
 
-        private final Alert loopOverrun = new Alert("Loop overrun!", AlertType.WARNING);
-        private final Alert canUtil = new Alert("High CAN utilization!", AlertType.WARNING);
-        private final Alert practiceBot = new Alert("Using practice robot constants!", AlertType.WARNING);
-        private final Alert loopSkipped = new Alert(
-                        "Handling concurrency error: CommandScheduler loop skipped!", AlertType.ERROR);
+        pivot.setDefaultCommand(pivot.toStow());
+        shooter.setDefaultCommand(shooter.idle());
+        intakeRoller.setDefaultCommand(intakeRoller.idle());
+        boxClimber.setDefaultCommand(boxClimber.stop());
+        winch.setDefaultCommand(winch.idleCommand());
+        led.scheduleDefaultCommand(led.allianceColor(0, 50));
 
-        @Log
-        public boolean isCompetitionRobot() {
-                return practiceBotJumper.get();
-        }
+        speakerSequence = new Trigger(input::speakerSequence);
+        speakerSequence.toggleOnTrue(
+                ScoringSequences.coordinatedSubwooferShot(shooter, pivot, intakeRoller));
 
-        @Override
-        public void robotInit() {
+        intakeSequence = new Trigger(input::intakeSequence);
+        intakeSequence.toggleOnTrue(ScoringSequences.coordinatedFloorIntake(pivot, intakeRoller));
 
-                CommandScheduler.getInstance()
-                                .setPeriod(Constants.MiscConstants.LOOP_WATCHDOG_TRIGGER_SECONDS);
+        intakePivotStow = new Trigger(input::intakePivotStow);
+        intakePivotStow.toggleOnTrue(pivot.toStow());
 
-                SignalLogger.enableAutoLogging(true);
-                SignalLogger.start();
+        intakePivotAmp = new Trigger(input::pivotAmp);
+        intakePivotAmp.onTrue(
+                TrajectoryFollowing.instance
+                        .driveToRelativePose(
+                                swerve,
+                                poseEstimation::getPoseEstimate,
+                                () -> new Transform2d(.09, 0, new Rotation2d()))
+                        .alongWith(
+                                pivot.toAmp()
+                                        .alongWith(
+                                                new WaitCommand(1).andThen(intakeRoller.ampShot())))
+                        .withTimeout(2));
 
-                if (isReal()) {
-                        URCL.start(); // URCL segfaults in sim
+        shootAmp = new Trigger(input::shootAmp);
+        shootAmp.onTrue(intakeRoller.ampShotUntilNoteGone());
 
-                        input = new DefaultDriver();
+        intakeSlow = new Trigger(input::slowIntake);
+        intakeSlow.whileTrue(intakeRoller.slowIntake());
 
-                        CameraServer.startAutomaticCapture().setResolution(480, 360);
-                } else {
-                        input = new SimKeyboardDriver();
-                }
+        outakeSlow = new Trigger(input::slowEject);
+        outakeSlow.whileTrue(intakeRoller.slowEject());
 
-                LimelightLib.setPipelineIndex(
-                                VisionConstants.LL1_NAME, VisionConstants.LL1_NOTE_TRACKING_PL);
-                LimelightLib.setPipelineIndex(
-                                VisionConstants.LL2_NAME, VisionConstants.LL2_POSE_ESTIMATION_PL);
+        onGetNote = new Trigger(intakeRoller::debouncedNoteIsPresent);
+        onGetNote.onTrue(
+                Commands.run(() -> input.setRumble(true))
+                        .withTimeout(.5)
+                        .andThen(Commands.run(() -> input.setRumble(false))));
 
-                Monologue.setupMonologue(this, "Robot", false, true);
+        onGetNote.onFalse(Commands.run(() -> input.setRumble(false)).ignoringDisable(true));
 
-                DriverStation.startDataLog(DataLogManager.getLog()); // same log used by monologue
+        noteTracking =
+                new Trigger(() -> input.noteTracking() && !intakeRoller.debouncedNoteIsPresent());
+        noteTracking.whileTrue(noteTargeting.getNoteTrackCommand());
 
-                ui.setDriverInputChangeCallback((driverInput) -> this.input = driverInput);
-                ui.setOperatorInputChangeCallback((operatorInput) -> {
-                });
+        climbHookUp = new Trigger(input::raiseHook);
+        climbHookUp.whileTrue(boxClimber.raiseCommand());
 
-                ui.addAuto("Narrow Center Four Piece", autos.narrowFourPiece());
-                ui.addAuto("Source Far Three Piece", autos.sourceFarThreePiece());
-                ui.addAuto("Amp Three Piece", autos.ampThreePiece());
-                ui.addAuto("Center Three Piece", autos.centerThreePiece());
-                ui.addAuto("Center Two Piece", autos.centerTwoPiece());
-                // ui.addAuto("Center Four Piece", autos.centerFourPiece());
-                // ui.addAuto("Source Two Piece", autos.sourceTwoPiece());
-                ui.addAuto("Just Leave: Center", autos.justLeaveCenter());
-                ui.addAuto("Just Leave: Amp", autos.justLeaveAmp());
-                ui.addAuto("Just Leave: Source", autos.justLeaveSource());
-                ui.addAuto("Just Shoot: Center", autos.justShootCenter());
-                ui.addAuto("Just Shoot: Amp", autos.justShootAmp());
-                ui.addAuto("Just Shoot: Source", autos.justShootSource());
+        climbHookDown = new Trigger(input::lowerHook);
+        climbHookDown.whileTrue(boxClimber.lowerCommand());
 
-                // ui.addAuto("Five Piece??", autos.fivePieceMockup());
-                // ui.addAuto("Test Path", autos.testPath());
-                // ui.addAuto("Five Piece Mockup", autos.fivePieceMockup());
-                // ui.addAuto("Four Piece Mockup", autos.fourPieceMockup());
-                // ui.addAuto("Three Piece Mockup", autos.threePieceMockup());
+        climbWinch = new Trigger(input::climbWinch);
+        climbWinch.whileTrue(winch.raiseCommand().alongWith(shooter.off()));
 
-                swerve.setDefaultCommand(
-                                swerve.getFieldRelativeControlCommand(
-                                                () -> new ChassisSpeeds(
-                                                                input.swerveX(), input.swerveY(), input.swerveRot()),
-                                                () -> poseEstimation
-                                                                .getRotationEstimate()
-                                                                .minus(new Rotation2d(fieldRelRotationOffset))));
+        climbRetract = new Trigger(input::toggleClimbRetract);
+        climbRetract.toggleOnTrue(boxClimber.stop()).toggleOnFalse(boxClimber.idleCommand());
 
-                pivot.setDefaultCommand(pivot.toStow());
-                shooter.setDefaultCommand(shooter.idle());
-                intakeRoller.setDefaultCommand(intakeRoller.idle());
-                boxClimber.setDefaultCommand(boxClimber.stop());
-                winch.setDefaultCommand(winch.idleCommand());
-                led.scheduleDefaultCommand(led.allianceColor(0, 50));
+        resetFieldRelZero = new Trigger(input::zeroGyro);
 
-                speakerSequence = new Trigger(input::speakerSequence);
-                speakerSequence.toggleOnTrue(
-                                ScoringSequences.coordinatedSubwooferShot(shooter, pivot, intakeRoller));
+        resetFieldRelZero.onTrue(
+                Commands.runOnce(
+                        () -> {
+                            fieldRelRotationOffset =
+                                    poseEstimation.getRotationEstimate().getRadians();
+                        }));
 
-                intakeSequence = new Trigger(input::intakeSequence);
-                intakeSequence.toggleOnTrue(ScoringSequences.coordinatedFloorIntake(pivot, intakeRoller));
+        ledEndGame = new Trigger(() -> DriverStation.getMatchTime() <= 20);
+        ledEndGame.whileTrue(led.endGameCommand(0, 50, .100, false));
 
-                intakePivotStow = new Trigger(input::intakePivotStow);
-                intakePivotStow.toggleOnTrue(pivot.toStow());
-
-                intakePivotAmp = new Trigger(input::pivotAmp);
-                intakePivotAmp.onTrue(
-                                TrajectoryFollowing.instance
-                                                .driveToRelativePose(
-                                                                swerve,
-                                                                poseEstimation::getPoseEstimate,
-                                                                () -> new Transform2d(.09, 0, new Rotation2d()))
-                                                .alongWith(
-                                                                pivot.toAmp()
-                                                                                .alongWith(
-                                                                                                new WaitCommand(1)
-                                                                                                                .andThen(intakeRoller
-                                                                                                                                .ampShot())))
-                                                .withTimeout(2));
-
-                shootAmp = new Trigger(input::shootAmp);
-                shootAmp.onTrue(intakeRoller.ampShotUntilNoteGone());
-
-                intakeSlow = new Trigger(input::slowIntake);
-                intakeSlow.whileTrue(intakeRoller.slowIntake());
-
-                outakeSlow = new Trigger(input::slowEject);
-                outakeSlow.whileTrue(intakeRoller.slowEject());
-
-                onGetNote = new Trigger(intakeRoller::debouncedNoteIsPresent);
-                onGetNote.onTrue(
-                                Commands.run(() -> input.setRumble(true))
-                                                .withTimeout(.5)
-                                                .andThen(Commands.run(() -> input.setRumble(false))));
-
-                onGetNote.onFalse(Commands.run(() -> input.setRumble(false)).ignoringDisable(true));
-
-                noteTracking = new Trigger(() -> input.noteTracking() && !intakeRoller.debouncedNoteIsPresent());
-                noteTracking.whileTrue(noteTargeting.getNoteTrackCommand());
-
-                climbHookUp = new Trigger(input::raiseHook);
-                climbHookUp.whileTrue(boxClimber.raiseCommand());
-
-                climbHookDown = new Trigger(input::lowerHook);
-                climbHookDown.whileTrue(boxClimber.lowerCommand());
-
-                climbWinch = new Trigger(input::climbWinch);
-                climbWinch.whileTrue(winch.raiseCommand().alongWith(shooter.off()));
-
-                climbRetract = new Trigger(input::toggleClimbRetract);
-                climbRetract.toggleOnTrue(boxClimber.stop()).toggleOnFalse(boxClimber.idleCommand());
-
-                resetFieldRelZero = new Trigger(input::zeroGyro);
-
-                resetFieldRelZero.onTrue(
-                                Commands.runOnce(
-                                                () -> {
-                                                        fieldRelRotationOffset = poseEstimation.getRotationEstimate()
-                                                                        .getRadians();
-                                                }));
-
-                ledEndGame = new Trigger(() -> DriverStation.getMatchTime() <= 20);
-                ledEndGame.whileTrue(led.endGameCommand(0, 50, .100, false));
-
-                ledNotePickup = new Trigger(() -> intakeRoller.debouncedNoteIsPresent());
-                ledNotePickup
-                                .onTrue(
-                                                led.notePickupCommand(0, 50)
-                                                                .withTimeout(2)
-                                                                .andThen(led.noteInRobotCommand(0, 50, .1,
-                                                                                isAutonomous())))
-                                .onFalse(led.allianceColor(0, 50));
+        ledNotePickup = new Trigger(() -> intakeRoller.debouncedNoteIsPresent());
+        ledNotePickup
+                .onTrue(
+                        led.notePickupCommand(0, 50)
+                                .withTimeout(2)
+                                .andThen(led.noteInRobotCommand(0, 50, .1, isAutonomous())))
+                .onFalse(led.allianceColor(0, 50));
 
         activeNoteCentering = new Trigger(input::activeNoteCentering);
         activeNoteCentering.onTrue(new ActiveNoteCentering(intakeRoller).withTimeout(2));
 
-                fastLoop.startPeriodic(MiscConstants.NOMINAL_LOOP_TIME_SECONDS);
+        fastLoop.startPeriodic(MiscConstants.NOMINAL_LOOP_TIME_SECONDS);
+
+        poseEstimation.setPose(new Pose2d(0, 0, new Rotation2d()));
+    }
+
+    public void loop() {
+        try {
+            CommandScheduler.getInstance().run();
+            loopSkipped.set(false);
+        } catch (ConcurrentModificationException e) {
+            loopSkipped.set(true);
         }
+        // catch (IndexOutOfBoundsException e){
+        // CommandScheduler.getInstance().cancelAll();
+        // }
 
-        public void loop() {
-                try {
-                        CommandScheduler.getInstance().run();
-                        loopSkipped.set(false);
-                } catch (ConcurrentModificationException e) {
-                        loopSkipped.set(true);
-                }
-                // catch (IndexOutOfBoundsException e){
-                // CommandScheduler.getInstance().cancelAll();
-                // }
+        // something deep in wpilib internals
 
-                // something deep in wpilib internals
+        double dtSeconds = dt.getTimeSecondsSinceLastCall();
 
-                double dtSeconds = dt.getTimeSecondsSinceLastCall();
+        log("loopTimeSeconds", dtSeconds);
 
-                log("loopTimeSeconds", dtSeconds);
+        double canUtilization = RobotController.getCANStatus().percentBusUtilization;
 
-                double canUtilization = RobotController.getCANStatus().percentBusUtilization;
+        log("canUtilization", canUtilization);
 
-                log("canUtilization", canUtilization);
+        loopOverrun.set(dtSeconds > MiscConstants.LOOP_WATCHDOG_TRIGGER_SECONDS);
+        canUtil.set(canUtilization > MiscConstants.HIGH_CAN_UTIL_THRESHOLD);
+        practiceBot.set(!isCompetitionRobot());
 
-                loopOverrun.set(dtSeconds > MiscConstants.LOOP_WATCHDOG_TRIGGER_SECONDS);
-                canUtil.set(canUtilization > MiscConstants.HIGH_CAN_UTIL_THRESHOLD);
-                practiceBot.set(!isCompetitionRobot());
+        Monologue.setFileOnly(DriverStation.isFMSAttached());
+        Monologue.updateAll();
 
-                Monologue.setFileOnly(DriverStation.isFMSAttached());
-                Monologue.updateAll();
+        poseEstimation.update();
 
-                poseEstimation.update();
+        imu.periodic();
+        pdh.periodic();
+    }
 
-                imu.periodic();
-                pdh.periodic();
-        }
+    @Override
+    public void teleopInit() {
+        CommandScheduler.getInstance().cancelAll();
+        poseEstimation.setPose(new Pose2d(0, 0, new Rotation2d()));
+        // led.endGameCommand(0, 50, .100, false).schedule();
+        // led.scheduleDefaultCommand(led.allianceColor(0, 0));
+    }
 
-        @Override
-        public void teleopInit() {
-                CommandScheduler.getInstance().cancelAll();
-                // led.endGameCommand(0, 50, .100, false).schedule();
-                // led.scheduleDefaultCommand(led.allianceColor(0, 0));
-        }
+    @Override
+    public void disabledInit() {
+        CommandScheduler.getInstance().cancelAll();
 
-        @Override
-        public void disabledInit() {
-                CommandScheduler.getInstance().cancelAll();
+        swerve.lockDrivetrain().ignoringDisable(true);
+    }
 
-                swerve.lockDrivetrain().ignoringDisable(true);
-        }
+    @Override
+    public void autonomousInit() {
+        ui.getAuto().schedule();
+    }
 
-        @Override
-        public void autonomousInit() {
-                ui.getAuto().schedule();
-        }
-
-        @Log
-        public Alliance getAlliance() {
-                return DriverStation.getAlliance().isPresent()
-                                ? DriverStation.getAlliance().get()
-                                : MiscConstants.DEFAULT_ALLIANCE;
-        }
+    @Log
+    public Alliance getAlliance() {
+        return DriverStation.getAlliance().isPresent()
+                ? DriverStation.getAlliance().get()
+                : MiscConstants.DEFAULT_ALLIANCE;
+    }
 }

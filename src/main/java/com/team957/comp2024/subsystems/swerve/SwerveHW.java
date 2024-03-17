@@ -112,6 +112,8 @@ public class SwerveHW extends Swerve {
             this.invertDrive = invertDrive;
 
             setBrakeMode(Constants.SwerveConstants.INITIAL_BRAKE_MODE_ACTIVE);
+
+            driveEncoder.setPosition(0);
         }
 
         @Override
