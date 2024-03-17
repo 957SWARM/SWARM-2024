@@ -11,6 +11,7 @@ import com.team957.comp2024.commands.LEDStripPatterns;
 import com.team957.comp2024.commands.NoteTargeting;
 import com.team957.comp2024.commands.ScoringSequences;
 import com.team957.comp2024.commands.TrajectoryFollowing;
+import com.team957.comp2024.commands.VisionAlignment;
 import com.team957.comp2024.input.DefaultDriver;
 import com.team957.comp2024.input.DriverInput;
 import com.team957.comp2024.input.SimKeyboardDriver;
@@ -120,6 +121,8 @@ public class Robot extends TimedRobot implements Logged {
                     () -> fieldRelRotationOffset,
                     isReal());
 
+    private VisionAlignment visionAlignment;
+
     private NoteTargeting noteTargeting;
 
     private final Autos autos =
@@ -200,15 +203,15 @@ public class Robot extends TimedRobot implements Logged {
                         poseEstimation,
                         VisionConstants.LL1_NAME);
 
+        visionAlignment =
+                new VisionAlignment(swerve, input::swerveX, input::swerveY, poseEstimation);
+
         swerve.setDefaultCommand(
                 swerve.getFieldRelativeControlCommand(
                         () ->
                                 new ChassisSpeeds(
                                         input.swerveX(), input.swerveY(), input.swerveRot()),
-                        () ->
-                                poseEstimation
-                                        .getRotationEstimate()
-                                        .minus(new Rotation2d(fieldRelRotationOffset))));
+                        () -> poseEstimation.getRotationEstimate()));
 
         pivot.setDefaultCommand(pivot.toStow());
         shooter.setDefaultCommand(shooter.idle());
@@ -233,7 +236,7 @@ public class Robot extends TimedRobot implements Logged {
                         .driveToRelativePose(
                                 swerve,
                                 poseEstimation::getPoseEstimate,
-                                () -> new Transform2d(.09, 0, new Rotation2d()))
+                                () -> new Transform2d(-.09, 0, new Rotation2d()))
                         .alongWith(
                                 pivot.toAmp()
                                         .alongWith(
@@ -278,8 +281,9 @@ public class Robot extends TimedRobot implements Logged {
         resetFieldRelZero.onTrue(
                 Commands.runOnce(
                         () -> {
-                            fieldRelRotationOffset =
-                                    poseEstimation.getRotationEstimate().getRadians();
+                            //     fieldRelRotationOffset =
+                            //             poseEstimation.getRotationEstimate().getRadians();
+                            poseEstimation.centerGyro();
                         }));
 
         ledEndGame = new Trigger(() -> DriverStation.getMatchTime() <= 20);
@@ -329,10 +333,12 @@ public class Robot extends TimedRobot implements Logged {
         Monologue.setFileOnly(DriverStation.isFMSAttached());
         Monologue.updateAll();
 
-        poseEstimation.update();
+        poseEstimation.update(isTeleop());
 
         imu.periodic();
         pdh.periodic();
+
+        // System.out.println(visionAlignment.getSpeakerAngle());
     }
 
     @Override

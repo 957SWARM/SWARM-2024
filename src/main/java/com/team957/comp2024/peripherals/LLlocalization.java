@@ -92,7 +92,7 @@ public class LLlocalization implements Logged {
         photonEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
     }
 
-    public void update() {
+    public void update(boolean useVision) {
         double dt = dtUtil.getTimeSecondsSinceLastCall();
 
         simGyro.calculate(
@@ -103,8 +103,9 @@ public class LLlocalization implements Logged {
         Rotation2d rotation;
 
         if (robotReal) {
-
-            // estimateVisionPoseLL(VisionConstants.LL2_NAME);
+            if (useVision) {
+                estimateVisionPoseLL(VisionConstants.LL2_NAME);
+            }
             // estimateVisionPosePV();
 
             rotation = gyro.get();
@@ -115,6 +116,13 @@ public class LLlocalization implements Logged {
         poseEstimator.update(rotation, modulePositions.get());
 
         UI.instance.setPose(poseEstimator.getEstimatedPosition());
+    }
+
+    public void centerGyro() {
+        poseEstimator.resetPosition(
+                gyro.get(),
+                modulePositions.get(),
+                new Pose2d(getPoseEstimate().getTranslation(), new Rotation2d()));
     }
 
     public void estimateVisionPoseLL(String limelightName) {

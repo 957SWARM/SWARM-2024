@@ -282,7 +282,7 @@ public class Constants {
         public static final Vector<N3> STATE_STDS =
                 VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5));
         public static final Vector<N3> VISION_STDS =
-                VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(30));
+                VecBuilder.fill(1, 1, Units.degreesToRadians(30));
 
         public static final Transform3d LL1_TO_CENTER =
                 new Transform3d(

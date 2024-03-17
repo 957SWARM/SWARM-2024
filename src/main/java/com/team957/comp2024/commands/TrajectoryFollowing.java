@@ -10,6 +10,7 @@ import com.team957.comp2024.peripherals.LLlocalization;
 import com.team957.comp2024.subsystems.swerve.Swerve;
 import com.team957.lib.controllers.feedback.PID;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -153,6 +154,10 @@ public class TrajectoryFollowing implements Logged {
                 .alongWith(
                         swerve.getFieldRelativeControlCommand(
                                 () -> controlFunc.apply(localization.get(), referenceState),
-                                () -> localization.get().getRotation()));
+                                () ->
+                                        localization
+                                                .get()
+                                                .getRotation()
+                                                .plus(new Rotation2d(Math.PI))));
     }
 }

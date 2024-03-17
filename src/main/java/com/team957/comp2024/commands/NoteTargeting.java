@@ -54,10 +54,7 @@ public class NoteTargeting {
                             return new ChassisSpeeds(
                                     swerveX, swerveY, -getTrackingAngle(getTargetAngle()));
                         },
-                        () ->
-                                poseEstimation
-                                        .getRotationEstimate()
-                                        .minus(new Rotation2d(fieldRelRotationOffset)))
+                        () -> poseEstimation.getRotationEstimate())
                 .unless(() -> !checkTarget())
                 .withName("noteTargeting");
     }

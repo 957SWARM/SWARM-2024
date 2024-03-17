@@ -5,7 +5,6 @@ import com.team957.comp2024.peripherals.LLlocalization;
 import com.team957.comp2024.subsystems.swerve.Swerve;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -76,7 +75,6 @@ public class VisionAlignment extends Command {
             Swerve swerve,
             Supplier<Double> swerveX,
             Supplier<Double> swerveY,
-            Supplier<Double> fieldRotationOffset,
             LLlocalization poseEstimation) {
         this.swerve = swerve;
         this.swerveX = swerveX.get();
@@ -99,10 +97,24 @@ public class VisionAlignment extends Command {
     }
 
     public double getSpeakerAngle() { // TODO: TEST BY PRINTING GETSPEAKERANGLE
-        Translation2d pointToFace = speaker.getTranslation();
-        Rotation2d rotationNeeded =
-                pointToFace.minus(poseEstimation.getPoseEstimate().getTranslation()).getAngle();
-        return rotationNeeded.getDegrees();
+        // Pose2d pointToFace = new Pose2d(0.21, 5.5, new Rotation2d(Math.PI));
+        // Pose2d difference =
+        //         new Pose2d(
+        //                 pointToFace
+        //                         .getTranslation()
+        //                         .minus(poseEstimation.getPoseEstimate().getTranslation()),
+        //                 pointToFace
+        //                         .getRotation()
+        //                         .minus(poseEstimation.getRotationEstimate())
+        //                         .minus(new Rotation2d(Math.PI)));
+
+        // double c =
+        //         Math.sqrt(
+        //                 (difference.getY() * difference.getY())
+        //                         + (difference.getX() * difference.getX()));
+        // double rotationNeeded = Math.asin(difference.getY() / c);
+        // return Units.radiansToDegrees(rotationNeeded);
+        return 0;
     }
 
     public Command getTargetAlignmentCommand() {
