@@ -4,6 +4,7 @@ import com.ctre.phoenix6.SignalLogger;
 import com.team957.comp2024.Constants.MiscConstants;
 import com.team957.comp2024.Constants.PDHConstants;
 import com.team957.comp2024.Constants.SwerveConstants;
+import com.team957.comp2024.commands.ActiveNoteCentering;
 import com.team957.comp2024.commands.Autos;
 import com.team957.comp2024.commands.LEDStripPatterns;
 import com.team957.comp2024.commands.NoteTargeting;
@@ -117,6 +118,8 @@ public class Robot extends TimedRobot implements Logged {
 
     private Trigger ledEndGame;
     private Trigger ledNotePickup;
+
+    private Trigger activeNoteCentering;
 
     private double fieldRelRotationOffset = 0;
 
@@ -280,6 +283,9 @@ public class Robot extends TimedRobot implements Logged {
                                 .withTimeout(2)
                                 .andThen(led.noteInRobotCommand(0, 50, .1, isAutonomous())))
                 .onFalse(led.allianceColor(0, 50));
+
+        activeNoteCentering = new Trigger(input::activeNoteCentering);
+        activeNoteCentering.onTrue(new ActiveNoteCentering(intakeRoller).withTimeout(2));
 
         fastLoop.startPeriodic(MiscConstants.NOMINAL_LOOP_TIME_SECONDS);
     }

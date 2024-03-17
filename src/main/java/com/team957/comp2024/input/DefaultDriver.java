@@ -111,4 +111,9 @@ public class DefaultDriver implements DriverInput {
     public boolean toggleClimbRetract() {
         return (xboxController.getPOV() == 90);
     }
+
+    @Override
+    public boolean activeNoteCentering() {
+        return (xboxController.getPOV() == 270);
+    }
 }

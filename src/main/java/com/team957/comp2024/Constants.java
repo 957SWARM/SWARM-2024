@@ -225,10 +225,10 @@ public class Constants {
 
     public static final class IntakeRollerConstants {
         public static final int ROLLER_CANID = 12;
-        public static final int CURRENT_LIMIT = 30;
+        public static final int CURRENT_LIMIT = 10;
         public static final boolean ROLLER_INVERTED = false;
 
-        public static final double FLOOR_INTAKE_VOLTAGE = 6;
+        public static final double FLOOR_INTAKE_VOLTAGE = 12;
         public static final double SHOOTER_HANDOFF_VOLTAGE = -12;
         public static final double AMP_SHOT_VOLTAGE = -12;
         public static final double SLOW_RUN_VOLTAGE = 2;
@@ -245,9 +245,9 @@ public class Constants {
         public static final double SIM_MOCK_OUTTAKE_DELAY_SECONDS = 0.5;
         public static final double SIM_MOCK_INTAKE_DELAY_SECONDS = 0.5;
 
-        public static final double CENTERING_REVERSAL_HYSTERESIS_METERS = .01; // 10mm
+        public static final double CENTERING_REVERSAL_HYSTERESIS_METERS = .05; // 50mm
 
-        public static final double CENTERING_PULSE_VOLTAGE = 4;
+        public static final double CENTERING_PULSE_VOLTAGE = 1.5;
 
         public static final int STALENESS_THRESHOLD_CYCLES =
                 5; // reports stale data fault if reported value is identical for this many cycles
