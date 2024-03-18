@@ -244,7 +244,15 @@ public class Robot extends TimedRobot implements Logged {
                         .withTimeout(2));
 
         shootAmp = new Trigger(input::shootAmp);
-        shootAmp.onTrue(intakeRoller.ampShotUntilNoteGone());
+        // shootAmp.onTrue(intakeRoller.ampShotUntilNoteGone());
+
+        shootAmp.whileTrue(
+                TrajectoryFollowing.instance.driveToRelativePose(
+                        swerve,
+                        poseEstimation::getPoseEstimate,
+                        () ->
+                                new Pose2d(1, 7.5, new Rotation2d(Math.PI / 2))
+                                        .minus(poseEstimation.getPoseEstimate())));
 
         intakeSlow = new Trigger(input::slowIntake);
         intakeSlow.whileTrue(intakeRoller.slowIntake());

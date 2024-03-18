@@ -264,7 +264,7 @@ public class Constants {
 
     public static final class VisionConstants {
 
-        public static final boolean VISION_POSE_ESTIMATION_ENABLED = false;
+        public static final boolean VISION_POSE_ESTIMATION_ENABLED = true;
 
         public static final int LL1_NOTE_TRACKING_PL = 4;
         public static final int LL1_POSE_ESTIMATION_PL = 0;
@@ -282,7 +282,7 @@ public class Constants {
         public static final Vector<N3> STATE_STDS =
                 VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5));
         public static final Vector<N3> VISION_STDS =
-                VecBuilder.fill(1, 1, Units.degreesToRadians(30));
+                VecBuilder.fill(2, 2, Units.degreesToRadians(60));
 
         public static final Transform3d LL1_TO_CENTER =
                 new Transform3d(
