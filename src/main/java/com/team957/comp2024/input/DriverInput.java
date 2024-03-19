@@ -20,12 +20,6 @@ public interface DriverInput {
     // shoot
     public boolean speakerSequence();
 
-    // raise hook
-    public boolean raiseHook();
-
-    // lower hooK?
-    public boolean lowerHook();
-
     // winch upwards!
     public boolean climbWinch();
 
@@ -45,8 +39,6 @@ public interface DriverInput {
     public boolean shootAmp();
 
     public boolean pivotAmp();
-
-    public boolean toggleClimbRetract();
 
     public boolean activeNoteCentering();
 }

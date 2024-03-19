@@ -73,16 +73,6 @@ public class DefaultDriver implements DriverInput {
     }
 
     @Override
-    public boolean raiseHook() {
-        return xboxController.getPOV() == 0;
-    }
-
-    @Override
-    public boolean lowerHook() {
-        return xboxController.getPOV() == 180;
-    }
-
-    @Override
     public boolean climbWinch() {
         return xboxController.getRawButton(7);
     }
@@ -105,11 +95,6 @@ public class DefaultDriver implements DriverInput {
     @Override
     public boolean pivotAmp() {
         return xboxController.getBButton();
-    }
-
-    @Override
-    public boolean toggleClimbRetract() {
-        return (xboxController.getPOV() == 90);
     }
 
     @Override
