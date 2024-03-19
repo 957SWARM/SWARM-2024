@@ -127,7 +127,7 @@ public class LLlocalization implements Logged {
 
     public void estimateVisionPoseLL(String limelightName) {
 
-        if (VisionConstants.VISION_POSE_ESTIMATION_ENABLED) {
+        if (VisionConstants.VISION_POSE_ESTIMATION_ENABLED && LimelightLib.getTV(limelightName)) {
 
             double[] botpose = LimelightLib.getBotPose_wpiBlue(limelightName);
 
@@ -144,13 +144,27 @@ public class LLlocalization implements Logged {
                     visionPose2d =
                             new Pose2d(
                                     visionPose.getTranslation().toTranslation2d(),
-                                    getRotationEstimate());
+                                    visionPose
+                                            .getRotation()
+                                            .toRotation2d()
+                                            .minus(new Rotation2d(Math.PI)));
                     double timeStampSeconds =
                             Timer.getFPGATimestamp()
                                     - (LimelightLib.getLatency_Pipeline(limelightName) / 1000.0)
                                     - (LimelightLib.getLatency_Capture(limelightName) / 1000.0);
 
                     poseEstimator.addVisionMeasurement(visionPose2d, timeStampSeconds);
+
+                    // System.out.println(
+                    //         gyro.get().getRadians()
+                    //                 + " || "
+                    //                 + visionPose
+                    //                         .getRotation()
+                    //                         .toRotation2d()
+                    //                         .minus(new Rotation2d(Math.PI))
+                    //                         .getRadians()
+                    //                 + " || "
+                    //                 + getRotationEstimate().getRadians());
                 }
             }
         }

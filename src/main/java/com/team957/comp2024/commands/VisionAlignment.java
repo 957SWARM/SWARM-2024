@@ -97,16 +97,16 @@ public class VisionAlignment extends Command {
     }
 
     public double getSpeakerAngle() { // TODO: TEST BY PRINTING GETSPEAKERANGLE
-        // Pose2d pointToFace = new Pose2d(0.21, 5.5, new Rotation2d(Math.PI));
-        // Pose2d difference =
-        //         new Pose2d(
-        //                 pointToFace
-        //                         .getTranslation()
-        //                         .minus(poseEstimation.getPoseEstimate().getTranslation()),
-        //                 pointToFace
-        //                         .getRotation()
-        //                         .minus(poseEstimation.getRotationEstimate())
-        //                         .minus(new Rotation2d(Math.PI)));
+        Pose2d pointToFace = new Pose2d(0.21, 5.5, new Rotation2d(Math.PI));
+        Pose2d difference =
+                new Pose2d(
+                        pointToFace
+                                .getTranslation()
+                                .minus(poseEstimation.getPoseEstimate().getTranslation()),
+                        pointToFace
+                                .getRotation()
+                                .minus(poseEstimation.getRotationEstimate())
+                                .minus(new Rotation2d(Math.PI)));
 
         // double c =
         //         Math.sqrt(
@@ -114,7 +114,8 @@ public class VisionAlignment extends Command {
         //                         + (difference.getX() * difference.getX()));
         // double rotationNeeded = Math.asin(difference.getY() / c);
         // return Units.radiansToDegrees(rotationNeeded);
-        return 0;
+
+        return difference.getRotation().getRadians();
     }
 
     public Command getTargetAlignmentCommand() {

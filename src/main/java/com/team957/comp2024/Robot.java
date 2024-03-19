@@ -346,7 +346,7 @@ public class Robot extends TimedRobot implements Logged {
         imu.periodic();
         pdh.periodic();
 
-        // System.out.println(visionAlignment.getSpeakerAngle());
+        System.out.println(visionAlignment.getSpeakerAngle());
     }
 
     @Override
