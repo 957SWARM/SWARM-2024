@@ -1,7 +1,7 @@
 package com.team957.comp2024.commands;
 
 import com.team957.comp2024.Constants.LEDConstants;
-import com.team957.comp2024.subsystems.led.LED;
+import com.team957.comp2024.subsystems.LED;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.RobotController;

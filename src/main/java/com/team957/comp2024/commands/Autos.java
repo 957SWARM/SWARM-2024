@@ -123,15 +123,14 @@ public class Autos {
         }
 
         Command startAngle(double angle) {
-
-            double invert = (alliance.get() == Alliance.Red) ? 1 : -1;
+            double invert = (alliance.get() == Alliance.Blue) ? 1 : -1;
 
             return Commands.runOnce(
                     () -> {
                         localization.setPose(
                                 new Pose2d(
                                         localization.getPoseEstimate().getTranslation(),
-                                        new Rotation2d(angle)));
+                                        new Rotation2d(angle * invert)));
                     },
                     swerve);
         }
@@ -307,7 +306,7 @@ public class Autos {
 
         return ScoringSequences.coordinatedSubwooferShot(shooter, intakePivot, intakeRoller)
                 .withTimeout(1)
-                .andThen(factory.startAngle(MiscConstants.SUBWOOFER_SIDE_ANGLE));
+                .andThen(factory.startAngle(-MiscConstants.SUBWOOFER_SIDE_ANGLE));
     }
 
     public Command justShootAmp() {
@@ -321,7 +320,7 @@ public class Autos {
 
         return ScoringSequences.coordinatedSubwooferShot(shooter, intakePivot, intakeRoller)
                 .withTimeout(1)
-                .andThen(factory.startAngle(-MiscConstants.SUBWOOFER_SIDE_ANGLE));
+                .andThen(factory.startAngle(MiscConstants.SUBWOOFER_SIDE_ANGLE));
     }
 
     // avoids going wide, more straight lines

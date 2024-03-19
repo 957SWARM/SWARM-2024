@@ -1,4 +1,4 @@
-package com.team957.comp2024.subsystems.led;
+package com.team957.comp2024.subsystems;
 
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
