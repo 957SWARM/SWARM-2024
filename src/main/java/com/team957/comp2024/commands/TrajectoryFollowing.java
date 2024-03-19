@@ -49,14 +49,15 @@ public class TrajectoryFollowing implements Logged {
 
             this.log("referenceChassisSpeeds", new ChassisSpeeds(xFF, yFF, tFF));
 
-            x.setSetpoint(referenceState.x);
-            double xFB = x.calculate(pose.getX());
+            x.setSetpoint(-referenceState.x);
+            double xFB = x.calculate(-pose.getX());
 
-            y.setSetpoint(referenceState.y);
-            double yFB = y.calculate(pose.getY());
+            y.setSetpoint(-referenceState.y);
+            double yFB = y.calculate(-pose.getY());
 
-            theta.setSetpoint(referenceState.heading);
-            double tFB = theta.calculate(pose.getRotation().getRadians());
+            theta.setSetpoint(referenceState.heading + Math.PI);
+            double tFB =
+                    theta.calculate(pose.getRotation().plus(new Rotation2d(Math.PI)).getRadians());
 
             // negating angular is janky
             return new ChassisSpeeds(xFF + xFB, yFF + yFB, -(tFF + tFB));

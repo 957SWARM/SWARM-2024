@@ -284,8 +284,6 @@ public class Robot extends TimedRobot implements Logged {
         activeNoteCentering.onTrue(new ActiveNoteCentering(intakeRoller).withTimeout(2));
 
         fastLoop.startPeriodic(MiscConstants.NOMINAL_LOOP_TIME_SECONDS);
-
-        poseEstimation.setPose(new Pose2d(0, 0, new Rotation2d()));
     }
 
     public void loop() {
@@ -321,13 +319,12 @@ public class Robot extends TimedRobot implements Logged {
         imu.periodic();
         pdh.periodic();
 
-        System.out.println(visionAlignment.getSpeakerAngle());
+        // System.out.println(visionAlignment.getSpeakerAngle());
     }
 
     @Override
     public void teleopInit() {
         CommandScheduler.getInstance().cancelAll();
-        poseEstimation.setPose(new Pose2d(0, 0, new Rotation2d()));
         // led.endGameCommand(0, 50, .100, false).schedule();
         // led.scheduleDefaultCommand(led.allianceColor(0, 0));
     }
