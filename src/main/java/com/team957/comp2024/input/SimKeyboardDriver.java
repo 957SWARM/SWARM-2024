@@ -39,16 +39,6 @@ public class SimKeyboardDriver implements DriverInput {
     }
 
     @Override
-    public boolean raiseHook() {
-        return false;
-    }
-
-    @Override
-    public boolean lowerHook() {
-        return false;
-    }
-
-    @Override
     public boolean climbWinch() {
         return false;
     }
@@ -83,12 +73,6 @@ public class SimKeyboardDriver implements DriverInput {
     @Override
     public boolean pivotAmp() {
         return false;
-    }
-
-    @Override
-    public boolean toggleClimbRetract() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'toggleClimbRetract'");
     }
 
     public boolean activeNoteCentering() {

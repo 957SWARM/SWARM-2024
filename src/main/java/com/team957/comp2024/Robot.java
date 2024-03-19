@@ -18,8 +18,6 @@ import com.team957.comp2024.input.SimKeyboardDriver;
 import com.team957.comp2024.peripherals.IMU;
 import com.team957.comp2024.peripherals.LLlocalization;
 import com.team957.comp2024.peripherals.PDH;
-import com.team957.comp2024.subsystems.climbing.BoxClimber;
-import com.team957.comp2024.subsystems.climbing.Winch;
 import com.team957.comp2024.subsystems.intake.IntakePivot;
 import com.team957.comp2024.subsystems.intake.IntakeRoller;
 import com.team957.comp2024.subsystems.shooter.Shooter;
@@ -74,10 +72,6 @@ public class Robot extends TimedRobot implements Logged {
 
     private final IntakeRoller intakeRoller = IntakeRoller.getIntakeRoller(isReal());
 
-    private final BoxClimber boxClimber = BoxClimber.getBoxClimber(isReal());
-
-    private final Winch winch = Winch.getWinch(isReal());
-
     private final LEDStripPatterns led = new LEDStripPatterns();
 
     private final DeltaTimeUtil dt = new DeltaTimeUtil();
@@ -94,11 +88,6 @@ public class Robot extends TimedRobot implements Logged {
     private Trigger intakePivotStow;
 
     private Trigger shootAmp;
-
-    private Trigger climbHookDown;
-    private Trigger climbHookUp;
-    private Trigger climbWinch;
-    private Trigger climbRetract;
 
     private Trigger intakeSlow;
     private Trigger outakeSlow;
@@ -216,8 +205,6 @@ public class Robot extends TimedRobot implements Logged {
         pivot.setDefaultCommand(pivot.toStow());
         shooter.setDefaultCommand(shooter.idle());
         intakeRoller.setDefaultCommand(intakeRoller.idle());
-        boxClimber.setDefaultCommand(boxClimber.stop());
-        winch.setDefaultCommand(winch.idleCommand());
         led.scheduleDefaultCommand(led.allianceColor(0, 50));
 
         speakerSequence = new Trigger(input::speakerSequence);
@@ -271,18 +258,6 @@ public class Robot extends TimedRobot implements Logged {
         noteTracking =
                 new Trigger(() -> input.noteTracking() && !intakeRoller.debouncedNoteIsPresent());
         noteTracking.whileTrue(noteTargeting.getNoteTrackCommand());
-
-        climbHookUp = new Trigger(input::raiseHook);
-        climbHookUp.whileTrue(boxClimber.raiseCommand());
-
-        climbHookDown = new Trigger(input::lowerHook);
-        climbHookDown.whileTrue(boxClimber.lowerCommand());
-
-        climbWinch = new Trigger(input::climbWinch);
-        climbWinch.whileTrue(winch.raiseCommand().alongWith(shooter.off()));
-
-        climbRetract = new Trigger(input::toggleClimbRetract);
-        climbRetract.toggleOnTrue(boxClimber.stop()).toggleOnFalse(boxClimber.idleCommand());
 
         resetFieldRelZero = new Trigger(input::zeroGyro);
 
