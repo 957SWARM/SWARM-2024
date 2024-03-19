@@ -4,7 +4,6 @@ import com.revrobotics.CANSparkBase.FaultID;
 import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 import com.revrobotics.CANSparkMax;
 import com.team957.comp2024.Constants.SparkMaxAlertsConstants;
-import com.team957.comp2024.util.FaultDetectionUtil.SignalJumpDetector;
 import com.team957.comp2024.util.FaultDetectionUtil.StaleNoisyDataDetector;
 import java.util.ArrayList;
 import org.littletonrobotics.Alert;
@@ -61,7 +60,7 @@ public class SparkMaxUtils {
 
         private final StaleNoisyDataDetector stalenessDetector;
 
-        private final SignalJumpDetector jumpDetector;
+        // private final SignalJumpDetector jumpDetector;
 
         private final double currentLimitAmps;
 
@@ -83,11 +82,11 @@ public class SparkMaxUtils {
                             "SparkMax " + name + " voltage measurement",
                             SparkMaxAlertsConstants.VOLTAGE_MEASUREMENT_STALENESS_THRESHOLD);
 
-            jumpDetector =
-                    new SignalJumpDetector(
-                            SparkMaxAlertsConstants.SUSPICIOUS_TEMPERATURE_RATE,
-                            false,
-                            "SparkMax " + name + " temperature measurement");
+            // jumpDetector =
+            //         new SignalJumpDetector(
+            //                 SparkMaxAlertsConstants.SUSPICIOUS_TEMPERATURE_RATE,
+            //                 false,
+            //                 "SparkMax " + name + " temperature measurement");
 
             this.currentLimitAmps = currentLimitAmps;
         }
@@ -102,7 +101,8 @@ public class SparkMaxUtils {
             canFault.set(sMax.getFault(FaultID.kCANRX) || sMax.getFault(FaultID.kCANTX));
 
             stalenessDetector.poll(sMax.getBusVoltage());
-            jumpDetector.poll(sMax.getMotorTemperature());
+            // jumpDetector.poll(sMax.getMotorTemperature());
+            // got rid of temperature jumping alert because it is being annoying as of 3/16/24
         }
     }
 }

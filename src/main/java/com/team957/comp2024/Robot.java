@@ -4,11 +4,14 @@ import com.ctre.phoenix6.SignalLogger;
 import com.team957.comp2024.Constants.MiscConstants;
 import com.team957.comp2024.Constants.PDHConstants;
 import com.team957.comp2024.Constants.SwerveConstants;
+import com.team957.comp2024.Constants.VisionConstants;
+import com.team957.comp2024.commands.ActiveNoteCentering;
 import com.team957.comp2024.commands.Autos;
 import com.team957.comp2024.commands.LEDStripPatterns;
 import com.team957.comp2024.commands.NoteTargeting;
 import com.team957.comp2024.commands.ScoringSequences;
 import com.team957.comp2024.commands.TrajectoryFollowing;
+import com.team957.comp2024.commands.VisionAlignment;
 import com.team957.comp2024.input.DefaultDriver;
 import com.team957.comp2024.input.DriverInput;
 import com.team957.comp2024.input.SimKeyboardDriver;
@@ -24,6 +27,7 @@ import com.team957.comp2024.subsystems.swerve.Swerve;
 import com.team957.comp2024.util.LimelightLib;
 import com.team957.lib.util.DeltaTimeUtil;
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -78,21 +82,7 @@ public class Robot extends TimedRobot implements Logged {
 
     private final DeltaTimeUtil dt = new DeltaTimeUtil();
 
-    private final LLlocalization poseEstimation =
-            new LLlocalization(
-                    SwerveConstants.KINEMATICS,
-                    swerve::getStates,
-                    swerve::getPositions,
-                    imu::getCorrectedAngle,
-                    isReal());
-
-    private final Autos autos =
-            new Autos(swerve, pivot, intakeRoller, shooter, poseEstimation, this::getAlliance);
-
     private DriverInput input;
-
-    private final NoteTargeting noteTargeting =
-            new NoteTargeting(swerve, poseEstimation, "limelight-note");
 
     private Trigger resetFieldRelZero;
     private Trigger noteTracking;
@@ -118,7 +108,25 @@ public class Robot extends TimedRobot implements Logged {
     private Trigger ledEndGame;
     private Trigger ledNotePickup;
 
+    private Trigger activeNoteCentering;
+
     private double fieldRelRotationOffset = 0;
+
+    private final LLlocalization poseEstimation =
+            new LLlocalization(
+                    SwerveConstants.KINEMATICS,
+                    swerve::getStates,
+                    swerve::getPositions,
+                    imu::getCorrectedAngle,
+                    () -> fieldRelRotationOffset,
+                    isReal());
+
+    private VisionAlignment visionAlignment;
+
+    private NoteTargeting noteTargeting;
+
+    private final Autos autos =
+            new Autos(swerve, pivot, intakeRoller, shooter, poseEstimation, this::getAlliance);
 
     private final Notifier fastLoop = new Notifier(this::loop);
 
@@ -154,7 +162,10 @@ public class Robot extends TimedRobot implements Logged {
             input = new SimKeyboardDriver();
         }
 
-        LimelightLib.setPipelineIndex("limelight-note", 4);
+        LimelightLib.setPipelineIndex(
+                VisionConstants.LL1_NAME, VisionConstants.LL1_NOTE_TRACKING_PL);
+        LimelightLib.setPipelineIndex(
+                VisionConstants.LL2_NAME, VisionConstants.LL2_POSE_ESTIMATION_PL);
 
         Monologue.setupMonologue(this, "Robot", false, true);
 
@@ -183,15 +194,24 @@ public class Robot extends TimedRobot implements Logged {
         // ui.addAuto("Four Piece Mockup", autos.fourPieceMockup());
         // ui.addAuto("Three Piece Mockup", autos.threePieceMockup());
 
+        noteTargeting =
+                new NoteTargeting(
+                        swerve,
+                        () -> input.swerveX(),
+                        () -> input.swerveY(),
+                        () -> fieldRelRotationOffset,
+                        poseEstimation,
+                        VisionConstants.LL1_NAME);
+
+        visionAlignment =
+                new VisionAlignment(swerve, input::swerveX, input::swerveY, poseEstimation);
+
         swerve.setDefaultCommand(
                 swerve.getFieldRelativeControlCommand(
                         () ->
                                 new ChassisSpeeds(
                                         input.swerveX(), input.swerveY(), input.swerveRot()),
-                        () ->
-                                poseEstimation
-                                        .getRotationEstimate()
-                                        .minus(new Rotation2d(fieldRelRotationOffset))));
+                        () -> poseEstimation.getRotationEstimate()));
 
         pivot.setDefaultCommand(pivot.toStow());
         shooter.setDefaultCommand(shooter.idle());
@@ -216,7 +236,7 @@ public class Robot extends TimedRobot implements Logged {
                         .driveToRelativePose(
                                 swerve,
                                 poseEstimation::getPoseEstimate,
-                                () -> new Transform2d(.09, 0, new Rotation2d()))
+                                () -> new Transform2d(-.09, 0, new Rotation2d()))
                         .alongWith(
                                 pivot.toAmp()
                                         .alongWith(
@@ -224,7 +244,15 @@ public class Robot extends TimedRobot implements Logged {
                         .withTimeout(2));
 
         shootAmp = new Trigger(input::shootAmp);
-        shootAmp.onTrue(intakeRoller.ampShotUntilNoteGone());
+        // shootAmp.onTrue(intakeRoller.ampShotUntilNoteGone());
+
+        shootAmp.whileTrue(
+                TrajectoryFollowing.instance.driveToRelativePose(
+                        swerve,
+                        poseEstimation::getPoseEstimate,
+                        () ->
+                                new Pose2d(1, 7.5, new Rotation2d(Math.PI / 2))
+                                        .minus(poseEstimation.getPoseEstimate())));
 
         intakeSlow = new Trigger(input::slowIntake);
         intakeSlow.whileTrue(intakeRoller.slowIntake());
@@ -242,12 +270,7 @@ public class Robot extends TimedRobot implements Logged {
 
         noteTracking =
                 new Trigger(() -> input.noteTracking() && !intakeRoller.debouncedNoteIsPresent());
-        noteTracking.whileTrue(
-                noteTargeting.getNoteTrackCommand(
-                        () -> input.swerveX(),
-                        () -> input.swerveY(),
-                        () -> input.swerveRot(),
-                        () -> fieldRelRotationOffset));
+        noteTracking.whileTrue(noteTargeting.getNoteTrackCommand());
 
         climbHookUp = new Trigger(input::raiseHook);
         climbHookUp.whileTrue(boxClimber.raiseCommand());
@@ -266,8 +289,9 @@ public class Robot extends TimedRobot implements Logged {
         resetFieldRelZero.onTrue(
                 Commands.runOnce(
                         () -> {
-                            fieldRelRotationOffset =
-                                    poseEstimation.getRotationEstimate().getRadians();
+                            //     fieldRelRotationOffset =
+                            //             poseEstimation.getRotationEstimate().getRadians();
+                            poseEstimation.centerGyro();
                         }));
 
         ledEndGame = new Trigger(() -> DriverStation.getMatchTime() <= 20);
@@ -281,7 +305,12 @@ public class Robot extends TimedRobot implements Logged {
                                 .andThen(led.noteInRobotCommand(0, 50, .1, isAutonomous())))
                 .onFalse(led.allianceColor(0, 50));
 
+        activeNoteCentering = new Trigger(input::activeNoteCentering);
+        activeNoteCentering.onTrue(new ActiveNoteCentering(intakeRoller).withTimeout(2));
+
         fastLoop.startPeriodic(MiscConstants.NOMINAL_LOOP_TIME_SECONDS);
+
+        poseEstimation.setPose(new Pose2d(0, 0, new Rotation2d()));
     }
 
     public void loop() {
@@ -292,7 +321,7 @@ public class Robot extends TimedRobot implements Logged {
             loopSkipped.set(true);
         }
         // catch (IndexOutOfBoundsException e){
-        //         CommandScheduler.getInstance().cancelAll();
+        // CommandScheduler.getInstance().cancelAll();
         // }
 
         // something deep in wpilib internals
@@ -312,15 +341,18 @@ public class Robot extends TimedRobot implements Logged {
         Monologue.setFileOnly(DriverStation.isFMSAttached());
         Monologue.updateAll();
 
-        poseEstimation.update();
+        poseEstimation.update(isTeleop());
 
         imu.periodic();
         pdh.periodic();
+
+        // System.out.println(visionAlignment.getSpeakerAngle());
     }
 
     @Override
     public void teleopInit() {
         CommandScheduler.getInstance().cancelAll();
+        poseEstimation.setPose(new Pose2d(0, 0, new Rotation2d()));
         // led.endGameCommand(0, 50, .100, false).schedule();
         // led.scheduleDefaultCommand(led.allianceColor(0, 0));
     }

@@ -6,6 +6,8 @@ import com.team957.comp2024.UI;
 import com.team957.comp2024.util.LimelightLib;
 import com.team957.lib.math.filters.IntegratingFilter;
 import com.team957.lib.util.DeltaTimeUtil;
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -16,15 +18,21 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
+import java.util.Optional;
 import java.util.function.Supplier;
 import monologue.Annotations.Log;
 import monologue.Logged;
+import org.photonvision.EstimatedRobotPose;
+import org.photonvision.PhotonCamera;
+import org.photonvision.PhotonPoseEstimator;
+import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
 public class LLlocalization implements Logged {
 
     private final Supplier<SwerveModuleState[]> moduleStates;
     private final Supplier<SwerveModulePosition[]> modulePositions;
     private final Supplier<Rotation2d> gyro;
+    private final Supplier<Double> fieldRotationOffset;
     private final boolean robotReal;
 
     private final IntegratingFilter simGyro = new IntegratingFilter(0);
@@ -34,7 +42,13 @@ public class LLlocalization implements Logged {
 
     private final SwerveDrivePoseEstimator poseEstimator;
 
-    // this is 100% a code smell, but something is screwy with the pose estimator unless we flip
+    AprilTagFieldLayout ATFieldLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
+
+    PhotonCamera photonCam = new PhotonCamera(VisionConstants.PCAM_NAME);
+    PhotonPoseEstimator photonEstimator;
+
+    // this is 100% a code smell, but something is screwy with the pose estimator
+    // unless we flip
     // these
     private SwerveModulePosition[] invertDistances(SwerveModulePosition[] positions) {
         SwerveModulePosition[] flipped = positions;
@@ -50,11 +64,13 @@ public class LLlocalization implements Logged {
             Supplier<SwerveModuleState[]> moduleStates,
             Supplier<SwerveModulePosition[]> modulePositions,
             Supplier<Rotation2d> gyro,
+            Supplier<Double> fieldRotationOffset,
             boolean robotReal) {
 
         this.moduleStates = moduleStates;
         this.modulePositions = modulePositions;
         this.gyro = gyro;
+        this.fieldRotationOffset = fieldRotationOffset;
         this.robotReal = robotReal;
 
         poseEstimator =
@@ -65,9 +81,18 @@ public class LLlocalization implements Logged {
                         new Pose2d(),
                         VisionConstants.STATE_STDS,
                         VisionConstants.VISION_STDS);
+
+        photonEstimator =
+                new PhotonPoseEstimator(
+                        ATFieldLayout,
+                        PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
+                        photonCam,
+                        VisionConstants.PCAM_TO_CENTER);
+
+        photonEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
     }
 
-    public void update() {
+    public void update(boolean useVision) {
         double dt = dtUtil.getTimeSecondsSinceLastCall();
 
         simGyro.calculate(
@@ -78,19 +103,29 @@ public class LLlocalization implements Logged {
         Rotation2d rotation;
 
         if (robotReal) {
-            estimateVisionPose("limelight-tag");
+            if (useVision) {
+                estimateVisionPoseLL(VisionConstants.LL2_NAME);
+            }
+            // estimateVisionPosePV();
 
             rotation = gyro.get();
         } else {
             rotation = new Rotation2d(simGyro.getCurrentOutput());
         }
 
-        poseEstimator.update(rotation, invertDistances(modulePositions.get()));
+        poseEstimator.update(rotation, modulePositions.get());
 
         UI.instance.setPose(poseEstimator.getEstimatedPosition());
     }
 
-    public void estimateVisionPose(String limelightName) {
+    public void centerGyro() {
+        poseEstimator.resetPosition(
+                gyro.get(),
+                modulePositions.get(),
+                new Pose2d(getPoseEstimate().getTranslation(), new Rotation2d()));
+    }
+
+    public void estimateVisionPoseLL(String limelightName) {
 
         if (VisionConstants.VISION_POSE_ESTIMATION_ENABLED) {
 
@@ -107,16 +142,29 @@ public class LLlocalization implements Logged {
             if (visionPose != null && LimelightLib.getTV(limelightName)) {
                 if (LimelightLib.getTA(limelightName) > VisionConstants.TARGET_AREA_CUTOFF) {
                     visionPose2d =
-                            new Pose2d(visionPose.getTranslation().toTranslation2d(), gyro.get());
+                            new Pose2d(
+                                    visionPose.getTranslation().toTranslation2d(),
+                                    getRotationEstimate());
                     double timeStampSeconds =
                             Timer.getFPGATimestamp()
                                     - (LimelightLib.getLatency_Pipeline(limelightName) / 1000.0)
                                     - (LimelightLib.getLatency_Capture(limelightName) / 1000.0);
 
-                    System.out.println(visionPose2d.getX() + " || " + visionPose2d.getY());
-
                     poseEstimator.addVisionMeasurement(visionPose2d, timeStampSeconds);
                 }
+            }
+        }
+    }
+
+    public void estimateVisionPosePV() {
+        if (VisionConstants.VISION_POSE_ESTIMATION_ENABLED) {
+            final Optional<EstimatedRobotPose> optionalEstimatedRobotPose =
+                    photonEstimator.update();
+            if (optionalEstimatedRobotPose.isPresent()) {
+                final EstimatedRobotPose estimatedRobotPose = optionalEstimatedRobotPose.get();
+                poseEstimator.addVisionMeasurement(
+                        estimatedRobotPose.estimatedPose.toPose2d(),
+                        estimatedRobotPose.timestampSeconds);
             }
         }
     }
