@@ -17,6 +17,8 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -77,7 +79,7 @@ public class LLlocalization implements Logged {
                 new SwerveDrivePoseEstimator(
                         kinematics,
                         gyro.get(),
-                        invertDistances(modulePositions.get()),
+                        modulePositions.get(),
                         new Pose2d(),
                         VisionConstants.STATE_STDS,
                         VisionConstants.VISION_STDS);
@@ -122,7 +124,12 @@ public class LLlocalization implements Logged {
         poseEstimator.resetPosition(
                 gyro.get(),
                 modulePositions.get(),
-                new Pose2d(getPoseEstimate().getTranslation(), new Rotation2d()));
+                new Pose2d(
+                        getPoseEstimate().getTranslation(),
+                        new Rotation2d(
+                                (DriverStation.getAlliance().get() == Alliance.Red)
+                                        ? Math.PI
+                                        : 0)));
     }
 
     public void estimateVisionPoseLL(String limelightName) {
@@ -196,6 +203,6 @@ public class LLlocalization implements Logged {
     public void setPose(Pose2d pose) {
         Rotation2d rot = (robotReal) ? gyro.get() : new Rotation2d(simGyro.getCurrentOutput());
 
-        poseEstimator.resetPosition(rot, invertDistances(modulePositions.get()), pose);
+        poseEstimator.resetPosition(rot, modulePositions.get(), pose);
     }
 }

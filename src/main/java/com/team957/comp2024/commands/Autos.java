@@ -340,7 +340,7 @@ public class Autos {
                 .andThen(factory.shootTrajectoryPhase(3, false, .5, .75)) // shoot
                 .andThen(factory.floorTrajectoryPhase(4, false, 0, 2)) // floor
                 .andThen(factory.shootTrajectoryPhase(5, false, .5, .75)) // shoot
-                .andThen(factory.stowTrajectoryPhase(6, false)); // stow
+                .andThen(factory.stowTrajectoryPhase(6, false));
     }
 
     public Command centerThreePiece() {
@@ -373,6 +373,21 @@ public class Autos {
                 .andThen(factory.floorTrajectoryPhase(0, true, .5, 2)) // floor
                 .andThen(factory.shootTrajectoryPhase(1, false, 0.5, 0.75)) // shoot
                 .andThen(factory.floorTrajectoryPhase(2, false, 0, 4)) // floor
-                .andThen(factory.shootTrajectoryPhase(3, false, 0.5, 0.75)); // shoot
+                .andThen(factory.shootTrajectoryPhase(3, false, 0.5, 0.75));
+    }
+
+    public Command getFlipIfOnRedCommand() {
+
+        return Commands.runOnce(
+                () -> {
+                    if (alliance.get() == Alliance.Red) {
+                        localization.setPose(
+                                new Pose2d(
+                                        localization.getPoseEstimate().getTranslation(),
+                                        localization
+                                                .getRotationEstimate()
+                                                .plus(new Rotation2d(Math.PI))));
+                    }
+                });
     }
 }
