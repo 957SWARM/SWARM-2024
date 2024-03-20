@@ -25,7 +25,6 @@ import com.team957.comp2024.subsystems.swerve.Swerve;
 import com.team957.comp2024.util.LimelightLib;
 import com.team957.lib.util.DeltaTimeUtil;
 import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -174,8 +173,8 @@ public class Robot extends TimedRobot implements Logged {
         ui.addAuto("Just Leave: Amp", autos.justLeaveAmp());
         ui.addAuto("Just Leave: Source", autos.justLeaveSource());
         ui.addAuto("Just Shoot: Center", autos.justShootCenter());
-        ui.addAuto("Just Shoot: Amp", autos.justShootAmp());
-        ui.addAuto("Just Shoot: Source", autos.justShootSource());
+        ui.addAuto("Just Shoot: LEFT", autos.justShootLeft());
+        ui.addAuto("Just Shoot: RIGHT", autos.justShootRight());
 
         // ui.addAuto("Five Piece??", autos.fivePieceMockup());
         // ui.addAuto("Test Path", autos.testPath());
@@ -231,15 +230,15 @@ public class Robot extends TimedRobot implements Logged {
                         .withTimeout(2));
 
         shootAmp = new Trigger(input::shootAmp);
-        // shootAmp.onTrue(intakeRoller.ampShotUntilNoteGone());
+        shootAmp.onTrue(intakeRoller.ampShotUntilNoteGone());
 
-        shootAmp.whileTrue(
-                TrajectoryFollowing.instance.driveToRelativePose(
-                        swerve,
-                        poseEstimation::getPoseEstimate,
-                        () ->
-                                new Pose2d(1, 7.5, new Rotation2d(Math.PI / 2))
-                                        .minus(poseEstimation.getPoseEstimate())));
+        // shootAmp.whileTrue(
+        //         TrajectoryFollowing.instance.driveToRelativePose(
+        //                 swerve,
+        //                 poseEstimation::getPoseEstimate,
+        //                 () ->
+        //                         new Pose2d(1, 7.5, new Rotation2d(Math.PI / 2))
+        //                                 .minus(poseEstimation.getPoseEstimate())));
 
         intakeSlow = new Trigger(input::slowIntake);
         intakeSlow.whileTrue(intakeRoller.slowIntake());

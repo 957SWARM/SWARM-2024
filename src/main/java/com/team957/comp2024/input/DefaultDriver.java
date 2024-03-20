@@ -54,7 +54,7 @@ public class DefaultDriver implements DriverInput {
     public double swerveRot() {
         double invert = (DriverStation.getAlliance().get() == Alliance.Red) ? -1 : 1;
 
-        return angularLimiter.calculate(ROT_MAX_SPEED * invert * xboxController.getRightX());
+        return angularLimiter.calculate(ROT_MAX_SPEED * xboxController.getRightX());
     }
 
     @Override

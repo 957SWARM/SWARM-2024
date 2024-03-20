@@ -11,6 +11,7 @@ import com.team957.comp2024.subsystems.shooter.Shooter;
 import com.team957.comp2024.subsystems.swerve.Swerve;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -123,14 +124,20 @@ public class Autos {
         }
 
         Command startAngle(double angle) {
-            double invert = (alliance.get() == Alliance.Blue) ? 1 : -1;
+            double invert = (alliance.get() == Alliance.Red) ? 1 : -1;
 
             return Commands.runOnce(
                     () -> {
                         localization.setPose(
                                 new Pose2d(
                                         localization.getPoseEstimate().getTranslation(),
-                                        new Rotation2d(angle * invert)));
+                                        new Rotation2d(angle * invert)
+                                                .plus(
+                                                        new Rotation2d(
+                                                                (DriverStation.getAlliance().get()
+                                                                                == Alliance.Red)
+                                                                        ? Math.PI
+                                                                        : 0))));
                     },
                     swerve);
         }
@@ -295,7 +302,7 @@ public class Autos {
                 .andThen(factory.startAngle(0));
     }
 
-    public Command justShootSource() {
+    public Command justShootRight() {
 
         var maybeTraj = safeLoadTrajectory("justLeaveSource");
 
@@ -306,10 +313,10 @@ public class Autos {
 
         return ScoringSequences.coordinatedSubwooferShot(shooter, intakePivot, intakeRoller)
                 .withTimeout(1)
-                .andThen(factory.startAngle(-MiscConstants.SUBWOOFER_SIDE_ANGLE));
+                .andThen(factory.startAngle(MiscConstants.SUBWOOFER_SIDE_ANGLE));
     }
 
-    public Command justShootAmp() {
+    public Command justShootLeft() {
 
         var maybeTraj = safeLoadTrajectory("justLeaveAmp");
 
@@ -320,7 +327,7 @@ public class Autos {
 
         return ScoringSequences.coordinatedSubwooferShot(shooter, intakePivot, intakeRoller)
                 .withTimeout(1)
-                .andThen(factory.startAngle(MiscConstants.SUBWOOFER_SIDE_ANGLE));
+                .andThen(factory.startAngle(-MiscConstants.SUBWOOFER_SIDE_ANGLE));
     }
 
     // avoids going wide, more straight lines
@@ -355,7 +362,7 @@ public class Autos {
                 .withTimeout(1)
                 .andThen(factory.floorTrajectoryPhase(0, true, 0, 2)) // floor
                 .andThen(factory.shootTrajectoryPhase(1, false, .5, .75)) // shoot
-                .andThen(factory.floorTrajectoryPhase(2, false, 0, 2)) // floor
+                .andThen(factory.floorTrajectoryPhase(2, false, 0, 3)) // floor
                 .andThen(factory.shootTrajectoryPhase(3, false, .5, .75)) // shoot
                 .andThen(factory.stowTrajectoryPhase(4, false)); // stow
     }
