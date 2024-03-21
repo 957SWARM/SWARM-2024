@@ -18,7 +18,7 @@ public class DefaultDriver implements DriverInput {
 
     private final SlewRateLimiter xLimiter = new SlewRateLimiter(20);
     private final SlewRateLimiter yLimiter = new SlewRateLimiter(20);
-    private final SlewRateLimiter angularLimiter = new SlewRateLimiter(20);
+    private final SlewRateLimiter angularLimiter = new SlewRateLimiter(2000);
 
     public DefaultDriver() {
         xboxController = new XboxController(OIConstants.DRIVER_PORT);

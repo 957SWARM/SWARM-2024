@@ -145,7 +145,7 @@ public class Robot extends TimedRobot implements Logged {
 
             input = new DefaultDriver();
 
-            CameraServer.startAutomaticCapture().setResolution(480, 360);
+            CameraServer.startAutomaticCapture().setResolution(480 / 4, 360 / 4);
         } else {
             input = new SimKeyboardDriver();
         }
@@ -163,15 +163,21 @@ public class Robot extends TimedRobot implements Logged {
         ui.setOperatorInputChangeCallback((operatorInput) -> {});
 
         ui.addAuto("Narrow Center Four Piece", autos.narrowFourPiece());
-        ui.addAuto("Source Far Three Piece", autos.sourceFarThreePiece());
+        ui.addAuto("Center And Amp", autos.centerAndAmp());
+        ui.addAuto("Center And Source", autos.centerAndSource());
+        ui.addAuto("Amp And Amp", autos.ampAndAmp());
+        ui.addAuto("Source and Source", autos.sourceAndSource());
+        ui.addAuto("Center Two Piece", autos.centerTwoPiece());
+        ui.addAuto("Amp Then Leave", autos.ampAndLeave());
+        ui.addAuto("Source Then Leave", autos.sourceAndLeave());
         ui.addAuto("Amp Three Piece", autos.ampThreePiece());
         ui.addAuto("Center Three Piece", autos.centerThreePiece());
-        ui.addAuto("Center Two Piece", autos.centerTwoPiece());
+        ui.addAuto("Source Far Three Piece", autos.sourceFarThreePiece());
+
         // ui.addAuto("Center Four Piece", autos.centerFourPiece());
         // ui.addAuto("Source Two Piece", autos.sourceTwoPiece());
         ui.addAuto("Just Leave: Center", autos.justLeaveCenter());
-        ui.addAuto("Just Leave: Amp", autos.justLeaveAmp());
-        ui.addAuto("Just Leave: Source", autos.justLeaveSource());
+
         ui.addAuto("Just Shoot: Center", autos.justShootCenter());
         ui.addAuto("Just Shoot: LEFT", autos.justShootLeft());
         ui.addAuto("Just Shoot: RIGHT", autos.justShootRight());

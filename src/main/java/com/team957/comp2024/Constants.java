@@ -228,11 +228,11 @@ public class Constants {
         public static final int CURRENT_LIMIT = 30;
         public static final boolean ROLLER_INVERTED = false;
 
-        public static final double FLOOR_INTAKE_VOLTAGE = 12;
+        public static final double FLOOR_INTAKE_VOLTAGE = 9;
         public static final double SHOOTER_HANDOFF_VOLTAGE = -12;
         public static final double AMP_SHOT_VOLTAGE = -12;
         public static final double SLOW_RUN_VOLTAGE = 2;
-        public static final double CENTERING_VOLTAGE = .9;
+        public static final double CENTERING_VOLTAGE = .7;
 
         public static final int TOF_CANID = 0;
 

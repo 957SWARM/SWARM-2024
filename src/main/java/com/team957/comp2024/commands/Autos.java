@@ -11,6 +11,7 @@ import com.team957.comp2024.subsystems.shooter.Shooter;
 import com.team957.comp2024.subsystems.swerve.Swerve;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -184,6 +185,15 @@ public class Autos {
         return new InstantCommand();
     }
 
+    public Command stopSwerve(){
+        return swerve.getFieldRelativeControlCommand(
+                        () -> {
+                            return new ChassisSpeeds(
+                                    0, 0, 0);
+                        },
+                        () -> localization.getRotationEstimate());
+    }
+
     private Command singleTrajectoryOnlyAuto(String trajName, boolean resetPoseToInitial) {
         var maybeTraj = safeLoadTrajectory(trajName);
 
@@ -341,10 +351,10 @@ public class Autos {
 
         return ScoringSequences.coordinatedSubwooferShot(shooter, intakePivot, intakeRoller)
                 .withTimeout(1)
-                .andThen(factory.floorTrajectoryPhase(0, true, 1, 2)) // floor
-                .andThen(factory.shootTrajectoryPhase(1, false, .5, .75)) // shoot
+                .andThen(factory.floorTrajectoryPhase(0, true, 0.5, 2)) // floor
+                .andThen(factory.shootTrajectoryPhase(1, false, .5, .85)) // shoot
                 .andThen(factory.floorTrajectoryPhase(2, false, 0, 2)) // floor
-                .andThen(factory.shootTrajectoryPhase(3, false, .5, .75)) // shoot
+                .andThen(factory.shootTrajectoryPhase(3, false, .5, .85)) // shoot
                 .andThen(factory.floorTrajectoryPhase(4, false, 0, 2)) // floor
                 .andThen(factory.shootTrajectoryPhase(5, false, .5, .75)) // shoot
                 .andThen(factory.stowTrajectoryPhase(6, false));
@@ -383,18 +393,100 @@ public class Autos {
                 .andThen(factory.shootTrajectoryPhase(3, false, 0.5, 0.75));
     }
 
-    public Command getFlipIfOnRedCommand() {
+    public Command centerAndAmp() {
+        var maybeTraj = safeLoadTrajectory("centerAndAmp");
 
-        return Commands.runOnce(
-                () -> {
-                    if (alliance.get() == Alliance.Red) {
-                        localization.setPose(
-                                new Pose2d(
-                                        localization.getPoseEstimate().getTranslation(),
-                                        localization
-                                                .getRotationEstimate()
-                                                .plus(new Rotation2d(Math.PI))));
-                    }
-                });
+        if (!maybeTraj.isPresent()) return new InstantCommand();
+
+        AutoPhaseFactory factory =
+                new AutoPhaseFactory(swerve, intakePivot, maybeTraj.get(), localization, alliance);
+
+        return ScoringSequences.coordinatedSubwooferShot(shooter, intakePivot, intakeRoller)
+                .withTimeout(1)
+                .andThen(factory.floorTrajectoryPhase(0, true, .5, 2)) // floor
+                .andThen(factory.shootTrajectoryPhase(1, false, 0.5, 0.75)) // shoot
+                .andThen(factory.floorTrajectoryPhase(2, false, 0, 2)) // floor
+                .andThen(factory.shootTrajectoryPhase(3, false, 0.5, 0.75))
+                .andThen(factory.stowTrajectoryPhase(4, false));
+    }
+
+    public Command centerAndSource() {
+        var maybeTraj = safeLoadTrajectory("centerAndSource");
+
+        if (!maybeTraj.isPresent()) return new InstantCommand();
+
+        AutoPhaseFactory factory =
+                new AutoPhaseFactory(swerve, intakePivot, maybeTraj.get(), localization, alliance);
+
+        return ScoringSequences.coordinatedSubwooferShot(shooter, intakePivot, intakeRoller)
+                .withTimeout(1)
+                .andThen(factory.floorTrajectoryPhase(0, true, .5, 2)) // floor
+                .andThen(factory.shootTrajectoryPhase(1, false, 0.5, 0.75)) // shoot
+                .andThen(factory.floorTrajectoryPhase(2, false, 0, 2)) // floor
+                .andThen(factory.floorTrajectoryPhase(3, false, 0, 2))
+                .andThen(factory.shootTrajectoryPhase(4, false, 0.5, 0.75))
+                .andThen(factory.stowTrajectoryPhase(5, false));
+    }
+
+    public Command ampAndAmp() {
+        var maybeTraj = safeLoadTrajectory("ampAndAmp");
+
+        if (!maybeTraj.isPresent()) return new InstantCommand();
+
+        AutoPhaseFactory factory =
+                new AutoPhaseFactory(swerve, intakePivot, maybeTraj.get(), localization, alliance);
+
+        return ScoringSequences.coordinatedSubwooferShot(shooter, intakePivot, intakeRoller)
+                .withTimeout(1)
+                .andThen(factory.floorTrajectoryPhase(0, true, .5, 2)) // floor
+                .andThen(factory.shootTrajectoryPhase(1, false, 0.5, 0.75)) // shoot
+                .andThen(factory.stowTrajectoryPhase(2, false));
+    }
+
+    public Command sourceAndSource() {
+        var maybeTraj = safeLoadTrajectory("sourceAndSource");
+
+        if (!maybeTraj.isPresent()) return new InstantCommand();
+
+        AutoPhaseFactory factory =
+                new AutoPhaseFactory(swerve, intakePivot, maybeTraj.get(), localization, alliance);
+
+        return ScoringSequences.coordinatedSubwooferShot(shooter, intakePivot, intakeRoller)
+                .withTimeout(1)
+                .andThen(factory.floorTrajectoryPhase(0, true, .5, 2)) // floor
+                .andThen(factory.shootTrajectoryPhase(1, false, 0.5, 0.75)) // shoot
+                .andThen(factory.stowTrajectoryPhase(2, false));
+    }
+
+    public Command ampAndLeave() {
+        var maybeTraj = safeLoadTrajectory("ampAndLeave");
+
+        if (!maybeTraj.isPresent()) return new InstantCommand();
+
+        AutoPhaseFactory factory =
+                new AutoPhaseFactory(swerve, intakePivot, maybeTraj.get(), localization, alliance);
+
+        return ScoringSequences.coordinatedSubwooferShot(shooter, intakePivot, intakeRoller)
+                .withTimeout(1)
+                .andThen(factory.stowTrajectoryPhase(0, true)) // floor
+                .andThen(stopSwerve())
+                .andThen(new WaitCommand(7))
+                .andThen(factory.stowTrajectoryPhase(1, false));
+    }
+
+    public Command sourceAndLeave() {
+        var maybeTraj = safeLoadTrajectory("sourceAndLeave");
+
+        if (!maybeTraj.isPresent()) return new InstantCommand();
+
+        AutoPhaseFactory factory =
+                new AutoPhaseFactory(swerve, intakePivot, maybeTraj.get(), localization, alliance);
+
+        return ScoringSequences.coordinatedSubwooferShot(shooter, intakePivot, intakeRoller)
+                .withTimeout(1)
+                .andThen(factory.stowTrajectoryPhase(0, true)) // floor
+                .andThen(stopSwerve())
+                .andThen(new WaitCommand(7))
+                .andThen(factory.stowTrajectoryPhase(1, false));
     }
 }

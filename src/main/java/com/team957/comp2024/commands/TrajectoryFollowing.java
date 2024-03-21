@@ -154,10 +154,6 @@ public class TrajectoryFollowing implements Logged {
                 .alongWith(
                         swerve.getFieldRelativeControlCommand(
                                 () -> controlFunc.apply(localization.get(), referenceState),
-                                () ->
-                                        localization
-                                                .get()
-                                                .getRotation()
-                                                .plus(new Rotation2d(Math.PI))));
+                                () -> localization.get().getRotation()));
     }
 }
