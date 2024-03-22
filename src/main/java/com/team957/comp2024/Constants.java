@@ -129,7 +129,7 @@ public class Constants {
         public static final DCMotor SHOOTER_MOTOR = DCMotor.getNEO(1);
         public static final double SHOOTER_REDUCTION = 1;
 
-        public static final double IDLE_CONTROL_EFFORT_VOLTS = 2;
+        public static final double IDLE_CONTROL_EFFORT_VOLTS = 4;
         public static final double SUBWOOFER_CONTROL_EFFORT_VOLTS = 12;
 
         public static final boolean leftMotorInverted = true;
@@ -337,7 +337,7 @@ public class Constants {
     public static final class SequencingConstants {
         // coordinatedSubwooferShot
         public static final double CENTERING_NOTE_DURATION = .05;
-        public static final double UNTIL_SHOOT_DELAY = .6;
+        public static final double UNTIL_SHOOT_DELAY = .8;
         public static final double SHOOT_DURATION = .5;
 
         // coordinatedFloorIntake
