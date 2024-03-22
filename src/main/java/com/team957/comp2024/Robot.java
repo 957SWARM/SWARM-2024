@@ -177,6 +177,7 @@ public class Robot extends TimedRobot implements Logged {
         // ui.addAuto("Center Four Piece", autos.centerFourPiece());
         // ui.addAuto("Source Two Piece", autos.sourceTwoPiece());
         ui.addAuto("Just Leave: Center", autos.justLeaveCenter());
+        ui.addAuto("Just Leave From Wall", autos.leaveFromWall());
 
         ui.addAuto("Just Shoot: Center", autos.justShootCenter());
         ui.addAuto("Just Shoot: LEFT", autos.justShootLeft());

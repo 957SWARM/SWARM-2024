@@ -129,8 +129,8 @@ public class Constants {
         public static final DCMotor SHOOTER_MOTOR = DCMotor.getNEO(1);
         public static final double SHOOTER_REDUCTION = 1;
 
-        public static final double IDLE_CONTROL_EFFORT_VOLTS = -2;
-        public static final double SUBWOOFER_CONTROL_EFFORT_VOLTS = -12;
+        public static final double IDLE_CONTROL_EFFORT_VOLTS = 2;
+        public static final double SUBWOOFER_CONTROL_EFFORT_VOLTS = 12;
 
         public static final boolean leftMotorInverted = true;
         public static final boolean rightMotorInverted = false;

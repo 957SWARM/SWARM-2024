@@ -185,13 +185,12 @@ public class Autos {
         return new InstantCommand();
     }
 
-    public Command stopSwerve(){
+    public Command stopSwerve() {
         return swerve.getFieldRelativeControlCommand(
-                        () -> {
-                            return new ChassisSpeeds(
-                                    0, 0, 0);
-                        },
-                        () -> localization.getRotationEstimate());
+                () -> {
+                    return new ChassisSpeeds(0, 0, 0);
+                },
+                () -> localization.getRotationEstimate());
     }
 
     private Command singleTrajectoryOnlyAuto(String trajName, boolean resetPoseToInitial) {
@@ -467,11 +466,8 @@ public class Autos {
                 new AutoPhaseFactory(swerve, intakePivot, maybeTraj.get(), localization, alliance);
 
         return ScoringSequences.coordinatedSubwooferShot(shooter, intakePivot, intakeRoller)
-                .withTimeout(1)
-                .andThen(factory.stowTrajectoryPhase(0, true)) // floor
-                .andThen(stopSwerve())
-                .andThen(new WaitCommand(7))
-                .andThen(factory.stowTrajectoryPhase(1, false));
+                .withTimeout(12)
+                .andThen(factory.stowTrajectoryPhase(0, true)); // floor
     }
 
     public Command sourceAndLeave() {
@@ -483,10 +479,18 @@ public class Autos {
                 new AutoPhaseFactory(swerve, intakePivot, maybeTraj.get(), localization, alliance);
 
         return ScoringSequences.coordinatedSubwooferShot(shooter, intakePivot, intakeRoller)
-                .withTimeout(1)
-                .andThen(factory.stowTrajectoryPhase(0, true)) // floor
-                .andThen(stopSwerve())
-                .andThen(new WaitCommand(7))
-                .andThen(factory.stowTrajectoryPhase(1, false));
+                .withTimeout(12)
+                .andThen(factory.stowTrajectoryPhase(0, true)); // floor
+    }
+
+    public Command leaveFromWall() {
+        var maybeTraj = safeLoadTrajectory("leaveFromWall");
+
+        if (!maybeTraj.isPresent()) return new InstantCommand();
+
+        AutoPhaseFactory factory =
+                new AutoPhaseFactory(swerve, intakePivot, maybeTraj.get(), localization, alliance);
+
+        return new WaitCommand(7).withTimeout(7).andThen(factory.stowTrajectoryPhase(0, true));
     }
 }
