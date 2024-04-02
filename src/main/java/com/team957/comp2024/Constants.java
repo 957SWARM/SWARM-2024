@@ -98,25 +98,25 @@ public class Constants {
 
         public static final int FRONT_LEFT_DRIVE_CANID = 7;
         public static final int FRONT_LEFT_STEER_CANID = 8;
-        public static final double FRONT_LEFT_STEER_OFFSET_RADIANS = 2.555 + (Math.PI / 2);
+        public static final double FRONT_LEFT_STEER_OFFSET_RADIANS = 0.49 + (Math.PI / 2);
         public static final boolean FRONT_LEFT_DRIVE_INVERTED = false;
         public static final double PRACTICE_FRONT_LEFT_STEER_OFFSET_RADIANS = -5.9 + (Math.PI / 4);
 
         public static final int FRONT_RIGHT_DRIVE_CANID = 1;
         public static final int FRONT_RIGHT_STEER_CANID = 2;
-        public static final double FRONT_RIGHT_STEER_OFFSET_RADIANS = 3.169;
+        public static final double FRONT_RIGHT_STEER_OFFSET_RADIANS = 2.17;
         public static final boolean FRONT_RIGHT_DRIVE_INVERTED = true;
         public static final double PRACTICE_FRONT_RIGHT_STEER_OFFSET_RADIANS = 1.58;
 
         public static final int BACK_LEFT_DRIVE_CANID = 5;
         public static final int BACK_LEFT_STEER_CANID = 6;
-        public static final double BACK_LEFT_STEER_OFFSET_RADIANS = 0.478;
+        public static final double BACK_LEFT_STEER_OFFSET_RADIANS = 3.71;
         public static final boolean BACK_LEFT_DRIVE_INVERTED = false;
         public static final double PRACTICE_BACK_LEFT_STEER_OFFSET_RADIANS = 6.27;
 
         public static final int BACK_RIGHT_DRIVE_CANID = 3;
         public static final int BACK_RIGHT_STEER_CANID = 4;
-        public static final double BACK_RIGHT_STEER_OFFSET_RADIANS = 0.73 + (Math.PI / 2);
+        public static final double BACK_RIGHT_STEER_OFFSET_RADIANS = 5.90 + (Math.PI / 2);
         public static final boolean BACK_RIGHT_DRIVE_INVERTED = true;
         public static final double PRACTICE_BACK_RIGHT_STEER_OFFSET_RADIANS = .63 + (Math.PI / 2);
     }
@@ -129,7 +129,7 @@ public class Constants {
         public static final DCMotor SHOOTER_MOTOR = DCMotor.getNEO(1);
         public static final double SHOOTER_REDUCTION = 1;
 
-        public static final double IDLE_CONTROL_EFFORT_VOLTS = 4;
+        public static final double IDLE_CONTROL_EFFORT_VOLTS = 6;
         public static final double SUBWOOFER_CONTROL_EFFORT_VOLTS = 12;
 
         public static final boolean leftMotorInverted = true;
@@ -228,8 +228,8 @@ public class Constants {
         public static final int CURRENT_LIMIT = 30;
         public static final boolean ROLLER_INVERTED = false;
 
-        public static final double FLOOR_INTAKE_VOLTAGE = 9;
-        public static final double SHOOTER_HANDOFF_VOLTAGE = -12;
+        public static final double FLOOR_INTAKE_VOLTAGE = 11;
+        public static final double SHOOTER_HANDOFF_VOLTAGE = -10;
         public static final double AMP_SHOT_VOLTAGE = -12;
         public static final double SLOW_RUN_VOLTAGE = 2;
         public static final double CENTERING_VOLTAGE = .7;

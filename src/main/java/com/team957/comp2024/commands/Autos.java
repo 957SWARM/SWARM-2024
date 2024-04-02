@@ -355,7 +355,7 @@ public class Autos {
                 .andThen(factory.floorTrajectoryPhase(2, false, 0, 2)) // floor
                 .andThen(factory.shootTrajectoryPhase(3, false, .5, .85)) // shoot
                 .andThen(factory.floorTrajectoryPhase(4, false, 0, 2)) // floor
-                .andThen(factory.shootTrajectoryPhase(5, false, .5, .75)) // shoot
+                .andThen(factory.shootTrajectoryPhase(5, false, .5, .85)) // shoot
                 .andThen(factory.stowTrajectoryPhase(6, false));
     }
 
