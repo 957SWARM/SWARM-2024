@@ -349,7 +349,7 @@ public class Autos {
                 new AutoPhaseFactory(swerve, intakePivot, maybeTraj.get(), localization, alliance);
 
         return ScoringSequences.coordinatedSubwooferShot(shooter, intakePivot, intakeRoller)
-                .withTimeout(1)
+                .withTimeout(1.25)
                 .andThen(factory.floorTrajectoryPhase(0, true, 0.5, 2)) // floor
                 .andThen(factory.shootTrajectoryPhase(1, false, .5, .85)) // shoot
                 .andThen(factory.floorTrajectoryPhase(2, false, 0, 2)) // floor
