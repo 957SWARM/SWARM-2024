@@ -8,7 +8,7 @@ import monologue.Annotations.Log;
 import monologue.Logged;
 
 public class IMU implements Logged {
-    private final Pigeon2 pigeon = new Pigeon2(0);
+    private final Pigeon2 pigeon = new Pigeon2(32);
 
     private final DeltaTimeUtil dtUtil;
 
