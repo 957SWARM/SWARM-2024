@@ -97,6 +97,16 @@ public class SwerveHW extends Swerve {
             driveController.setD(Constants.SwerveConstants.ONBOARD_DRIVE_CONTROLLER_KD);
             driveController.setFF(Constants.SwerveConstants.ONBOARD_DRIVE_CONTROLLER_KFF);
 
+            driveController.setSmartMotionMaxVelocity(
+                    (30 * SwerveConstants.MAX_WHEEL_SPEED_METERS_PER_SECOND)
+                            / (Math.PI * SwerveConstants.WHEEL_RADIUS_METERS),
+                    0);
+            driveController.setSmartMotionMaxAccel(
+                    40
+                            * ((30 * SwerveConstants.MAX_WHEEL_SPEED_METERS_PER_SECOND)
+                                    / (Math.PI * SwerveConstants.WHEEL_RADIUS_METERS)),
+                    0);
+
             steerEncoder = steer.getAbsoluteEncoder(Type.kDutyCycle);
             steerEncoder.setInverted(true);
             driveEncoder = drive.getEncoder();

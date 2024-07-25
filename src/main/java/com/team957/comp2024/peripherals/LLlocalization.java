@@ -20,14 +20,13 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
-import java.util.Optional;
 import java.util.function.Supplier;
 import monologue.Annotations.Log;
 import monologue.Logged;
-import org.photonvision.EstimatedRobotPose;
-import org.photonvision.PhotonCamera;
-import org.photonvision.PhotonPoseEstimator;
-import org.photonvision.PhotonPoseEstimator.PoseStrategy;
+// import org.photonvision.EstimatedRobotPose;
+// import org.photonvision.PhotonCamera;
+// import org.photonvision.PhotonPoseEstimator;
+// import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
 public class LLlocalization implements Logged {
 
@@ -46,8 +45,8 @@ public class LLlocalization implements Logged {
 
     AprilTagFieldLayout ATFieldLayout = AprilTagFields.k2024Crescendo.loadAprilTagLayoutField();
 
-    PhotonCamera photonCam = new PhotonCamera(VisionConstants.PCAM_NAME);
-    PhotonPoseEstimator photonEstimator;
+    // PhotonCamera photonCam = new PhotonCamera(VisionConstants.PCAM_NAME);
+    // PhotonPoseEstimator photonEstimator;
 
     // this is 100% a code smell, but something is screwy with the pose estimator
     // unless we flip
@@ -84,14 +83,14 @@ public class LLlocalization implements Logged {
                         VisionConstants.STATE_STDS,
                         VisionConstants.VISION_STDS);
 
-        photonEstimator =
-                new PhotonPoseEstimator(
-                        ATFieldLayout,
-                        PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
-                        photonCam,
-                        VisionConstants.PCAM_TO_CENTER);
+        // photonEstimator =
+        //         new PhotonPoseEstimator(
+        //                 ATFieldLayout,
+        //                 PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
+        //                 photonCam,
+        //                 VisionConstants.PCAM_TO_CENTER);
 
-        photonEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
+        // photonEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
     }
 
     public void update(boolean useVision) {
@@ -177,18 +176,18 @@ public class LLlocalization implements Logged {
         }
     }
 
-    public void estimateVisionPosePV() {
-        if (VisionConstants.VISION_POSE_ESTIMATION_ENABLED) {
-            final Optional<EstimatedRobotPose> optionalEstimatedRobotPose =
-                    photonEstimator.update();
-            if (optionalEstimatedRobotPose.isPresent()) {
-                final EstimatedRobotPose estimatedRobotPose = optionalEstimatedRobotPose.get();
-                poseEstimator.addVisionMeasurement(
-                        estimatedRobotPose.estimatedPose.toPose2d(),
-                        estimatedRobotPose.timestampSeconds);
-            }
-        }
-    }
+    // public void estimateVisionPosePV() {
+    //     if (VisionConstants.VISION_POSE_ESTIMATION_ENABLED) {
+    //         final Optional<EstimatedRobotPose> optionalEstimatedRobotPose =
+    //                 photonEstimator.update();
+    //         if (optionalEstimatedRobotPose.isPresent()) {
+    //             final EstimatedRobotPose estimatedRobotPose = optionalEstimatedRobotPose.get();
+    //             poseEstimator.addVisionMeasurement(
+    //                     estimatedRobotPose.estimatedPose.toPose2d(),
+    //                     estimatedRobotPose.timestampSeconds);
+    //         }
+    //     }
+    // }
 
     @Log.NT
     public Pose2d getPoseEstimate() {

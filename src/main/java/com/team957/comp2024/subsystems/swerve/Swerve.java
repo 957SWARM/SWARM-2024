@@ -348,7 +348,7 @@ public abstract class Swerve implements Subsystem, Logged {
     @Override
     public void periodic() {
         UI.instance.setSwerveStates(getStates());
-
+        // System.out.println(getStates()[0].speedMetersPerSecond);
         double dt = dtUtil.getTimeSecondsSinceLastCall();
 
         frontLeft.update(dt);

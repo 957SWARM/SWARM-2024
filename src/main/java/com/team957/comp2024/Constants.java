@@ -67,7 +67,7 @@ public class Constants {
 
         public static final double WHEEL_RADIUS_METERS = Units.inchesToMeters(1.5);
 
-        public static final double MAX_WHEEL_SPEED_METERS_PER_SECOND = 8;
+        public static final double MAX_WHEEL_SPEED_METERS_PER_SECOND = 4;
 
         public static final double a = .3302;
         public static final double b = .254;
@@ -84,12 +84,12 @@ public class Constants {
                         BACK_RIGHT_TRANSLATION,
                         BACK_LEFT_TRANSLATION);
 
-        public static final double ONBOARD_DRIVE_CONTROLLER_KP = 0.00004;
+        public static final double ONBOARD_DRIVE_CONTROLLER_KP = 0.00004; // 0.00004
         public static final double ONBOARD_DRIVE_CONTROLLER_KI = 0;
         public static final double ONBOARD_DRIVE_CONTROLLER_KD = 0;
         public static final double ONBOARD_DRIVE_CONTROLLER_KFF = 0.000175;
 
-        public static final double ONBOARD_STEER_CONTROLLER_KP = 2.5;
+        public static final double ONBOARD_STEER_CONTROLLER_KP = 8;
         public static final double ONBOARD_STEER_CONTROLLER_KI = 0;
         public static final double ONBOARD_STEER_CONTROLLER_KD = 0;
 
@@ -98,25 +98,25 @@ public class Constants {
 
         public static final int FRONT_LEFT_DRIVE_CANID = 7;
         public static final int FRONT_LEFT_STEER_CANID = 8;
-        public static final double FRONT_LEFT_STEER_OFFSET_RADIANS = 0.49 + (Math.PI / 2);
+        public static final double FRONT_LEFT_STEER_OFFSET_RADIANS = 1.55 + (Math.PI / 2);
         public static final boolean FRONT_LEFT_DRIVE_INVERTED = false;
         public static final double PRACTICE_FRONT_LEFT_STEER_OFFSET_RADIANS = -5.9 + (Math.PI / 4);
 
         public static final int FRONT_RIGHT_DRIVE_CANID = 1;
         public static final int FRONT_RIGHT_STEER_CANID = 2;
-        public static final double FRONT_RIGHT_STEER_OFFSET_RADIANS = 2.17;
+        public static final double FRONT_RIGHT_STEER_OFFSET_RADIANS = 6.26;
         public static final boolean FRONT_RIGHT_DRIVE_INVERTED = true;
         public static final double PRACTICE_FRONT_RIGHT_STEER_OFFSET_RADIANS = 1.58;
 
         public static final int BACK_LEFT_DRIVE_CANID = 5;
         public static final int BACK_LEFT_STEER_CANID = 6;
-        public static final double BACK_LEFT_STEER_OFFSET_RADIANS = 3.71;
+        public static final double BACK_LEFT_STEER_OFFSET_RADIANS = 3.16;
         public static final boolean BACK_LEFT_DRIVE_INVERTED = false;
         public static final double PRACTICE_BACK_LEFT_STEER_OFFSET_RADIANS = 6.27;
 
         public static final int BACK_RIGHT_DRIVE_CANID = 3;
         public static final int BACK_RIGHT_STEER_CANID = 4;
-        public static final double BACK_RIGHT_STEER_OFFSET_RADIANS = 5.90 + (Math.PI / 2);
+        public static final double BACK_RIGHT_STEER_OFFSET_RADIANS = 4.74 + (Math.PI / 2);
         public static final boolean BACK_RIGHT_DRIVE_INVERTED = true;
         public static final double PRACTICE_BACK_RIGHT_STEER_OFFSET_RADIANS = .63 + (Math.PI / 2);
     }
@@ -129,8 +129,8 @@ public class Constants {
         public static final DCMotor SHOOTER_MOTOR = DCMotor.getNEO(1);
         public static final double SHOOTER_REDUCTION = 1;
 
-        public static final double IDLE_CONTROL_EFFORT_VOLTS = 6;
-        public static final double SUBWOOFER_CONTROL_EFFORT_VOLTS = 12;
+        public static final double IDLE_CONTROL_EFFORT_VOLTS = 3.5;
+        public static final double SUBWOOFER_CONTROL_EFFORT_VOLTS = 9;
 
         public static final boolean leftMotorInverted = true;
         public static final boolean rightMotorInverted = false;
@@ -236,11 +236,11 @@ public class Constants {
 
         public static final int TOF_CANID = 0;
 
-        public static final double TOF_TIMING_BUDGET_MS = 30;
+        public static final double TOF_TIMING_BUDGET_MS = 15;
 
         public static final double TOF_NOTE_PRESENT_THRESHOLD_METERS = .4;
 
-        public static final double TOF_NOTE_PRESENT_DEBOUNCE_SECONDS = 0.1;
+        public static final double TOF_NOTE_PRESENT_DEBOUNCE_SECONDS = 0.05;
 
         public static final double SIM_MOCK_OUTTAKE_DELAY_SECONDS = 0.5;
         public static final double SIM_MOCK_INTAKE_DELAY_SECONDS = 0.5;
