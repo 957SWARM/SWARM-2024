@@ -129,8 +129,8 @@ public class Constants {
         public static final DCMotor SHOOTER_MOTOR = DCMotor.getNEO(1);
         public static final double SHOOTER_REDUCTION = 1;
 
-        public static final double IDLE_CONTROL_EFFORT_VOLTS = 3.5;
-        public static final double SUBWOOFER_CONTROL_EFFORT_VOLTS = 9;
+        public static final double IDLE_CONTROL_EFFORT_VOLTS = 6;
+        public static final double SUBWOOFER_CONTROL_EFFORT_VOLTS = 11;
 
         public static final boolean leftMotorInverted = true;
         public static final boolean rightMotorInverted = false;
@@ -194,7 +194,7 @@ public class Constants {
         public static final double INTAKE_PIVOT_PROFILE_CONTROL_EFFORT = 3;
 
         // reported angle when the pivot is at "zero" (straight ahead)
-        public static final double INTAKE_PIVOT_OFFSET_RADIANS = -.58;
+        public static final double INTAKE_PIVOT_OFFSET_RADIANS = -5.95;
 
         public static final PIDConstants PID_CONSTANTS = new PIDConstants(2.5, 0, 0);
     }
@@ -236,11 +236,11 @@ public class Constants {
 
         public static final int TOF_CANID = 0;
 
-        public static final double TOF_TIMING_BUDGET_MS = 15;
+        public static final double TOF_TIMING_BUDGET_MS = 15; // 15
 
-        public static final double TOF_NOTE_PRESENT_THRESHOLD_METERS = .4;
+        public static final double TOF_NOTE_PRESENT_THRESHOLD_METERS = .4; // .4
 
-        public static final double TOF_NOTE_PRESENT_DEBOUNCE_SECONDS = 0.05;
+        public static final double TOF_NOTE_PRESENT_DEBOUNCE_SECONDS = 0.05; // 0.05
 
         public static final double SIM_MOCK_OUTTAKE_DELAY_SECONDS = 0.5;
         public static final double SIM_MOCK_INTAKE_DELAY_SECONDS = 0.5;
@@ -286,7 +286,10 @@ public class Constants {
 
         public static final Transform3d LL1_TO_CENTER =
                 new Transform3d(
-                        new Translation3d(-Units.inchesToMeters(3), 0, Units.inchesToMeters(24)),
+                        new Translation3d(
+                                -Units.inchesToMeters(3),
+                                -Units.inchesToMeters(0),
+                                Units.inchesToMeters(24)),
                         new Rotation3d(0, 0, 0));
         public static final Transform3d LL2_TO_CENTER =
                 new Transform3d(new Translation3d(0, 0, 0), new Rotation3d(0, 0, 0));
@@ -297,8 +300,8 @@ public class Constants {
         public static final double TARGET_TX_CUTOFF = 24; // DEGREES
         public static final double TARGET_THOR_CUTOFF = 70; // PIXELS
 
-        public static final double TRACKING_KP = 5;
-        public static final double TRACKING_MIN_COMMAND = 0.05;
+        public static final double TRACKING_KP = 3.25;
+        public static final double TRACKING_MIN_COMMAND = 0.005;
         public static final double TRACKING_STOP_THRESHOLD = 0.01; // RADIANS
         public static final double TRACKING_MIN_COMMAND_TRESHOLD = 0.02; // RADIANS
         public static final double TRACKING_MAX_SPEED = 100; // TODO: TUNE VALUE

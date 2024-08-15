@@ -192,8 +192,8 @@ public class Robot extends TimedRobot implements Logged {
         noteTargeting =
                 new NoteTargeting(
                         swerve,
-                        () -> input.swerveX(),
-                        () -> input.swerveY(),
+                        // () -> input.swerveX(),
+                        // () -> input.swerveY(),
                         () -> fieldRelRotationOffset,
                         poseEstimation,
                         VisionConstants.LL1_NAME);
@@ -263,7 +263,8 @@ public class Robot extends TimedRobot implements Logged {
 
         noteTracking =
                 new Trigger(() -> input.noteTracking() && !intakeRoller.debouncedNoteIsPresent());
-        noteTracking.whileTrue(noteTargeting.getNoteTrackCommand());
+        noteTracking.whileTrue(
+                noteTargeting.getNoteTrackCommand(() -> input.swerveX(), () -> input.swerveY()));
 
         resetFieldRelZero = new Trigger(input::zeroGyro);
 
@@ -325,7 +326,7 @@ public class Robot extends TimedRobot implements Logged {
         imu.periodic();
         pdh.periodic();
 
-        // System.out.println(visionAlignment.getSpeakerAngle());
+        // System.out.println(input.swerveX() + " || " + input.swerveY());
     }
 
     @Override

@@ -33,26 +33,28 @@ public class NoteTargeting {
 
     public NoteTargeting(
             Swerve swerve,
-            Supplier<Double> swerveX,
-            Supplier<Double> swerveY,
+            // Supplier<Double> swerveX,
+            // Supplier<Double> swerveY,
             Supplier<Double> fieldRelRotationOffset,
             LLlocalization poseEstimation,
             String limelightName) {
         this.swerve = swerve;
-        this.swerveX = swerveX.get();
-        this.swerveY = swerveY.get();
+        // this.swerveX = swerveX.get();
+        // this.swerveY = swerveY.get();
         this.fieldRelRotationOffset = fieldRelRotationOffset.get();
         this.poseEstimation = poseEstimation;
         this.limelightName = limelightName;
     }
 
     // AUTO AIMS TO NOTE IF NOTE IS TRACKABLE
-    public Command getNoteTrackCommand() {
+    public Command getNoteTrackCommand(Supplier<Double> swerveX, Supplier<Double> swerveY) {
 
         return swerve.getFieldRelativeControlCommand(
                         () -> {
                             return new ChassisSpeeds(
-                                    swerveX, swerveY, -getTrackingAngle(getTargetAngle()));
+                                    swerveX.get(),
+                                    swerveY.get(),
+                                    -getTrackingAngle(getTargetAngle()));
                         },
                         () -> poseEstimation.getRotationEstimate())
                 .unless(() -> !checkTarget())

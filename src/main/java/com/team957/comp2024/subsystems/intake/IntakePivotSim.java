@@ -27,6 +27,11 @@ public class IntakePivotSim extends IntakePivot {
     }
 
     @Override
+    public double getUnoffsetPositionRadians() {
+        return model.getAngleRads();
+    }
+
+    @Override
     public double getVelocityRadiansPerSecond() {
         return model.getVelocityRadPerSec();
     }

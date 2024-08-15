@@ -47,6 +47,9 @@ public abstract class IntakePivot implements Subsystem, Logged {
     public abstract double getPositionRadians();
 
     @Log.NT
+    public abstract double getUnoffsetPositionRadians();
+
+    @Log.NT
     public abstract double getVelocityRadiansPerSecond();
 
     @Log.NT

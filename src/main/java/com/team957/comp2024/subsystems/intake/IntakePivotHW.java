@@ -52,6 +52,11 @@ public class IntakePivotHW extends IntakePivot {
     }
 
     @Override
+    public double getUnoffsetPositionRadians() {
+        return encoder.getPosition();
+    }
+
+    @Override
     public double getVelocityRadiansPerSecond() {
         return encoder.getVelocity();
     }
