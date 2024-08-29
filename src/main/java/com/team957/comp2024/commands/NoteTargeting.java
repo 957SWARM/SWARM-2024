@@ -4,6 +4,7 @@ import com.team957.comp2024.Constants.VisionConstants;
 import com.team957.comp2024.peripherals.LLlocalization;
 import com.team957.comp2024.subsystems.swerve.Swerve;
 import com.team957.comp2024.util.LimelightLib;
+import com.team957.lib.controllers.feedback.PID;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -20,6 +21,8 @@ public class NoteTargeting {
     private double fieldRelRotationOffset;
     private final LLlocalization poseEstimation;
     private final String limelightName;
+
+    PID notePID = new PID(VisionConstants.NOTE_CONSTANTS, 0);
 
     private double map(
             double input,
@@ -54,27 +57,32 @@ public class NoteTargeting {
                             return new ChassisSpeeds(
                                     swerveX.get(),
                                     swerveY.get(),
-                                    -getTrackingAngle(getTargetAngle()));
+                                    getTrackingAngle(getTargetAngle()));
                         },
                         () -> poseEstimation.getRotationEstimate())
                 .unless(() -> !checkTarget())
                 .withName("noteTargeting");
     }
 
+    // private double getTrackingAngle(double targetAngle) {
+    //     double kp = VisionConstants.TRACKING_KP;
+    //     double minCommand = VisionConstants.TRACKING_MIN_COMMAND;
+    //     if (Math.abs(targetAngle) > VisionConstants.TRACKING_STOP_THRESHOLD) {
+    //         if (targetAngle > 0 && targetAngle < VisionConstants.TRACKING_MIN_COMMAND_TRESHOLD) {
+    //             return -minCommand;
+    //         } else if (targetAngle < 0
+    //                 && targetAngle > -VisionConstants.TRACKING_MIN_COMMAND_TRESHOLD) {
+    //             return minCommand;
+    //         } else {
+    //             return kp * targetAngle;
+    //         }
+    //     }
+    //     return 0;
+    // }
+
     private double getTrackingAngle(double targetAngle) {
-        double kp = VisionConstants.TRACKING_KP;
-        double minCommand = VisionConstants.TRACKING_MIN_COMMAND;
-        if (Math.abs(targetAngle) > VisionConstants.TRACKING_STOP_THRESHOLD) {
-            if (targetAngle > 0 && targetAngle < VisionConstants.TRACKING_MIN_COMMAND_TRESHOLD) {
-                return -minCommand;
-            } else if (targetAngle < 0
-                    && targetAngle > -VisionConstants.TRACKING_MIN_COMMAND_TRESHOLD) {
-                return minCommand;
-            } else {
-                return kp * targetAngle;
-            }
-        }
-        return 0;
+        System.out.println(targetAngle);
+        return notePID.calculate(targetAngle);
     }
 
     private double getTargetAngle() {

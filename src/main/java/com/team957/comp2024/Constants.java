@@ -129,8 +129,8 @@ public class Constants {
         public static final DCMotor SHOOTER_MOTOR = DCMotor.getNEO(1);
         public static final double SHOOTER_REDUCTION = 1;
 
-        public static final double IDLE_CONTROL_EFFORT_VOLTS = 6;
-        public static final double SUBWOOFER_CONTROL_EFFORT_VOLTS = 11;
+        public static final double IDLE_CONTROL_EFFORT_VOLTS = 3;
+        public static final double SUBWOOFER_CONTROL_EFFORT_VOLTS = 6;
 
         public static final boolean leftMotorInverted = true;
         public static final boolean rightMotorInverted = false;
@@ -183,7 +183,7 @@ public class Constants {
         public static final double FLOOR_INTAKE_ANGLE_RADIANS = Units.degreesToRadians(327.5);
         public static final double STOW_INTAKE_ANGLE_RADIANS = Units.degreesToRadians(120);
         public static final double HANDOFF_INTAKE_ANGLE_RADIANS = 2.8;
-        public static final double AMP_INTAKE_ANGLE_RADIANS = Units.degreesToRadians(70);
+        public static final double AMP_INTAKE_ANGLE_RADIANS = Units.degreesToRadians(65);
 
         public static final int INTAKE_PIVOT_MOTOR_CANID = 11;
 
@@ -300,11 +300,13 @@ public class Constants {
         public static final double TARGET_TX_CUTOFF = 24; // DEGREES
         public static final double TARGET_THOR_CUTOFF = 70; // PIXELS
 
-        public static final double TRACKING_KP = 3.25;
-        public static final double TRACKING_MIN_COMMAND = 0.005;
-        public static final double TRACKING_STOP_THRESHOLD = 0.01; // RADIANS
-        public static final double TRACKING_MIN_COMMAND_TRESHOLD = 0.02; // RADIANS
-        public static final double TRACKING_MAX_SPEED = 100; // TODO: TUNE VALUE
+        public static final PIDConstants NOTE_CONSTANTS = new PIDConstants(3, 0, 0);
+
+        // public static final double TRACKING_KP = 3.25;
+        // public static final double TRACKING_MIN_COMMAND = 0.005;
+        // public static final double TRACKING_STOP_THRESHOLD = 0.01; // RADIANS
+        // public static final double TRACKING_MIN_COMMAND_TRESHOLD = 0.02; // RADIANS
+        // public static final double TRACKING_MAX_SPEED = 100; // TODO: TUNE VALUE
 
         // OLD WIP VISION PATHING/ALIGNMENT STUFF
 

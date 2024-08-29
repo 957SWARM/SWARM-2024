@@ -11,7 +11,6 @@ import com.team957.comp2024.commands.LEDStripPatterns;
 import com.team957.comp2024.commands.NoteTargeting;
 import com.team957.comp2024.commands.ScoringSequences;
 import com.team957.comp2024.commands.TrajectoryFollowing;
-import com.team957.comp2024.commands.VisionAlignment;
 import com.team957.comp2024.input.DefaultDriver;
 import com.team957.comp2024.input.DriverInput;
 import com.team957.comp2024.input.SimKeyboardDriver;
@@ -109,7 +108,7 @@ public class Robot extends TimedRobot implements Logged {
                     () -> fieldRelRotationOffset,
                     isReal());
 
-    private VisionAlignment visionAlignment;
+    // private VisionAlignment visionAlignment;
 
     private NoteTargeting noteTargeting;
 
@@ -198,8 +197,8 @@ public class Robot extends TimedRobot implements Logged {
                         poseEstimation,
                         VisionConstants.LL1_NAME);
 
-        visionAlignment =
-                new VisionAlignment(swerve, input::swerveX, input::swerveY, poseEstimation);
+        // visionAlignment =
+        //         new VisionAlignment(swerve, input::swerveX, input::swerveY, poseEstimation);
 
         swerve.setDefaultCommand(
                 swerve.getFieldRelativeControlCommand(
@@ -326,7 +325,7 @@ public class Robot extends TimedRobot implements Logged {
         imu.periodic();
         pdh.periodic();
 
-        // System.out.println(input.swerveX() + " || " + input.swerveY());
+        // System.out.println();
     }
 
     @Override
