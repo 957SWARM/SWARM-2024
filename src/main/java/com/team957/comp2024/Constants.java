@@ -288,7 +288,7 @@ public class Constants {
                 new Transform3d(
                         new Translation3d(
                                 -Units.inchesToMeters(3),
-                                -Units.inchesToMeters(0),
+                                -Units.inchesToMeters(3),
                                 Units.inchesToMeters(24)),
                         new Rotation3d(0, 0, 0));
         public static final Transform3d LL2_TO_CENTER =
@@ -299,8 +299,6 @@ public class Constants {
         public static final double TARGET_AREA_CUTOFF = 0.5; // PERCENT OF SCREEN //TODO: FIND VAL
         public static final double TARGET_TX_CUTOFF = 24; // DEGREES
         public static final double TARGET_THOR_CUTOFF = 70; // PIXELS
-
-        public static final PIDConstants NOTE_CONSTANTS = new PIDConstants(3, 0, 0);
 
         // public static final double TRACKING_KP = 3.25;
         // public static final double TRACKING_MIN_COMMAND = 0.005;

@@ -4,7 +4,7 @@ import com.team957.comp2024.Constants.VisionConstants;
 import com.team957.comp2024.peripherals.LLlocalization;
 import com.team957.comp2024.subsystems.swerve.Swerve;
 import com.team957.comp2024.util.LimelightLib;
-import com.team957.lib.controllers.feedback.PID;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -22,7 +22,8 @@ public class NoteTargeting {
     private final LLlocalization poseEstimation;
     private final String limelightName;
 
-    PID notePID = new PID(VisionConstants.NOTE_CONSTANTS, 0);
+    // PID notePID = new PID(VisionConstants.NOTE_CONSTANTS, 0);
+    PIDController notePID = new PIDController(5, 0, 1);
 
     private double map(
             double input,
@@ -81,7 +82,7 @@ public class NoteTargeting {
     // }
 
     private double getTrackingAngle(double targetAngle) {
-        System.out.println(targetAngle);
+        System.out.println(notePID.calculate(targetAngle));
         return notePID.calculate(targetAngle);
     }
 
