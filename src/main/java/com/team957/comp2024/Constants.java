@@ -129,8 +129,8 @@ public class Constants {
         public static final DCMotor SHOOTER_MOTOR = DCMotor.getNEO(1);
         public static final double SHOOTER_REDUCTION = 1;
 
-        public static final double IDLE_CONTROL_EFFORT_VOLTS = 3;
-        public static final double SUBWOOFER_CONTROL_EFFORT_VOLTS = 6;
+        public static final double IDLE_CONTROL_EFFORT_VOLTS = 9;
+        public static final double SUBWOOFER_CONTROL_EFFORT_VOLTS = 11.5;
 
         public static final boolean leftMotorInverted = true;
         public static final boolean rightMotorInverted = false;
@@ -183,7 +183,7 @@ public class Constants {
         public static final double FLOOR_INTAKE_ANGLE_RADIANS = Units.degreesToRadians(320);
         public static final double STOW_INTAKE_ANGLE_RADIANS = Units.degreesToRadians(120);
         public static final double HANDOFF_INTAKE_ANGLE_RADIANS = 2.8;
-        public static final double AMP_INTAKE_ANGLE_RADIANS = Units.degreesToRadians(65);
+        public static final double AMP_INTAKE_ANGLE_RADIANS = Units.degreesToRadians(61.5);
 
         public static final int INTAKE_PIVOT_MOTOR_CANID = 11;
 
@@ -230,7 +230,7 @@ public class Constants {
 
         public static final double FLOOR_INTAKE_VOLTAGE = 11;
         public static final double SHOOTER_HANDOFF_VOLTAGE = -10;
-        public static final double AMP_SHOT_VOLTAGE = -12;
+        public static final double AMP_SHOT_VOLTAGE = -11;
         public static final double SLOW_RUN_VOLTAGE = 2;
         public static final double CENTERING_VOLTAGE = .7;
 

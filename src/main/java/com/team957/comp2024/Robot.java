@@ -3,6 +3,7 @@ package com.team957.comp2024;
 import com.ctre.phoenix6.SignalLogger;
 import com.team957.comp2024.Constants.MiscConstants;
 import com.team957.comp2024.Constants.PDHConstants;
+import com.team957.comp2024.Constants.SequencingConstants;
 import com.team957.comp2024.Constants.SwerveConstants;
 import com.team957.comp2024.Constants.VisionConstants;
 import com.team957.comp2024.commands.ActiveNoteCentering;
@@ -36,7 +37,6 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import java.util.ConcurrentModificationException;
 import monologue.Annotations.Log;
@@ -169,18 +169,12 @@ public class Robot extends TimedRobot implements Logged {
         ui.addAuto("Center Two Piece", autos.centerTwoPiece());
         ui.addAuto("Amp Then Leave", autos.ampAndLeave());
         ui.addAuto("Source Then Leave", autos.sourceAndLeave());
-        ui.addAuto("Amp Three Piece", autos.ampThreePiece());
-        ui.addAuto("Center Three Piece", autos.centerThreePiece());
-        ui.addAuto("Source Far Three Piece", autos.sourceFarThreePiece());
 
         // ui.addAuto("Center Four Piece", autos.centerFourPiece());
         // ui.addAuto("Source Two Piece", autos.sourceTwoPiece());
-        ui.addAuto("Just Leave: Center", autos.justLeaveCenter());
         ui.addAuto("Just Leave From Wall", autos.leaveFromWall());
 
         ui.addAuto("Just Shoot: Center", autos.justShootCenter());
-        ui.addAuto("Just Shoot: LEFT", autos.justShootLeft());
-        ui.addAuto("Just Shoot: RIGHT", autos.justShootRight());
 
         // ui.addAuto("Five Piece??", autos.fivePieceMockup());
         // ui.addAuto("Test Path", autos.testPath());
@@ -228,11 +222,23 @@ public class Robot extends TimedRobot implements Logged {
                         .driveToRelativePose(
                                 swerve,
                                 poseEstimation::getPoseEstimate,
-                                () -> new Transform2d(-.09, 0, new Rotation2d()))
+                                () -> new Transform2d(-.14, 0, new Rotation2d()))
                         .alongWith(
                                 pivot.toAmp()
                                         .alongWith(
-                                                new WaitCommand(1).andThen(intakeRoller.ampShot())))
+                                                intakeRoller
+                                                        .slowCentering()
+                                                        .withTimeout(
+                                                                SequencingConstants
+                                                                                .CENTERING_NOTE_DURATION
+                                                                        / 1.5))
+                                        .withTimeout(SequencingConstants.UNTIL_SHOOT_DELAY)
+                                        .andThen(
+                                                intakeRoller
+                                                        .ampShot()
+                                                        .withTimeout(
+                                                                SequencingConstants
+                                                                        .SHOOT_DURATION)))
                         .withTimeout(2));
 
         shootAmp = new Trigger(input::shootAmp);

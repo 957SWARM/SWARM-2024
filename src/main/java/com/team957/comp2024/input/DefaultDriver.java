@@ -11,8 +11,8 @@ public class DefaultDriver implements DriverInput {
 
     // implementation detail of the driver profile
     // example: slower profile for outreach events
-    private static final double LIN_MAX_SPEED = 1.6;
-    private static final double ROT_MAX_SPEED = 4;
+    private static final double LIN_MAX_SPEED = 6;
+    private static final double ROT_MAX_SPEED = 8;
 
     private final XboxController xboxController;
 

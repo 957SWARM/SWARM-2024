@@ -2,7 +2,6 @@ package com.team957.comp2024.commands;
 
 import com.choreo.lib.Choreo;
 import com.choreo.lib.ChoreoTrajectory;
-import com.team957.comp2024.Constants.MiscConstants;
 import com.team957.comp2024.commands.TrajectoryFollowing.CommandWithTime;
 import com.team957.comp2024.peripherals.LLlocalization;
 import com.team957.comp2024.subsystems.intake.IntakePivot;
@@ -204,34 +203,6 @@ public class Autos {
                 .command();
     }
 
-    public Command justLeaveAmp() {
-        return singleTrajectoryOnlyAuto("justLeaveAmp", true);
-    }
-
-    public Command justLeaveCenter() {
-        return singleTrajectoryOnlyAuto("justLeaveCenter", true);
-    }
-
-    public Command justLeaveSource() {
-        return singleTrajectoryOnlyAuto("justLeaveSource", true);
-    }
-
-    public Command testPath() {
-        return singleTrajectoryOnlyAuto("testPath", true);
-    }
-
-    public Command fivePieceMockup() {
-        return singleTrajectoryOnlyAuto("fivePieceMockup", true);
-    }
-
-    public Command fourPieceMockup() {
-        return singleTrajectoryOnlyAuto("fourPieceMockup", true);
-    }
-
-    public Command threePieceMockup() {
-        return singleTrajectoryOnlyAuto("threePieceMockup", true);
-    }
-
     public Command centerTwoPiece() {
         var maybeTraj = safeLoadTrajectory("centerTwoPiece");
 
@@ -266,37 +237,6 @@ public class Autos {
                 .andThen(factory.stowTrajectoryPhase(6, false));
     }
 
-    public Command sourceFarThreePiece() {
-        var maybeTraj = safeLoadTrajectory("sourceFarThreePiece");
-
-        if (!maybeTraj.isPresent()) return new InstantCommand();
-
-        AutoPhaseFactory factory =
-                new AutoPhaseFactory(swerve, intakePivot, maybeTraj.get(), localization, alliance);
-
-        return ScoringSequences.coordinatedSubwooferShot(shooter, intakePivot, intakeRoller)
-                .withTimeout(1)
-                .andThen(factory.floorTrajectoryPhase(0, true, 0, 5))
-                .andThen(factory.shootTrajectoryPhase(1, false, 0.5, 0.75))
-                .andThen(factory.floorTrajectoryPhase(2, false, .25, 5))
-                .andThen(factory.shootTrajectoryPhase(3, false, 0.5, 0.75))
-                .andThen(factory.stowTrajectoryPhase(4, false));
-    }
-
-    public Command sourceTwoPiece() {
-        var maybeTraj = safeLoadTrajectory("sourceTwoPiece");
-
-        if (!maybeTraj.isPresent()) return new InstantCommand();
-
-        AutoPhaseFactory factory =
-                new AutoPhaseFactory(swerve, intakePivot, maybeTraj.get(), localization, alliance);
-
-        return ScoringSequences.coordinatedSubwooferShot(shooter, intakePivot, intakeRoller)
-                .withTimeout(1)
-                .andThen(factory.floorTrajectoryPhase(0, true, 0, 5))
-                .andThen(factory.shootTrajectoryPhase(1, false, 0.5, 0.75));
-    }
-
     public Command justShootCenter() {
 
         var maybeTraj = safeLoadTrajectory("justLeaveCenter");
@@ -309,34 +249,6 @@ public class Autos {
         return ScoringSequences.coordinatedSubwooferShot(shooter, intakePivot, intakeRoller)
                 .withTimeout(1)
                 .andThen(factory.startAngle(0));
-    }
-
-    public Command justShootRight() {
-
-        var maybeTraj = safeLoadTrajectory("justLeaveSource");
-
-        if (!maybeTraj.isPresent()) return new InstantCommand();
-
-        AutoPhaseFactory factory =
-                new AutoPhaseFactory(swerve, intakePivot, maybeTraj.get(), localization, alliance);
-
-        return ScoringSequences.coordinatedSubwooferShot(shooter, intakePivot, intakeRoller)
-                .withTimeout(1)
-                .andThen(factory.startAngle(MiscConstants.SUBWOOFER_SIDE_ANGLE));
-    }
-
-    public Command justShootLeft() {
-
-        var maybeTraj = safeLoadTrajectory("justLeaveAmp");
-
-        if (!maybeTraj.isPresent()) return new InstantCommand();
-
-        AutoPhaseFactory factory =
-                new AutoPhaseFactory(swerve, intakePivot, maybeTraj.get(), localization, alliance);
-
-        return ScoringSequences.coordinatedSubwooferShot(shooter, intakePivot, intakeRoller)
-                .withTimeout(1)
-                .andThen(factory.startAngle(-MiscConstants.SUBWOOFER_SIDE_ANGLE));
     }
 
     // avoids going wide, more straight lines
@@ -359,39 +271,6 @@ public class Autos {
                 .andThen(factory.stowTrajectoryPhase(6, false));
     }
 
-    public Command centerThreePiece() {
-        var maybeTraj = safeLoadTrajectory("centerThreePiece");
-
-        if (!maybeTraj.isPresent()) return new InstantCommand();
-
-        AutoPhaseFactory factory =
-                new AutoPhaseFactory(swerve, intakePivot, maybeTraj.get(), localization, alliance);
-
-        return ScoringSequences.coordinatedSubwooferShot(shooter, intakePivot, intakeRoller)
-                .withTimeout(1)
-                .andThen(factory.floorTrajectoryPhase(0, true, 0, 2)) // floor
-                .andThen(factory.shootTrajectoryPhase(1, false, .5, .75)) // shoot
-                .andThen(factory.floorTrajectoryPhase(2, false, 0, 3)) // floor
-                .andThen(factory.shootTrajectoryPhase(3, false, .5, .75)) // shoot
-                .andThen(factory.stowTrajectoryPhase(4, false)); // stow
-    }
-
-    public Command ampThreePiece() {
-        var maybeTraj = safeLoadTrajectory("ampThreePiece");
-
-        if (!maybeTraj.isPresent()) return new InstantCommand();
-
-        AutoPhaseFactory factory =
-                new AutoPhaseFactory(swerve, intakePivot, maybeTraj.get(), localization, alliance);
-
-        return ScoringSequences.coordinatedSubwooferShot(shooter, intakePivot, intakeRoller)
-                .withTimeout(1)
-                .andThen(factory.floorTrajectoryPhase(0, true, .5, 2)) // floor
-                .andThen(factory.shootTrajectoryPhase(1, false, 0.5, 0.75)) // shoot
-                .andThen(factory.floorTrajectoryPhase(2, false, 0, 4)) // floor
-                .andThen(factory.shootTrajectoryPhase(3, false, 0.5, 0.75));
-    }
-
     public Command centerAndAmp() {
         var maybeTraj = safeLoadTrajectory("centerAndAmp");
 
@@ -404,7 +283,7 @@ public class Autos {
                 .withTimeout(1)
                 .andThen(factory.floorTrajectoryPhase(0, true, .5, 2)) // floor
                 .andThen(factory.shootTrajectoryPhase(1, false, 0.5, 0.75)) // shoot
-                .andThen(factory.floorTrajectoryPhase(2, false, 0, 2)) // floor
+                .andThen(factory.floorTrajectoryPhase(2, false, 0.5, 2)) // floor
                 .andThen(factory.shootTrajectoryPhase(3, false, 0.5, 0.75))
                 .andThen(factory.stowTrajectoryPhase(4, false));
     }
