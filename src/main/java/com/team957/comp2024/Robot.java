@@ -316,7 +316,8 @@ public class Robot extends TimedRobot implements Logged {
                 Monologue.setFileOnly(DriverStation.isFMSAttached());
                 Monologue.updateAll();
 
-                poseEstimation.update(isTeleop());
+                // poseEstimation.update(isTeleop());
+                poseEstimation.update(true);
 
                 imu.periodic();
                 pdh.periodic();
