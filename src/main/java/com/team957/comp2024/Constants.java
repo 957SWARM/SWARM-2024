@@ -168,9 +168,9 @@ public class Constants {
         public static final double MAX_ANGLE_RADIANS = Units.degreesToRadians(160);
 
         public static final double PLANT_KS = 0;
-        public static final double PLANT_KV = 0.00001; // .92
-        public static final double PLANT_KA = 0.000001; // 0.01
-        public static final double PLANT_KG = 0.3;
+        public static final double PLANT_KV = 0.00005; // .92
+        public static final double PLANT_KA = 0.000025; // 0.01
+        public static final double PLANT_KG = 0.25;
 
         public static final DCMotor DRIVE_MOTOR = DCMotor.getNEO(1);
 
@@ -178,7 +178,7 @@ public class Constants {
 
         public static final double PIVOT_TO_TIP_METERS = Units.inchesToMeters(14);
 
-        public static final double FLOOR_INTAKE_ANGLE_RADIANS = Units.degreesToRadians(327.5);
+        public static final double FLOOR_INTAKE_ANGLE_RADIANS = Units.degreesToRadians(320);
         public static final double STOW_INTAKE_ANGLE_RADIANS = Units.degreesToRadians(120);
         public static final double HANDOFF_INTAKE_ANGLE_RADIANS = 2.8;
         public static final double AMP_INTAKE_ANGLE_RADIANS = Units.degreesToRadians(65);
@@ -194,7 +194,7 @@ public class Constants {
         // reported angle when the pivot is at "zero" (straight ahead)
         public static final double INTAKE_PIVOT_OFFSET_RADIANS = -5.95;
 
-        public static final PIDConstants PID_CONSTANTS = new PIDConstants(2.5, 0, 0);
+        public static final PIDConstants PID_CONSTANTS = new PIDConstants(3, 0, 0);
     }
 
     public static final class BoxClimberConstants {
