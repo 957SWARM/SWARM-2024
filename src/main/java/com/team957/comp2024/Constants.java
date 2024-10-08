@@ -130,7 +130,7 @@ public class Constants {
         public static final double SHOOTER_REDUCTION = 1;
 
         public static final double IDLE_CONTROL_EFFORT_VOLTS = 9;
-        public static final double SUBWOOFER_CONTROL_EFFORT_VOLTS = 11.5;
+        public static final double SUBWOOFER_CONTROL_EFFORT_VOLTS = 12;
 
         public static final boolean leftMotorInverted = true;
         public static final boolean rightMotorInverted = false;
@@ -339,7 +339,7 @@ public class Constants {
 
     public static final class SequencingConstants {
         // coordinatedSubwooferShot
-        public static final double CENTERING_NOTE_DURATION = .05;
+        public static final double CENTERING_NOTE_DURATION = .075;
         public static final double UNTIL_SHOOT_DELAY = .8;
         public static final double SHOOT_DURATION = .5;
 
