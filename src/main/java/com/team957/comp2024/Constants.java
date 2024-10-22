@@ -59,7 +59,8 @@ public class Constants {
         public static final double STEER_GEARING = 42.62;
         public static final double DRIVE_GEARING = 4.71;
 
-        public static final GearRatioHelper DRIVE_GEARING_HELPER = new GearRatioHelper(1, DRIVE_GEARING);
+        public static final GearRatioHelper DRIVE_GEARING_HELPER =
+                new GearRatioHelper(1, DRIVE_GEARING);
 
         public static final DCMotor STEER_MOTOR = DCMotor.getNeo550(1);
         public static final DCMotor DRIVE_MOTOR = DCMotor.getNEO(1);
@@ -76,11 +77,12 @@ public class Constants {
         public static final Translation2d BACK_RIGHT_TRANSLATION = new Translation2d(-a, -b);
         public static final Translation2d BACK_LEFT_TRANSLATION = new Translation2d(-a, b);
 
-        public static final SwerveDriveKinematics KINEMATICS = new SwerveDriveKinematics(
-                FRONT_LEFT_TRANSLATION,
-                FRONT_RIGHT_TRANSLATION,
-                BACK_RIGHT_TRANSLATION,
-                BACK_LEFT_TRANSLATION);
+        public static final SwerveDriveKinematics KINEMATICS =
+                new SwerveDriveKinematics(
+                        FRONT_LEFT_TRANSLATION,
+                        FRONT_RIGHT_TRANSLATION,
+                        BACK_RIGHT_TRANSLATION,
+                        BACK_LEFT_TRANSLATION);
 
         public static final double ONBOARD_DRIVE_CONTROLLER_KP = 0.00004; // 0.00004
         public static final double ONBOARD_DRIVE_CONTROLLER_KI = 0;
@@ -247,8 +249,9 @@ public class Constants {
 
         public static final double CENTERING_PULSE_VOLTAGE = 1.5;
 
-        public static final int STALENESS_THRESHOLD_CYCLES = 5; // reports stale data fault if reported value is
-                                                                // identical for this many cycles
+        public static final int STALENESS_THRESHOLD_CYCLES =
+                5; // reports stale data fault if reported value is
+        // identical for this many cycles
     }
 
     public static final class AlertConstants {
@@ -277,19 +280,22 @@ public class Constants {
 
         public static final double NOTE_WIDTH = 14; // 0.3556 METERS
 
-        public static final Vector<N3> STATE_STDS = VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5));
-        public static final Vector<N3> VISION_STDS = VecBuilder.fill(2, 2, Units.degreesToRadians(60));
+        public static final Vector<N3> STATE_STDS =
+                VecBuilder.fill(0.05, 0.05, Units.degreesToRadians(5));
+        public static final Vector<N3> VISION_STDS =
+                VecBuilder.fill(2, 2, Units.degreesToRadians(60));
 
-        public static final Transform3d LL1_TO_CENTER = new Transform3d(
-                new Translation3d(
-                        -Units.inchesToMeters(3),
-                        -Units.inchesToMeters(3),
-                        Units.inchesToMeters(24)),
-                new Rotation3d(0, 0, 0));
-        public static final Transform3d LL2_TO_CENTER = new Transform3d(new Translation3d(0, 0, 0),
-                new Rotation3d(0, 0, 0));
-        public static final Transform3d PCAM_TO_CENTER = new Transform3d(new Translation3d(0, 0, 0),
-                new Rotation3d(0, 0, 0));
+        public static final Transform3d LL1_TO_CENTER =
+                new Transform3d(
+                        new Translation3d(
+                                -Units.inchesToMeters(3),
+                                -Units.inchesToMeters(3),
+                                Units.inchesToMeters(24)),
+                        new Rotation3d(0, 0, 0));
+        public static final Transform3d LL2_TO_CENTER =
+                new Transform3d(new Translation3d(0, 0, 0), new Rotation3d(0, 0, 0));
+        public static final Transform3d PCAM_TO_CENTER =
+                new Transform3d(new Translation3d(0, 0, 0), new Rotation3d(0, 0, 0));
 
         public static final double TARGET_AREA_CUTOFF = 0.5; // PERCENT OF SCREEN //TODO: FIND VAL
         public static final double TARGET_TX_CUTOFF = 24; // DEGREES
@@ -323,10 +329,13 @@ public class Constants {
 
     public static final class OtfPathingConstants {
         public static final Pose2d OTF_SPEAKER_POSE_BLUE = new Pose2d(1.6, 5.5, new Rotation2d());
-        public static final Pose2d OTF_SPEAKER_POSE_RED = new Pose2d(15, 5.5, new Rotation2d(Math.PI));
+        public static final Pose2d OTF_SPEAKER_POSE_RED =
+                new Pose2d(15, 5.5, new Rotation2d(Math.PI));
 
-        public static final Pose2d OTF_AMP_POSE_BLUE = new Pose2d(1.9, 7.6, new Rotation2d(Math.PI / 2));
-        public static final Pose2d OTF_AMP_POSE_RED = new Pose2d(14.75, 7.6, new Rotation2d(-Math.PI / 2));
+        public static final Pose2d OTF_AMP_POSE_BLUE =
+                new Pose2d(1.9, 7.6, new Rotation2d(Math.PI / 2));
+        public static final Pose2d OTF_AMP_POSE_RED =
+                new Pose2d(14.75, 7.6, new Rotation2d(-Math.PI / 2));
     }
 
     public static final class SequencingConstants {
@@ -344,6 +353,7 @@ public class Constants {
 
         public static final int VOLTAGE_MEASUREMENT_STALENESS_THRESHOLD = 5;
 
-        public static final double SUSPICIOUS_TEMPERATURE_RATE = 50; // 50 celsius / second is not going to happen, ever
+        public static final double SUSPICIOUS_TEMPERATURE_RATE =
+                50; // 50 celsius / second is not going to happen, ever
     }
 }

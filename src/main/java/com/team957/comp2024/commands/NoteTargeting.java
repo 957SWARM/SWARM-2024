@@ -3,7 +3,7 @@ package com.team957.comp2024.commands;
 import com.team957.comp2024.Constants.VisionConstants;
 import com.team957.comp2024.peripherals.LLlocalization;
 import com.team957.comp2024.subsystems.swerve.Swerve;
-import com.team957.comp2024.util.LimelightLib;
+import com.team957.comp2024.util.LimelightHelpers;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -118,7 +118,7 @@ public class NoteTargeting {
     private Pose2d getNotePose2dRobot() {
 
         double groundDistance = getNoteGroundDistance();
-        double tx = LimelightLib.getTX(limelightName);
+        double tx = LimelightHelpers.getTX(limelightName);
         double targetYLL;
         double targetXLL;
         if (tx > 0) {
@@ -143,8 +143,8 @@ public class NoteTargeting {
     }
 
     private double getNoteDistance() {
-        double tx = LimelightLib.getTX(limelightName);
-        double thor = LimelightLib.getTHOR(limelightName);
+        double tx = LimelightHelpers.getTX(limelightName);
+        double thor = LimelightHelpers.getTHOR(limelightName);
         double txp =
                 map(
                         tx,

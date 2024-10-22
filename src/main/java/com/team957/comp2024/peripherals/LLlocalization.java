@@ -4,7 +4,6 @@ import com.team957.comp2024.Constants.SwerveConstants;
 import com.team957.comp2024.Constants.VisionConstants;
 import com.team957.comp2024.UI;
 import com.team957.comp2024.util.LimelightHelpers;
-import com.team957.comp2024.util.LimelightHelpers.LimelightResults;
 import com.team957.lib.math.filters.IntegratingFilter;
 import com.team957.lib.util.DeltaTimeUtil;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
@@ -75,13 +74,14 @@ public class LLlocalization implements Logged {
         this.fieldRotationOffset = fieldRotationOffset;
         this.robotReal = robotReal;
 
-        poseEstimator = new SwerveDrivePoseEstimator(
-                kinematics,
-                gyro.get(),
-                modulePositions.get(),
-                new Pose2d(),
-                VisionConstants.STATE_STDS,
-                VisionConstants.VISION_STDS);
+        poseEstimator =
+                new SwerveDrivePoseEstimator(
+                        kinematics,
+                        gyro.get(),
+                        modulePositions.get(),
+                        new Pose2d(),
+                        VisionConstants.STATE_STDS,
+                        VisionConstants.VISION_STDS);
 
         // photonEstimator =
         // new PhotonPoseEstimator(
@@ -97,7 +97,8 @@ public class LLlocalization implements Logged {
         double dt = dtUtil.getTimeSecondsSinceLastCall();
 
         simGyro.calculate(
-                SwerveConstants.KINEMATICS.toChassisSpeeds(moduleStates.get()).omegaRadiansPerSecond,
+                SwerveConstants.KINEMATICS.toChassisSpeeds(moduleStates.get())
+                        .omegaRadiansPerSecond,
                 dt);
 
         Rotation2d rotation;
@@ -132,29 +133,35 @@ public class LLlocalization implements Logged {
 
     public void estimateVisionPoseLL(String limelightName) {
 
-        if (VisionConstants.VISION_POSE_ESTIMATION_ENABLED && LimelightHelpers.getTV(limelightName)) {
+        if (VisionConstants.VISION_POSE_ESTIMATION_ENABLED
+                && LimelightHelpers.getTV(limelightName)) {
 
-            double[] botpose = LimelightHelpers
-                    .pose2dToArray(LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(limelightName).pose);
+            double[] botpose =
+                    LimelightHelpers.pose2dToArray(
+                            LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(limelightName)
+                                    .pose);
 
-            Rotation3d rot3 = new Rotation3d(
-                    Units.degreesToRadians(botpose[3]),
-                    Units.degreesToRadians(botpose[4]),
-                    Units.degreesToRadians(botpose[5]));
+            Rotation3d rot3 =
+                    new Rotation3d(
+                            Units.degreesToRadians(botpose[3]),
+                            Units.degreesToRadians(botpose[4]),
+                            Units.degreesToRadians(botpose[5]));
 
             Pose3d visionPose = new Pose3d(botpose[0], botpose[1], botpose[2], rot3);
 
             if (visionPose != null && LimelightHelpers.getTV(limelightName)) {
                 if (LimelightHelpers.getTA(limelightName) > VisionConstants.TARGET_AREA_CUTOFF) {
-                    visionPose2d = new Pose2d(
-                            visionPose.getTranslation().toTranslation2d(),
-                            visionPose
-                                    .getRotation()
-                                    .toRotation2d()
-                                    .minus(new Rotation2d(Math.PI)));
-                    double timeStampSeconds = Timer.getFPGATimestamp()
-                            - (LimelightHelpers.getLatency_Pipeline(limelightName) / 1000.0)
-                            - (LimelightHelpers.getLatency_Capture(limelightName) / 1000.0);
+                    visionPose2d =
+                            new Pose2d(
+                                    visionPose.getTranslation().toTranslation2d(),
+                                    visionPose
+                                            .getRotation()
+                                            .toRotation2d()
+                                            .minus(new Rotation2d(Math.PI)));
+                    double timeStampSeconds =
+                            Timer.getFPGATimestamp()
+                                    - (LimelightHelpers.getLatency_Pipeline(limelightName) / 1000.0)
+                                    - (LimelightHelpers.getLatency_Capture(limelightName) / 1000.0);
 
                     poseEstimator.addVisionMeasurement(visionPose2d, timeStampSeconds);
 
