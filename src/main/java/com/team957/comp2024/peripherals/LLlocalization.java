@@ -154,10 +154,8 @@ public class LLlocalization implements Logged {
                     visionPose2d =
                             new Pose2d(
                                     visionPose.getTranslation().toTranslation2d(),
-                                    visionPose
-                                            .getRotation()
-                                            .toRotation2d()
-                                            .minus(new Rotation2d(Math.PI)));
+                                    visionPose.getRotation().toRotation2d());
+                    // .minus(new Rotation2d(Math.PI)));
                     double timeStampSeconds =
                             Timer.getFPGATimestamp()
                                     - (LimelightHelpers.getLatency_Pipeline(limelightName) / 1000.0)

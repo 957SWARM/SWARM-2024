@@ -297,7 +297,7 @@ public class Constants {
         public static final Transform3d PCAM_TO_CENTER =
                 new Transform3d(new Translation3d(0, 0, 0), new Rotation3d(0, 0, 0));
 
-        public static final double TARGET_AREA_CUTOFF = 0.5; // PERCENT OF SCREEN //TODO: FIND VAL
+        public static final double TARGET_AREA_CUTOFF = 0.1; // PERCENT OF SCREEN //TODO: FIND VAL
         public static final double TARGET_TX_CUTOFF = 24; // DEGREES
         public static final double TARGET_THOR_CUTOFF = 70; // PIXELS
 
