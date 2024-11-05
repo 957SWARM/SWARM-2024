@@ -104,7 +104,7 @@ public class Robot extends TimedRobot implements Logged {
                     SwerveConstants.KINEMATICS,
                     swerve::getStates,
                     swerve::getPositions,
-                    imu::getCorrectedAngle,
+                    () -> imu,
                     () -> fieldRelRotationOffset,
                     isReal());
 
@@ -321,7 +321,7 @@ public class Robot extends TimedRobot implements Logged {
         Monologue.updateAll();
 
         // poseEstimation.update(isTeleop());
-        poseEstimation.update(true);
+        poseEstimation.update(true, () -> imu);
 
         imu.periodic();
         pdh.periodic();

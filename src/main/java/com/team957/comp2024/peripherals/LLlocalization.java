@@ -8,18 +8,16 @@ import com.team957.lib.math.filters.IntegratingFilter;
 import com.team957.lib.util.DeltaTimeUtil;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.Timer;
 import java.util.function.Supplier;
 import monologue.Annotations.Log;
 import monologue.Logged;
@@ -32,7 +30,7 @@ public class LLlocalization implements Logged {
 
     private final Supplier<SwerveModuleState[]> moduleStates;
     private final Supplier<SwerveModulePosition[]> modulePositions;
-    private final Supplier<Rotation2d> gyro;
+    private final Supplier<IMU> imu;
     private final Supplier<Double> fieldRotationOffset;
     private final boolean robotReal;
 
@@ -64,20 +62,20 @@ public class LLlocalization implements Logged {
             SwerveDriveKinematics kinematics,
             Supplier<SwerveModuleState[]> moduleStates,
             Supplier<SwerveModulePosition[]> modulePositions,
-            Supplier<Rotation2d> gyro,
+            Supplier<IMU> imu,
             Supplier<Double> fieldRotationOffset,
             boolean robotReal) {
 
         this.moduleStates = moduleStates;
         this.modulePositions = modulePositions;
-        this.gyro = gyro;
+        this.imu = imu;
         this.fieldRotationOffset = fieldRotationOffset;
         this.robotReal = robotReal;
 
         poseEstimator =
                 new SwerveDrivePoseEstimator(
                         kinematics,
-                        gyro.get(),
+                        imu.get().getCorrectedAngle(),
                         modulePositions.get(),
                         new Pose2d(),
                         VisionConstants.STATE_STDS,
@@ -93,7 +91,7 @@ public class LLlocalization implements Logged {
         // photonEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
     }
 
-    public void update(boolean useVision) {
+    public void update(boolean useVision, Supplier<IMU> imu) {
         double dt = dtUtil.getTimeSecondsSinceLastCall();
 
         simGyro.calculate(
@@ -105,11 +103,11 @@ public class LLlocalization implements Logged {
 
         if (robotReal) {
             if (useVision) {
-                estimateVisionPoseLL(VisionConstants.LL2_NAME);
+                estimateVisionPoseLL(VisionConstants.LL2_NAME, imu);
             }
             // estimateVisionPosePV();
 
-            rotation = gyro.get();
+            rotation = imu.get().getCorrectedAngle();
         } else {
             rotation = new Rotation2d(simGyro.getCurrentOutput());
         }
@@ -121,7 +119,7 @@ public class LLlocalization implements Logged {
 
     public void centerGyro() {
         poseEstimator.resetPosition(
-                gyro.get(),
+                imu.get().getCorrectedAngle(),
                 modulePositions.get(),
                 new Pose2d(
                         getPoseEstimate().getTranslation(),
@@ -131,49 +129,34 @@ public class LLlocalization implements Logged {
                                         : 0)));
     }
 
-    public void estimateVisionPoseLL(String limelightName) {
+    public void estimateVisionPoseLL(String limelightName, Supplier<IMU> imu) {
 
         if (VisionConstants.VISION_POSE_ESTIMATION_ENABLED
                 && LimelightHelpers.getTV(limelightName)) {
 
-            double[] botpose =
-                    LimelightHelpers.pose2dToArray(
-                            LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(limelightName)
-                                    .pose);
-
-            Rotation3d rot3 =
-                    new Rotation3d(
-                            Units.degreesToRadians(botpose[3]),
-                            Units.degreesToRadians(botpose[4]),
-                            Units.degreesToRadians(botpose[5]));
-
-            Pose3d visionPose = new Pose3d(botpose[0], botpose[1], botpose[2], rot3);
-
-            if (visionPose != null && LimelightHelpers.getTV(limelightName)) {
-                if (LimelightHelpers.getTA(limelightName) > VisionConstants.TARGET_AREA_CUTOFF) {
-                    visionPose2d =
-                            new Pose2d(
-                                    visionPose.getTranslation().toTranslation2d(),
-                                    visionPose.getRotation().toRotation2d());
-                    // .minus(new Rotation2d(Math.PI)));
-                    double timeStampSeconds =
-                            Timer.getFPGATimestamp()
-                                    - (LimelightHelpers.getLatency_Pipeline(limelightName) / 1000.0)
-                                    - (LimelightHelpers.getLatency_Capture(limelightName) / 1000.0);
-
-                    poseEstimator.addVisionMeasurement(visionPose2d, timeStampSeconds);
-
-                    // System.out.println(
-                    // gyro.get().getRadians()
-                    // + " || "
-                    // + visionPose
-                    // .getRotation()
-                    // .toRotation2d()
-                    // .minus(new Rotation2d(Math.PI))
-                    // .getRadians()
-                    // + " || "
-                    // + getRotationEstimate().getRadians());
-                }
+            Boolean doRejectUpdate = false;
+            LimelightHelpers.SetRobotOrientation(
+                    limelightName,
+                    poseEstimator.getEstimatedPosition().getRotation().getDegrees(),
+                    0,
+                    0,
+                    0,
+                    0,
+                    0);
+            LimelightHelpers.PoseEstimate mt2 =
+                    LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(limelightName);
+            if (Math.abs(Units.radiansToDegrees(imu.get().getAngularVelocityRadiansperSecond()))
+                    > 720) // if our angular velocity is greater than 720 degrees per second, ignore
+            // vision updates
+            {
+                doRejectUpdate = true;
+            }
+            if (mt2.tagCount == 0) {
+                doRejectUpdate = true;
+            }
+            if (!doRejectUpdate) {
+                poseEstimator.setVisionMeasurementStdDevs(VecBuilder.fill(.7, .7, 9999999));
+                poseEstimator.addVisionMeasurement(mt2.pose, mt2.timestampSeconds);
             }
         }
     }
@@ -203,7 +186,10 @@ public class LLlocalization implements Logged {
     }
 
     public void setPose(Pose2d pose) {
-        Rotation2d rot = (robotReal) ? gyro.get() : new Rotation2d(simGyro.getCurrentOutput());
+        Rotation2d rot =
+                (robotReal)
+                        ? imu.get().getCorrectedAngle()
+                        : new Rotation2d(simGyro.getCurrentOutput());
 
         poseEstimator.resetPosition(rot, modulePositions.get(), pose);
     }
