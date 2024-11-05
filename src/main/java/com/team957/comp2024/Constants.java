@@ -194,7 +194,7 @@ public class Constants {
         public static final double INTAKE_PIVOT_PROFILE_CONTROL_EFFORT = 3;
 
         // reported angle when the pivot is at "zero" (straight ahead)
-        public static final double INTAKE_PIVOT_OFFSET_RADIANS = -5.95;
+        public static final double INTAKE_PIVOT_OFFSET_RADIANS = -3.2; // -5.95
 
         public static final PIDConstants PID_CONSTANTS = new PIDConstants(3, 0, 0);
     }
